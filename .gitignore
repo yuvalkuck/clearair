@@ -1,3 +1,16 @@
+# JetBrains CLion localized configuration
+.idea/
+
+# CMake compiler artifacts and build directory
+cmake-build-*/
+build/
+
+# Automatically generated backup or log files
+*.log
+*.bak
+# C
+*.o
+#
 CMakeLists.txt.user
 CMakeCache.txt
 CMakeFiles
