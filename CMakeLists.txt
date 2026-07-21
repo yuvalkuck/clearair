@@ -36,11 +36,13 @@ add_executable(${CMAKE_PROJECT_NAME})
 
 # Add STM32CubeMX generated sources
 add_subdirectory(cmake/stm32cubemx)
+ADD_SUBDIRECTORY(App/bme68x)
 
 # Link directories setup
 target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined library search paths
-        Drivers/BSEC2/cortex-m4/1.10.2610/libfpv4-sp-d16-hard-algobsec.a
+        Drivers/BSEC2/cortex-m4/1.10.2610
+
 )
 
 # Add sources to executable
@@ -65,6 +67,8 @@ list(REMOVE_ITEM CMAKE_C_IMPLICIT_LINK_LIBRARIES ob)
 # Add linked libraries
 target_link_libraries(${CMAKE_PROJECT_NAME}
     stm32cubemx
+    fpv4-sp-d16-hard-algobsec
+        bme68x
 
     # Add user defined libraries
 )
