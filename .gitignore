@@ -1,5 +1,6 @@
 # JetBrains CLion localized configuration
 .idea/
+.git/
 
 # CMake compiler artifacts and build directory
 cmake-build-*/

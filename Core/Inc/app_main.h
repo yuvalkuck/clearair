@@ -6,6 +6,7 @@
 #define CLEARAIR_APP_MAIN_H
 
 #ifdef __cplusplus
+#include "event_message.h"
 extern "C" {
 #endif
 #include "main.h"
