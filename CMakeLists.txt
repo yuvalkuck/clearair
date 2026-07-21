@@ -40,6 +40,7 @@ add_subdirectory(cmake/stm32cubemx)
 # Link directories setup
 target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined library search paths
+        Drivers/BSEC2/cortex-m4/1.10.2610/libfpv4-sp-d16-hard-algobsec.a
 )
 
 # Add sources to executable
