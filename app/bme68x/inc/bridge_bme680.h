@@ -4,6 +4,7 @@
 
 #ifndef CLEARAIR_TELEMETRY_BME680_H
 #define CLEARAIR_TELEMETRY_BME680_H
+#include "stm32f4xx.h"
 #include "stm32f4xx_hal_i2c.h"
 
 namespace bridgeBME680 {

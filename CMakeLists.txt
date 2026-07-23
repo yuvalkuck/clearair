@@ -70,8 +70,6 @@ ADD_SUBDIRECTORY(app/bme68x)
 # Add linked libraries
 target_link_libraries(${CMAKE_PROJECT_NAME}
     stm32cubemx
-    fpv4-sp-d16-hard-algobsec
-        bme68x
-
+    bme68x
     # Add user defined libraries
 )

@@ -2,7 +2,7 @@
 // Created by uv on 21/07/2026
 //
 #include "stm32f4xx_hal.h"
-#include "bme68x.h" // from Bosch bme68x sensor-api, used by BSEC2
+#include "bme68x.h"
 #include "bridge_bme680.h"
 namespace {
     constexpr uint32_t I2C_TIMEOUT_MS = 100;
