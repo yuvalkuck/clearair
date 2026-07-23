@@ -7,7 +7,7 @@
 #include <cstdint>
 
 #ifdef __cplusplus
-namespace Message { namespace Data {
+namespace Common { namespace Data {
     enum class SensorSignal : uint8_t {
         IAQ,
         TEMPERATURE,
