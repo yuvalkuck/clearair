@@ -23,6 +23,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "app_main.h"
+#include "event_message.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -59,6 +60,18 @@ const osThreadAttr_t defaultTask_attributes = {
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
+/* Definitions for bmeSensor */
+osThreadId_t bmeSensorHandle;
+const osThreadAttr_t bmeSensor_attributes = {
+  .name = "bmeSensor",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityLow,
+};
+/* Definitions for SensorEvents */
+osMessageQueueId_t SensorEventsHandle;
+const osMessageQueueAttr_t SensorEvents_attributes = {
+  .name = "SensorEvents"
+};
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -72,6 +85,7 @@ static void MX_I2C2_Init(void);
 static void MX_TIM2_Init(void);
 static void MX_USART2_UART_Init(void);
 void StartDefaultTask(void *argument);
+void bmeSensorTask(void *argument);
 
 /* USER CODE BEGIN PFP */
 
@@ -135,6 +149,10 @@ int main(void)
   /* start timers, add new ones, ... */
   /* USER CODE END RTOS_TIMERS */
 
+  /* Create the queue(s) */
+  /* creation of SensorEvents */
+  SensorEventsHandle = osMessageQueueNew (32, sizeof(struct CommonMessage), &SensorEvents_attributes);
+
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
   /* USER CODE END RTOS_QUEUES */
@@ -142,6 +160,9 @@ int main(void)
   /* Create the thread(s) */
   /* creation of defaultTask */
   defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
+
+  /* creation of bmeSensor */
+  bmeSensorHandle = osThreadNew(bmeSensorTask, NULL, &bmeSensor_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -487,6 +508,24 @@ void StartDefaultTask(void *argument)
     osDelay(1);
   }
   /* USER CODE END 5 */
+}
+
+/* USER CODE BEGIN Header_bmeSensorTask */
+/**
+* @brief Function implementing the bmeSensor thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_bmeSensorTask */
+void bmeSensorTask(void *argument)
+{
+  /* USER CODE BEGIN bmeSensorTask */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END bmeSensorTask */
 }
 
 /**

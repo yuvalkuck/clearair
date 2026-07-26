@@ -6,31 +6,32 @@
 #include "task_bme680.h"
 #include "bsec_interface.h"
 
-static bme68x_dev sensorCfg;
+
+
 
 TaskBme680::TaskBme680(I2C_HandleTypeDef* hi2c,
                        uint8_t i2c_addr8, // 8-bit shifted address
-                       MessageQueue& output_queue) : hi2c_(hi2c), i2c_addr8_(i2c_addr8), msgQueue_(output_queue) {}
+                       osMessageQueueId_t* output_queue) : hi2c_(hi2c), i2c_addr8_(i2c_addr8), msgQueue_(*output_queue) {}
 
 bool TaskBme680::load() {
-    bridgeBME680::init(hi2c_, i2c_addr8_);
-
-    sensorCfg.intf = BME68X_I2C_INTF;
-    sensorCfg.read = bridgeBME680::i2c_read;
-    sensorCfg.write = bridgeBME680::i2c_write;
-    sensorCfg.delay_us = bridgeBME680::delay_us;
-    sensorCfg.intf_ptr = &i2c_addr8_;
-    sensorCfg.amb_temp = 25;
-
-    // bsec_sensor_control()
-    if (bme68x_init(&sensorCfg) != BME68X_OK) {
+    if (!bridgeBME680::init(hi2c_, i2c_addr8_) || ( bsec_init() != BME68X_OK ) ) {
         return false;
     }
+    bsec_sensor_configuration_t requestedOutputs[6];
+    uint8_t nRequested = 0;
 
-    if ( bsec_init() != BME68X_OK ) {
-        return false;
-    }
-    return true;
+    requestedOutputs[nRequested++] = {BSEC_SAMPLE_RATE_LP, BSEC_OUTPUT_IAQ};
+    requestedOutputs[nRequested++] = {BSEC_SAMPLE_RATE_LP, BSEC_OUTPUT_STATIC_IAQ};
+    requestedOutputs[nRequested++] = {BSEC_SAMPLE_RATE_LP, BSEC_OUTPUT_CO2_EQUIVALENT};
+    requestedOutputs[nRequested++] = {BSEC_SAMPLE_RATE_LP, BSEC_OUTPUT_BREATH_VOC_EQUIVALENT};
+    requestedOutputs[nRequested++] = {BSEC_SAMPLE_RATE_LP, BSEC_OUTPUT_RAW_TEMPERATURE};
+    requestedOutputs[nRequested++] = {BSEC_SAMPLE_RATE_LP, BSEC_OUTPUT_RAW_HUMIDITY};
+
+    bsec_sensor_configuration_t requiredSensorSettings[BSEC_MAX_PHYSICAL_SENSOR];
+    uint8_t nRequired = BSEC_MAX_PHYSICAL_SENSOR;
+
+    return bsec_update_subscription(requestedOutputs, nRequested,
+                                     requiredSensorSettings, &nRequired) == BSEC_OK;
 }
 
 bool TaskBme680::start() {

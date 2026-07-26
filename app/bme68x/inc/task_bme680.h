@@ -4,8 +4,9 @@
 
 #ifndef CLEARAIR_TASK_BME680_H
 #define CLEARAIR_TASK_BME680_H
+#include "cmsis_os2.h"
 #include "stm32f4xx_hal_i2c.h"
-#include "fixed_queue.h"
+// #include "fixed_queue.h"
 // #include "bme68x_defs.h"
 
 /**
@@ -16,14 +17,14 @@
  */
 class TaskBme680 {
     I2C_HandleTypeDef* hi2c_;
-    uint8_t i2c_addr8_; // 8-bit shifted address
-    MessageQueue& msgQueue_;
+    uint8_t i2c_addr8_;
+    osMessageQueueId_t & msgQueue_;
 
 public:
     TaskBme680(
         I2C_HandleTypeDef* hi2c,
         uint8_t i2c_addr8, // 8-bit shifted address
-        MessageQueue& output_queue);
+        osMessageQueueId_t* output_queue);
 
     bool load();
     bool start();

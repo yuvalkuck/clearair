@@ -4,11 +4,9 @@
 
 #ifndef CLEARAIR_EVENT_DATA_H
 #define CLEARAIR_EVENT_DATA_H
-#include <cstdint>
+#include <stdint.h>
 
-#ifdef __cplusplus
-namespace Common { namespace Data {
-    enum class SensorSignal : uint8_t {
+typedef enum __attribute__((packed)){
         IAQ,
         TEMPERATURE,
         HUMIDITY,
@@ -16,20 +14,15 @@ namespace Common { namespace Data {
         CO2_EQUIVALENT,
         VOC_EQUIVALENT,
         RAW_GAS,
-    };
+    } SensorSignal;
 
-    extern "C" {
-#endif
+
     // Keep this POD (plain-old-data) so it can be copied through an RTOS queue safely.
-    struct BME680D {
-        uint8_t signal;
+    struct DataBME680 {
+        SensorSignal signal;
         float value;
         uint8_t accuracy; // BSEC accuracy 0-3, or 0xFF if n/a
     };
-#ifdef __cplusplus
-    }
-}}
-#endif
 
 
 #endif //CLEARAIR_EVENT_DATA_H

@@ -6,19 +6,19 @@
 #define CLEARAIR_EVENT_MESSAGE_H
 
 #include "event_data.h"
-namespace Common {
-    enum class UniqueID : uint8_t {
+
+    typedef enum __attribute__((packed)) {
         BME680 = 0,
         // Add other sensors here, e.g. LSM6DS3, BMP280, etc.
-    };
+    } UniqueID;
 
-    struct Message {
+    struct CommonMessage {
         UniqueID id;
         uint32_t timestamp_ms;
         union {
-            Data::BME680D bme680;
+            struct DataBME680 bme680;
             // BmpData bmp; etc. for other sensors
         } payload;
     };
-}
+
 #endif //CLEARAIR_EVENT_MESSAGE_H
