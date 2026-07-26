@@ -178,6 +178,7 @@ int main(void)
   /* Initialize USER push-button, will be used to trigger an interrupt each time it's pressed.*/
   BSP_PB_Init(BUTTON_USER, BUTTON_MODE_EXTI);
 
+  app_main();
   /* Start scheduler */
   osKernelStart();
 
@@ -189,7 +190,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    app_main();
+
   }
   /* USER CODE END 3 */
 }
