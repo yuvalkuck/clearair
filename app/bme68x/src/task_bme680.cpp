@@ -10,11 +10,15 @@
 
 
 TaskBme680::TaskBme680(I2C_HandleTypeDef* hi2c,
-                       uint8_t i2c_addr8, // 8-bit shifted address
-                       osMessageQueueId_t* output_queue) : hi2c_(hi2c), i2c_addr8_(i2c_addr8), msgQueue_(*output_queue) {}
+                       osMessageQueueId_t* output_queue,
+                       uint8_t i2c_addr8 // 8-bit shifted address
+                       ) : hi2c_(hi2c), i2c_addr8_(i2c_addr8), msgQueue_(*output_queue) {}
 
 bool TaskBme680::load() {
-    if (!bridgeBME680::init(hi2c_, i2c_addr8_) || ( bsec_init() != BME68X_OK ) ) {
+    if (!initBridgeBME680(hi2c_, i2c_addr8_)  ) {
+        return false;
+    }
+    if ( bsec_init() != BME68X_OK ) {
         return false;
     }
     bsec_sensor_configuration_t requestedOutputs[6];

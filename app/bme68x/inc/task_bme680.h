@@ -23,8 +23,9 @@ class TaskBme680 {
 public:
     TaskBme680(
         I2C_HandleTypeDef* hi2c,
-        uint8_t i2c_addr8, // 8-bit shifted address
-        osMessageQueueId_t* output_queue);
+        osMessageQueueId_t* output_queue,
+        uint8_t i2c_addr8 = 0x76 // 7-bit address
+        );
 
     bool load();
     bool start();
