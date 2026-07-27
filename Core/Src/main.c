@@ -167,8 +167,6 @@ int main(void)
   bmeSensorHandle = osThreadNew(bmeSensorTask, NULL, &bmeSensor_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
-  // Freeze the task immediately before the scheduler boots up
-  osThreadSuspend(bmeSensorTask);
 
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */

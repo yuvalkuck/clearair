@@ -18,7 +18,7 @@ extern "C" void appStartDefaultTask(void *argument)
     if ( rc) {
         taskBme680.run();
     }
-    auto leep = 500;
+    auto leep = 1000;
     if ( !rc) {
         leep = 100;
     }
@@ -32,6 +32,7 @@ extern "C" void appStartDefaultTask(void *argument)
 extern "C" void appBmeSensorTask(void *argument)
 {
     /* USER CODE BEGIN bmeSensorTask */
+    osThreadSuspend(osThreadGetId()); // suspend - will be release elseware
     /* Infinite loop */
     for(;;)
     {
