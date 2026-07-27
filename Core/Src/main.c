@@ -73,6 +73,7 @@ const osMessageQueueAttr_t SensorEvents_attributes = {
   .name = "SensorEvents"
 };
 /* USER CODE BEGIN PV */
+uint32_t myTaskStack[128] __attribute__((aligned(8)));
 
 /* USER CODE END PV */
 
@@ -88,6 +89,8 @@ void StartDefaultTask(void *argument);
 void bmeSensorTask(void *argument);
 
 /* USER CODE BEGIN PFP */
+extern void appStartDefaultTask(void *argument);
+extern void appBmeSensorTask(void *argument);
 
 /* USER CODE END PFP */
 
@@ -104,7 +107,7 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-
+  SystemInit();
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -151,7 +154,7 @@ int main(void)
 
   /* Create the queue(s) */
   /* creation of SensorEvents */
-  SensorEventsHandle = osMessageQueueNew (32, sizeof(struct CommonMessage), &SensorEvents_attributes);
+  SensorEventsHandle = osMessageQueueNew (32, sizeof(sizeof(struct CommonMessage)), &SensorEvents_attributes);
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
@@ -178,7 +181,6 @@ int main(void)
   /* Initialize USER push-button, will be used to trigger an interrupt each time it's pressed.*/
   BSP_PB_Init(BUTTON_USER, BUTTON_MODE_EXTI);
 
-  app_main();
   /* Start scheduler */
   osKernelStart();
 
@@ -503,7 +505,9 @@ static void MX_GPIO_Init(void)
 void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN 5 */
+  appStartDefaultTask(argument);
   /* Infinite loop */
+
   for(;;)
   {
     osDelay(1);
@@ -521,6 +525,7 @@ void StartDefaultTask(void *argument)
 void bmeSensorTask(void *argument)
 {
   /* USER CODE BEGIN bmeSensorTask */
+  appBmeSensorTask(argument);
   /* Infinite loop */
   for(;;)
   {

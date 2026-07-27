@@ -8,7 +8,7 @@
 #include "stm32f4xx_hal_i2c.h"
 
 
-    bool initBridgeBME680(I2C_HandleTypeDef* hi2c, uint8_t dev_addr_7bit = 0x76);
+    int initBridgeBME680(I2C_HandleTypeDef* hi2c, uint8_t dev_addr_7bit = 0x76);
 
     // These match bme68x's required function pointer signatures
 

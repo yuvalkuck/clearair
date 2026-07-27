@@ -9,8 +9,9 @@ ADD_LIBRARY(${LIBRARY_NAME} STATIC
 # Expose header files to consumers of this library
 target_include_directories(${LIBRARY_NAME} PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/inc
-        ${PROJECT_ROOT_DIR}/Drivers/BME68x/4.4.8/bme68x
+        ${PROJECT_ROOT_DIR}/Drivers/BME68x/4.4.8
         ${PROJECT_ROOT_DIR}/Drivers/BSEC/2.6.1.0/inc
+        ${PROJECT_ROOT_DIR}/Drivers/BSEC/2.6.1.0/config/bme680_iaq_33v_3s_4d
         stm32bsec2bme_DEFINES
         STM32_Drivers
 )
@@ -18,6 +19,7 @@ target_link_libraries(${LIBRARY_NAME} PUBLIC stm32cubemx)
 
 target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/inc
+        ${PROJECT_ROOT_DIR}/Drivers/BME68x/4.4.8
 )
 target_link_directories(${CMAKE_PROJECT_NAME} PUBLIC
     ${CMAKE_CURRENT_BINARY_DIR}

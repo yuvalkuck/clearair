@@ -6,27 +6,31 @@ STM_SET_LIBNAME()
 
 # Interface library for includes and symbols
 ADD_LIBRARY(${INTERFACE_NAME} INTERFACE)
+SET(DRIVERS_ROOT_DIR "${PROJECT_ROOT_DIR}/Drivers")
 TARGET_INCLUDE_DIRECTORIES(${INTERFACE_NAME} INTERFACE
-        ${PROJECT_ROOT_DIR}/Drivers/BME68x/4.4.8/bme68x
-        ${PROJECT_ROOT_DIR}/Drivers/BSEC/2.6.1.0/inc
+        ${DRIVERS_ROOT_DIR}/BME68x/4.4.8
+        ${DRIVERS_ROOT_DIR}/BSEC/2.6.1.0/inc
+        ${DRIVERS_ROOT_DIR}/BSEC/2.6.1.0/config/bme680_iaq_33v_3s_4d
+
 )
 
 # Create STM32_Drivers static library
 ADD_LIBRARY(${LIBRARY_NAME} OBJECT)
 TARGET_INCLUDE_DIRECTORIES(${LIBRARY_NAME} PRIVATE
-        ${PROJECT_ROOT_DIR}/Drivers/BME68x/4.4.8/bme68x
-        ${PROJECT_ROOT_DIR}/Drivers/BSEC/2.6.1.0/inc
+        ${DRIVERS_ROOT_DIR}/BME68x/4.4.8
+        ${DRIVERS_ROOT_DIR}/BSEC/2.6.1.0/config/bme680_iaq_33v_3s_4d
+        ${DRIVERS_ROOT_DIR}/BSEC/2.6.1.0/inc
 )
 TARGET_SOURCES(${LIBRARY_NAME} PRIVATE
-        ${PROJECT_ROOT_DIR}/Drivers/BME68x/4.4.8/bme68x/bme68x.c
+        ${DRIVERS_ROOT_DIR}/BME68x/4.4.8/bme68x.c
+        ${DRIVERS_ROOT_DIR}/BSEC/2.6.1.0/config/bme680_iaq_33v_3s_4d/bsec_iaq.c
 )
-TARGET_LINK_LIBRARIES(${LIBRARY_NAME} PUBLIC
-        algobsec
+TARGET_LINK_DIRECTORIES(${LIBRARY_NAME} PUBLIC
+        ${DRIVERS_ROOT_DIR}/BSEC/2.6.1.0/Cortex_M4F
 )
 
-# Link directories setup
-TARGET_LINK_DIRECTORIES(${CMAKE_PROJECT_NAME} PRIVATE
-        ${PROJECT_ROOT_DIR}/Drivers/BSEC/2.6.1.0/Cortex_M4F
+TARGET_LINK_LIBRARIES(${LIBRARY_NAME} PUBLIC
+        algobsec
 )
 
 # Add libraries to the project

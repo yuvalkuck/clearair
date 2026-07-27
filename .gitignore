@@ -9,6 +9,7 @@ build/
 # Automatically generated backup or log files
 *.log
 *.bak
+*.svd
 # C
 *.o
 #

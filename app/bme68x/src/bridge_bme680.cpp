@@ -4,6 +4,7 @@
 #include "stm32f4xx_hal.h"
 #include "bme68x.h"
 #include "bridge_bme680.h"
+#include "cmsis_os.h"
 
 namespace {
     constexpr uint32_t I2C_TIMEOUT_MS = 100;
@@ -45,14 +46,14 @@ static void delay_us(uint32_t period, void* /*intf_ptr*/) {
         while (cycles--) { __NOP(); }
     }
     else {
-        HAL_Delay(us / 1000U + 1U);
+        vTaskDelay(pdMS_TO_TICKS(us));
     }
 }
 
-static bme68x_dev sensorCfg;
+static bme68x_dev sensorCfg = {0};
 
 
-bool initBridgeBME680(I2C_HandleTypeDef* hi2c, uint8_t dev_addr_7bit) {
+int initBridgeBME680(I2C_HandleTypeDef* hi2c, uint8_t dev_addr_7bit) {
     i2cH = hi2c;
     dev_addr_ = dev_addr_7bit << 1;
 
@@ -64,9 +65,5 @@ bool initBridgeBME680(I2C_HandleTypeDef* hi2c, uint8_t dev_addr_7bit) {
     sensorCfg.amb_temp = 25;
 
     // bsec_sensor_control()
-    auto rc = bme68x_init(&sensorCfg);
-    if (rc == BME68X_OK) {
-        return true;
-    }
-    return false;
+    return  bme68x_init(&sensorCfg);
 }
