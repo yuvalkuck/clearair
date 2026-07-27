@@ -26,7 +26,7 @@ public:
         uint8_t i2c_addr8 = BME68X_I2C_ADDR_LOW // 7-bit address
         );
 
-    bool load();
-    bool start();
+    bool configure();
+    bool run();
 };
 #endif //CLEARAIR_TASK_BME680_H

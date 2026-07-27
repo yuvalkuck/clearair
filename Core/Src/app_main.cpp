@@ -14,7 +14,10 @@ extern "C" void appStartDefaultTask(void *argument)
     /* USER CODE BEGIN 5 */
     /* Infinite loop */
     TaskBme680 taskBme680(&hi2c2,&SensorEventsHandle,BME68X_I2C_ADDR_HIGH);
-    auto rc = taskBme680.load();
+    auto rc = taskBme680.configure();
+    if ( rc) {
+        taskBme680.run();
+    }
     auto leep = 500;
     if ( !rc) {
         leep = 100;
