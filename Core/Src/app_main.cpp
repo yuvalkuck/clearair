@@ -24,7 +24,7 @@ extern osThreadId_t bmeSensorHandle;
 extern osMessageQueueId_t SensorEventsHandle;
 TaskBme680 taskBme680;
 
-extern "C" void appStartDefaultTask(void* argument) {
+extern "C" [[noreturn]] void appStartDefaultTask(void* argument) {
     /* USER CODE BEGIN 5 */
     auto leep = 100;
     auto rc = taskBme680.configure(SensorEventsHandle, &hi2c2,BME68X_I2C_ADDR_HIGH);
@@ -39,7 +39,7 @@ extern "C" void appStartDefaultTask(void* argument) {
     /* USER CODE END 5 */
 }
 
-extern "C" void appBmeSensorTask(void* argument) {
+extern "C" [[noreturn]] void appBmeSensorTask(void* argument) {
     /* USER CODE BEGIN bmeSensorTask */
     osThreadSuspend(osThreadGetId()); // suspend - will be release elseware
     taskBme680.taskLoop();
