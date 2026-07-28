@@ -27,7 +27,7 @@ public:
         I2C_HandleTypeDef* hi2c,
         uint8_t i2c_addr8 = BME68X_I2C_ADDR_LOW
     );
-    bool run();
+    void run();
     [[noreturn]] void taskLoop();
 };
 #endif //CLEARAIR_TASK_BME680_H

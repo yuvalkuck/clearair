@@ -11,7 +11,7 @@
 #include "bsec_iaq.h"
 #include "event_message.h"
 #include "queue.h"
-
+extern osThreadId_t bmeSensorHandle;
 static uint8_t work_buffer[BSEC_MAX_WORKBUFFER_SIZE];
 static bme68x_dev commBridgeCfg = {0};
 #define BSEC_REQUESTED_OUTPUTS 6
@@ -37,6 +37,9 @@ static auto applyBsecSensorSettings(const bsec_bme_settings_t& settings) {
 
     rc = bme68x_set_op_mode(BME68X_FORCED_MODE, &commBridgeCfg);
     return rc;
+}
+void TaskBme680::run() {
+    osThreadResume(bmeSensorHandle);
 }
 
 bool TaskBme680::configure(osMessageQueueId_t output_queue, I2C_HandleTypeDef* hi2c, uint8_t i2c_addr8) {
@@ -73,10 +76,6 @@ bool TaskBme680::configure(osMessageQueueId_t output_queue, I2C_HandleTypeDef* h
                                   requiredSensorSettings, &nRequired);
 
     return (rc == BSEC_OK);
-}
-
-bool TaskBme680::run() {
-    return false;
 }
 
 static uint32_t getTimestampMs() {

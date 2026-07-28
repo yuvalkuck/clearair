@@ -4,9 +4,6 @@
 #include "app_main.h"
 #include "task_bme680.h"
 #include "cmsis_os.h"
-extern I2C_HandleTypeDef hi2c1;
-extern I2C_HandleTypeDef hi2c2;
-extern osThreadId_t bmeSensorHandle;
 /*
  * Red LED set of 4 error status
  * 00 - All OK
@@ -22,18 +19,18 @@ enum ExDeviceErrState {
     // left for more
 };
 
-QueueHandle_t sensorsQueue;
+extern I2C_HandleTypeDef hi2c2;
+extern osThreadId_t bmeSensorHandle;
+extern osMessageQueueId_t SensorEventsHandle;
 TaskBme680 taskBme680;
 
 extern "C" void appStartDefaultTask(void* argument) {
     /* USER CODE BEGIN 5 */
-    auto rc = taskBme680.configure(sensorsQueue, &hi2c2,BME68X_I2C_ADDR_HIGH);
+    auto leep = 100;
+    auto rc = taskBme680.configure(SensorEventsHandle, &hi2c2,BME68X_I2C_ADDR_HIGH);
     if (rc) {
         taskBme680.run();
-    }
-    auto leep = 1000;
-    if (!rc) {
-        leep = 100;
+        leep = 1000;
     }
     for (;;) {
         BSP_LED_Toggle(LED2);
