@@ -46,6 +46,21 @@ extern "C" void appBmeSensorTask(void* argument) {
     /* USER CODE END bmeSensorTask */
 }
 
+extern "C" [[noreturn]] void mainSensorsMsgLoop(void* argument) {
+    CommonMessage msg{};
+    auto xQueue = (QueueHandle_t)SensorEventsHandle;
+    for (;;) {
+        if (xQueueReceive(xQueue, &msg, portMAX_DELAY) == pdTRUE) {
+            switch (msg.id) {
+                case UniqueID::BME680:
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+}
+
 int app_main(void) {
     /* Start scheduler */
     osKernelStart();

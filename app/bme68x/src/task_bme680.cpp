@@ -11,7 +11,7 @@
 #include "bsec_iaq.h"
 #include "event_message.h"
 #include "queue.h"
-extern osThreadId_t bmeSensorHandle;
+extern osThreadId_t bmeSensorTaskHandle;
 static uint8_t work_buffer[BSEC_MAX_WORKBUFFER_SIZE];
 static bme68x_dev commBridgeCfg = {0};
 static constexpr uint32_t BSEC_TASK_MAX_WAIT_MS     = 2000; // BME68x max heater dur
@@ -40,7 +40,7 @@ static auto applyBsecSensorSettings(const bsec_bme_settings_t& settings) {
     return rc;
 }
 void TaskBme680::run() {
-    osThreadResume(bmeSensorHandle);
+    osThreadResume(bmeSensorTaskHandle);
 }
 
 bool TaskBme680::configure(osMessageQueueId_t output_queue, I2C_HandleTypeDef* hi2c, uint8_t i2c_addr8) {

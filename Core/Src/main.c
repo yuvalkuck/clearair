@@ -61,11 +61,18 @@ const osThreadAttr_t defaultTask_attributes = {
   .stack_size = 512 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
-/* Definitions for bmeSensor */
-osThreadId_t bmeSensorHandle;
-const osThreadAttr_t bmeSensor_attributes = {
-  .name = "bmeSensor",
+/* Definitions for bmeSensorTask */
+osThreadId_t bmeSensorTaskHandle;
+const osThreadAttr_t bmeSensorTask_attributes = {
+  .name = "bmeSensorTask",
   .stack_size = 512 * 4,
+  .priority = (osPriority_t) osPriorityLow,
+};
+/* Definitions for msgLoopTask */
+osThreadId_t msgLoopTaskHandle;
+const osThreadAttr_t msgLoopTask_attributes = {
+  .name = "msgLoopTask",
+  .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for SensorEvents */
@@ -86,11 +93,12 @@ static void MX_I2C2_Init(void);
 static void MX_TIM2_Init(void);
 static void MX_USART2_UART_Init(void);
 void StartDefaultTask(void *argument);
-void bmeSensorTask(void *argument);
+extern void appBmeSensorTask(void *argument);
+extern void mainSensorsMsgLoop(void *argument);
 
 /* USER CODE BEGIN PFP */
 extern void appStartDefaultTask(void *argument);
-extern void appBmeSensorTask(void *argument);
+
 
 /* USER CODE END PFP */
 
@@ -164,8 +172,11 @@ int main(void)
   /* creation of defaultTask */
   defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
 
-  /* creation of bmeSensor */
-  bmeSensorHandle = osThreadNew(bmeSensorTask, NULL, &bmeSensor_attributes);
+  /* creation of bmeSensorTask */
+  bmeSensorTaskHandle = osThreadNew(appBmeSensorTask, NULL, &bmeSensorTask_attributes);
+
+  /* creation of msgLoopTask */
+  msgLoopTaskHandle = osThreadNew(mainSensorsMsgLoop, NULL, &msgLoopTask_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
 
@@ -514,25 +525,6 @@ void StartDefaultTask(void *argument)
     osDelay(1);
   }
   /* USER CODE END 5 */
-}
-
-/* USER CODE BEGIN Header_bmeSensorTask */
-/**
-* @brief Function implementing the bmeSensor thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_bmeSensorTask */
-void bmeSensorTask(void *argument)
-{
-  /* USER CODE BEGIN bmeSensorTask */
-  appBmeSensorTask(argument);
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
-  }
-  /* USER CODE END bmeSensorTask */
 }
 
 /**
