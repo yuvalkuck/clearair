@@ -14,6 +14,7 @@
 extern osThreadId_t bmeSensorHandle;
 static uint8_t work_buffer[BSEC_MAX_WORKBUFFER_SIZE];
 static bme68x_dev commBridgeCfg = {0};
+static constexpr uint32_t BSEC_TASK_MAX_WAIT_MS     = 2000; // BME68x max heater dur
 #define BSEC_REQUESTED_OUTPUTS 6
 
 static auto applyBsecSensorSettings(const bsec_bme_settings_t& settings) {
@@ -62,12 +63,12 @@ bool TaskBme680::configure(osMessageQueueId_t output_queue, I2C_HandleTypeDef* h
     bsec_sensor_configuration_t requestedOutputs[BSEC_REQUESTED_OUTPUTS];
     uint8_t nRequested = 0;
 
-    requestedOutputs[nRequested++] = {BSEC_SAMPLE_RATE_CONT, BSEC_OUTPUT_IAQ};
-    requestedOutputs[nRequested++] = {BSEC_SAMPLE_RATE_CONT, BSEC_OUTPUT_STATIC_IAQ};
-    requestedOutputs[nRequested++] = {BSEC_SAMPLE_RATE_CONT, BSEC_OUTPUT_CO2_EQUIVALENT};
-    requestedOutputs[nRequested++] = {BSEC_SAMPLE_RATE_CONT, BSEC_OUTPUT_BREATH_VOC_EQUIVALENT};
-    requestedOutputs[nRequested++] = {BSEC_SAMPLE_RATE_CONT, BSEC_OUTPUT_RAW_TEMPERATURE};
-    requestedOutputs[nRequested++] = {BSEC_SAMPLE_RATE_CONT, BSEC_OUTPUT_RAW_HUMIDITY};
+    requestedOutputs[nRequested++] = {BSEC_SAMPLE_RATE_LP, BSEC_OUTPUT_IAQ};
+    requestedOutputs[nRequested++] = {BSEC_SAMPLE_RATE_LP, BSEC_OUTPUT_STATIC_IAQ};
+    requestedOutputs[nRequested++] = {BSEC_SAMPLE_RATE_LP, BSEC_OUTPUT_CO2_EQUIVALENT};
+    requestedOutputs[nRequested++] = {BSEC_SAMPLE_RATE_LP, BSEC_OUTPUT_BREATH_VOC_EQUIVALENT};
+    requestedOutputs[nRequested++] = {BSEC_SAMPLE_RATE_LP, BSEC_OUTPUT_RAW_TEMPERATURE};
+    requestedOutputs[nRequested++] = {BSEC_SAMPLE_RATE_LP, BSEC_OUTPUT_RAW_HUMIDITY};
 
     bsec_sensor_configuration_t requiredSensorSettings[BSEC_MAX_PHYSICAL_SENSOR];
     uint8_t nRequired = BSEC_MAX_PHYSICAL_SENSOR;
@@ -184,8 +185,12 @@ void TaskBme680::taskLoop() {
         if (bme_settings.trigger_measurement) {
             applyBsecSensorSettings(bme_settings);
 
-            // Wait exactly as long as BSEC dictates for the measurement (forced mode)
-            uint32_t wait_ms = (bme_settings.heater_duration > 0) ? (bme_settings.heater_duration + 10) : 10;
+            uint32_t wait_ms = 10;
+            if (bme_settings.run_gas && bme_settings.heater_duration > 0) {
+                wait_ms = (uint32_t)bme_settings.heater_duration + 10;
+                if (wait_ms > BSEC_TASK_MAX_WAIT_MS)   // critical fix #2: hard cap
+                    wait_ms = BSEC_TASK_MAX_WAIT_MS;
+            }
             vTaskDelay(pdMS_TO_TICKS(wait_ms));
 
             readAndSendToQueue(bme_settings, timestamp_ns);

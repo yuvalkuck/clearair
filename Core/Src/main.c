@@ -58,14 +58,14 @@ UART_HandleTypeDef huart2;
 osThreadId_t defaultTaskHandle;
 const osThreadAttr_t defaultTask_attributes = {
   .name = "defaultTask",
-  .stack_size = 128 * 4,
+  .stack_size = 512 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for bmeSensor */
 osThreadId_t bmeSensorHandle;
 const osThreadAttr_t bmeSensor_attributes = {
   .name = "bmeSensor",
-  .stack_size = 128 * 4,
+  .stack_size = 512 * 4,
   .priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for SensorEvents */
@@ -154,7 +154,7 @@ int main(void)
 
   /* Create the queue(s) */
   /* creation of SensorEvents */
-  SensorEventsHandle = osMessageQueueNew (32, sizeof(sizeof(struct CommonMessage)), &SensorEvents_attributes);
+  SensorEventsHandle = osMessageQueueNew (32, sizeof(struct CommonMessage), &SensorEvents_attributes);
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
