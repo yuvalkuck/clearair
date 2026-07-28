@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
-
+seT(CMAKE_BUILD_TYPE "Debug" CACHE STRING "debugmode" FORCE)
 #
 # This file is generated only once,
 # and is not re-generated if converter is called multiple times.
@@ -29,18 +29,21 @@ project(${CMAKE_PROJECT_NAME})
 message("Build type: " ${CMAKE_BUILD_TYPE})
 
 # Enable CMake support for ASM and C languages
-enable_language(C ASM)
+enable_language(C CXX ASM)
 
 # Create an executable object type
 add_executable(${CMAKE_PROJECT_NAME})
 
 # Add STM32CubeMX generated sources
 add_subdirectory(cmake/stm32cubemx)
+add_subdirectory(cmake/stm32bsec2bme)
+
 
 # Link directories setup
 target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined library search paths
-        Drivers/BSEC2/cortex-m4/1.10.2610/libfpv4-sp-d16-hard-algobsec.a
+        Drivers/BSEC2/cortex-m4/1.10.2610
+
 )
 
 # Add sources to executable
@@ -51,6 +54,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
 
 # Add include paths
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
+        app/include
     # Add user defined include paths
 )
 
@@ -61,10 +65,10 @@ target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
 
 # Remove wrong libob.a library dependency when using cpp files
 list(REMOVE_ITEM CMAKE_C_IMPLICIT_LINK_LIBRARIES ob)
-
-# Add linked libraries
 target_link_libraries(${CMAKE_PROJECT_NAME}
-    stm32cubemx
-
-    # Add user defined libraries
+        stm32cubemx
+        # Add user defined libraries
 )
+
+ADD_SUBDIRECTORY(app/bme68x)
+# Add linked libraries
