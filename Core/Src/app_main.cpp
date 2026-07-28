@@ -3,47 +3,55 @@
 //
 #include "app_main.h"
 #include "task_bme680.h"
-
 #include "cmsis_os.h"
 extern I2C_HandleTypeDef hi2c1;
 extern I2C_HandleTypeDef hi2c2;
-extern osMessageQueueId_t SensorEventsHandle;
+extern osThreadId_t bmeSensorHandle;
+/*
+ * Red LED set of 4 error status
+ * 00 - All OK
+ * 1->4: Bit On Per Device
+ * 1 to 4 - all Blinking, AC control down
+ */
+enum ExDeviceErrState {
+    NoError = 0x00,
+    BME = 0x01,
+    CO1 = 0x02,
+    CO2 = 0x04,
+    AirQuality = 0x08,
+    // left for more
+};
 
-extern "C" void appStartDefaultTask(void *argument)
-{
+QueueHandle_t sensorsQueue;
+TaskBme680 taskBme680;
+
+extern "C" void appStartDefaultTask(void* argument) {
     /* USER CODE BEGIN 5 */
-    /* Infinite loop */
-    TaskBme680 taskBme680(&hi2c2,&SensorEventsHandle,BME68X_I2C_ADDR_HIGH);
-    auto rc = taskBme680.configure();
-    if ( rc) {
+    auto rc = taskBme680.configure(sensorsQueue, &hi2c2,BME68X_I2C_ADDR_HIGH);
+    if (rc) {
         taskBme680.run();
     }
     auto leep = 1000;
-    if ( !rc) {
+    if (!rc) {
         leep = 100;
     }
-    for(;;)
-    {
+    for (;;) {
         BSP_LED_Toggle(LED2);
         vTaskDelay(pdMS_TO_TICKS(leep));
     }
     /* USER CODE END 5 */
 }
-extern "C" void appBmeSensorTask(void *argument)
-{
+
+extern "C" void appBmeSensorTask(void* argument) {
     /* USER CODE BEGIN bmeSensorTask */
     osThreadSuspend(osThreadGetId()); // suspend - will be release elseware
-    /* Infinite loop */
-    for(;;)
-    {
-        vTaskDelay(pdMS_TO_TICKS(1000));
-    }
+    taskBme680.taskLoop();
     /* USER CODE END bmeSensorTask */
 }
+
 int app_main(void) {
     /* Start scheduler */
     osKernelStart();
 
     return 0;
 }
-

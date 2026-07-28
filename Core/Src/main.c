@@ -24,6 +24,7 @@
 /* USER CODE BEGIN Includes */
 #include "app_main.h"
 #include "event_message.h"
+#include "queue.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -73,7 +74,7 @@ const osMessageQueueAttr_t SensorEvents_attributes = {
   .name = "SensorEvents"
 };
 /* USER CODE BEGIN PV */
-
+extern QueueHandle_t sensorsQueue;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -156,6 +157,7 @@ int main(void)
   SensorEventsHandle = osMessageQueueNew (32, sizeof(sizeof(struct CommonMessage)), &SensorEvents_attributes);
 
   /* USER CODE BEGIN RTOS_QUEUES */
+  sensorsQueue = (QueueHandle_t)SensorEventsHandle;
   /* add queues, ... */
   /* USER CODE END RTOS_QUEUES */
 

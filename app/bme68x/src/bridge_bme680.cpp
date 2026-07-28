@@ -50,20 +50,17 @@ static void delay_us(uint32_t period, void* /*intf_ptr*/) {
     }
 }
 
-static bme68x_dev sensorCfg = {0};
-
-
-int initBridgeBME680(I2C_HandleTypeDef* hi2c, uint8_t dev_addr_7bit) {
+int initBridgeBME68x(I2C_HandleTypeDef* hi2c, bme68x_dev &commBridgeCfg, uint8_t dev_addr_7bit) {
     i2cH = hi2c;
     dev_addr_ = dev_addr_7bit << 1;
 
-    sensorCfg.intf = BME68X_I2C_INTF;
-    sensorCfg.read = i2c_read;
-    sensorCfg.write = i2c_write;
-    sensorCfg.delay_us = delay_us;
-    sensorCfg.intf_ptr = &dev_addr_;
-    sensorCfg.amb_temp = 25;
+    commBridgeCfg.chip_id = BME68X_CHIP_ID;
+    commBridgeCfg.intf = BME68X_I2C_INTF;
+    commBridgeCfg.read = i2c_read;
+    commBridgeCfg.write = i2c_write;
+    commBridgeCfg.delay_us = delay_us;
+    commBridgeCfg.intf_ptr = &dev_addr_;
+    commBridgeCfg.amb_temp = 25;
 
-    // bsec_sensor_control()
-    return  bme68x_init(&sensorCfg);
+    return  bme68x_init(&commBridgeCfg);
 }
