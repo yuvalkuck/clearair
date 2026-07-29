@@ -39,13 +39,6 @@ extern "C" [[noreturn]] void appStartDefaultTask(void* argument) {
     /* USER CODE END 5 */
 }
 
-extern "C" [[noreturn]] void appBmeSensorTask(void* argument) {
-    /* USER CODE BEGIN bmeSensorTask */
-    osThreadSuspend(osThreadGetId()); // suspend - will be release elseware
-    taskBme680.taskLoop();
-    /* USER CODE END bmeSensorTask */
-}
-
 extern "C" [[noreturn]] void mainSensorsMsgLoop(void* argument) {
     CommonMessage msg{};
     auto xQueue = (QueueHandle_t)SensorEventsHandle;
@@ -59,6 +52,17 @@ extern "C" [[noreturn]] void mainSensorsMsgLoop(void* argument) {
             }
         }
     }
+}
+
+extern "C" [[noreturn]] void appBmeSensorTask(void* argument) {
+    /* USER CODE BEGIN bmeSensorTask */
+    osThreadSuspend(osThreadGetId()); // suspend - will be release elseware
+    taskBme680.taskLoop();
+    /* USER CODE END bmeSensorTask */
+}
+
+extern "C" [[noreturn]] void co1SensorHandler(void* argument) {
+    osThreadSuspend(osThreadGetId()); // suspend - will be release elseware
 }
 
 int app_main(void) {

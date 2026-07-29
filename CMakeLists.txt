@@ -71,4 +71,5 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
 )
 
 ADD_SUBDIRECTORY(app/bme68x)
+ADD_SUBDIRECTORY(app/mq7co1)
 # Add linked libraries

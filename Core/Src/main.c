@@ -75,6 +75,13 @@ const osThreadAttr_t msgLoopTask_attributes = {
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityLow,
 };
+/* Definitions for Co1SensorTask */
+osThreadId_t Co1SensorTaskHandle;
+const osThreadAttr_t Co1SensorTask_attributes = {
+  .name = "Co1SensorTask",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityLow,
+};
 /* Definitions for SensorEvents */
 osMessageQueueId_t SensorEventsHandle;
 const osMessageQueueAttr_t SensorEvents_attributes = {
@@ -95,6 +102,7 @@ static void MX_USART2_UART_Init(void);
 void StartDefaultTask(void *argument);
 extern void appBmeSensorTask(void *argument);
 extern void mainSensorsMsgLoop(void *argument);
+extern void co1SensorHandler(void *argument);
 
 /* USER CODE BEGIN PFP */
 extern void appStartDefaultTask(void *argument);
@@ -162,7 +170,7 @@ int main(void)
 
   /* Create the queue(s) */
   /* creation of SensorEvents */
-  SensorEventsHandle = osMessageQueueNew (32, sizeof(struct CommonMessage), &SensorEvents_attributes);
+  SensorEventsHandle = osMessageQueueNew (32, sizeof(sizeof(struct CommonMessage)), &SensorEvents_attributes);
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
@@ -177,6 +185,9 @@ int main(void)
 
   /* creation of msgLoopTask */
   msgLoopTaskHandle = osThreadNew(mainSensorsMsgLoop, NULL, &msgLoopTask_attributes);
+
+  /* creation of Co1SensorTask */
+  Co1SensorTaskHandle = osThreadNew(co1SensorHandler, NULL, &Co1SensorTask_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
 
