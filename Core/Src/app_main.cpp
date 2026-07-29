@@ -24,8 +24,14 @@ extern osThreadId_t bmeSensorHandle;
 extern osMessageQueueId_t SensorEventsHandle;
 TaskBme680 taskBme680;
 
+int app_main(void) {
+    /* Start scheduler */
+    osKernelStart();
+
+    return 0;
+}
+
 extern "C" [[noreturn]] void appStartDefaultTask(void* argument) {
-    /* USER CODE BEGIN 5 */
     auto leep = 100;
     auto rc = taskBme680.configure(SensorEventsHandle, &hi2c2,BME68X_I2C_ADDR_HIGH);
     if (rc) {
@@ -36,7 +42,6 @@ extern "C" [[noreturn]] void appStartDefaultTask(void* argument) {
         BSP_LED_Toggle(LED2);
         vTaskDelay(pdMS_TO_TICKS(leep));
     }
-    /* USER CODE END 5 */
 }
 
 extern "C" [[noreturn]] void mainSensorsMsgLoop(void* argument) {
@@ -47,6 +52,8 @@ extern "C" [[noreturn]] void mainSensorsMsgLoop(void* argument) {
             switch (msg.id) {
                 case UniqueID::BME680:
                     break;
+                case UniqueID::MQ7CO1:
+                    break;
                 default:
                     break;
             }
@@ -55,19 +62,12 @@ extern "C" [[noreturn]] void mainSensorsMsgLoop(void* argument) {
 }
 
 extern "C" [[noreturn]] void appBmeSensorTask(void* argument) {
-    /* USER CODE BEGIN bmeSensorTask */
     osThreadSuspend(osThreadGetId()); // suspend - will be release elseware
     taskBme680.taskLoop();
-    /* USER CODE END bmeSensorTask */
 }
 
-extern "C" [[noreturn]] void co1SensorHandler(void* argument) {
+extern "C" void co1SensorHandler(void* argument) {
     osThreadSuspend(osThreadGetId()); // suspend - will be release elseware
 }
 
-int app_main(void) {
-    /* Start scheduler */
-    osKernelStart();
-
-    return 0;
-}
+//
