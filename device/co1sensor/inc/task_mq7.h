@@ -17,7 +17,7 @@ class SensorCO1 {
         osMessageQueueId_t output_queue
         );
     static void run();
-    [[noreturn]] void taskLoop();
+    [[noreturn]] void taskLoop() const;
 
 };
 
