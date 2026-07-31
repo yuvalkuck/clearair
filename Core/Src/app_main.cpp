@@ -3,6 +3,7 @@
 //
 #include "app_main.h"
 #include "task_bme680.h"
+#include "task_mq7.h"
 #include "cmsis_os.h"
 /*
  * Red LED set of 4 error status
@@ -23,6 +24,7 @@ extern I2C_HandleTypeDef hi2c2;
 extern osThreadId_t bmeSensorHandle;
 extern osMessageQueueId_t SensorEventsHandle;
 TaskBme680 taskBme680;
+SensorCO1 sensorCO1;
 
 int app_main(void) {
     /* Start scheduler */
@@ -66,8 +68,9 @@ extern "C" [[noreturn]] void appBmeSensorTask(void* argument) {
     taskBme680.taskLoop();
 }
 
-extern "C" void co1SensorHandler(void* argument) {
+extern "C" [[noreturn]] void co1SensorHandler(void* argument) {
     osThreadSuspend(osThreadGetId()); // suspend - will be release elseware
+    sensorCO1.taskLoop();
 }
 
 //
