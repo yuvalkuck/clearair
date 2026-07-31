@@ -6,10 +6,6 @@
 #define CLEARAIR_TIMESTAMP_H
 #include "cmsis_os2.h"
 
-static uint32_t getTimestampSec() {
-    return osKernelGetTickCount() / osKernelGetTickFreq();
-}
-
 static uint32_t getTimestampMs() {
     // Convert ticks to milliseconds safely based on your RTOS clock rate
     // (If configTICK_RATE_HZ is 1000, ms directly equals ticks)

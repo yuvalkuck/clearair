@@ -16,25 +16,29 @@ void SensorCO1::run() {
     osThreadResume(co1SensorTaskHandle);
 }
 
-constexpr uint8_t HEATER_TIME_SEC_ON = 60;
-constexpr uint8_t HEATER_TIME_SEC_OFF = 90;
+constexpr uint32_t HEATER_TIME_MS_ON = 60 * 1000;
+constexpr uint32_t HEATER_TIME_MS_OFF = 89 * 1000;
 extern ADC_HandleTypeDef hadc1;
+extern TIM_HandleTypeDef htim5;
+constexpr uint32_t TIM_CHANNEL = TIM_CHANNEL_2;
 
 [[noreturn]] void SensorCO1::taskLoop() const {
+    const uint32_t PwmPeriod5v = __HAL_TIM_GET_AUTORELOAD(&htim5);
+    const uint32_t PwmPeriod1v4 = (PwmPeriod5v * 28) / 100; // ~28% Duty
     CommonMessage msg{};
     msg.id = MQ7CO1;
     HAL_ADC_Start(&hadc1); // Start ADC conversion
     for (;;) {
         // turn on Heater
-
-        HAL_GPIO_WritePin(MQ7_HEATER_CTRL_GPIO_Port, MQ7_HEATER_CTRL_Pin, GPIO_PIN_SET);
-        vTaskDelay(pdMS_TO_TICKS(HEATER_TIME_SEC_ON));
-        HAL_GPIO_WritePin(MQ7_HEATER_CTRL_GPIO_Port, MQ7_HEATER_CTRL_Pin, GPIO_PIN_RESET);
-        vTaskDelay(pdMS_TO_TICKS(HEATER_TIME_SEC_ON-1));
-        if (HAL_ADC_PollForConversion(&hadc1, 1000) == HAL_OK) {
+        __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL, PwmPeriod5v);
+        vTaskDelay(pdMS_TO_TICKS(HEATER_TIME_MS_ON));
+        __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL, PwmPeriod1v4);
+        vTaskDelay(pdMS_TO_TICKS(HEATER_TIME_MS_OFF));
+        if (HAL_ADC_PollForConversion(&hadc1, 10) == HAL_OK) {
             msg.timestamp_ms = getTimestampMs();
             msg.payload.uiValue.value = HAL_ADC_GetValue(&hadc1);
             xQueueSend(msgQueue_, &msg, pdMS_TO_TICKS(5));
         }
+        vTaskDelay(1);
     }
 }
