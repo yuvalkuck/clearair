@@ -173,7 +173,7 @@ int main(void)
 
   /* Create the queue(s) */
   /* creation of SensorEvents */
-  SensorEventsHandle = osMessageQueueNew (32, sizeof(sizeof(struct CommonMessage)), &SensorEvents_attributes);
+  SensorEventsHandle = osMessageQueueNew (32, sizeof(struct CommonMessage), &SensorEvents_attributes);
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */

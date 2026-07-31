@@ -34,12 +34,12 @@ int app_main(void) {
 }
 
 extern "C" [[noreturn]] void appStartDefaultTask(void* argument) {
-    auto leep = 100;
+    auto leep = 1000;
     auto rc = taskBme680.configure(SensorEventsHandle, &hi2c2,BME68X_I2C_ADDR_HIGH);
-    if (rc) {
-        taskBme680.run();
-        leep = 1000;
-    }
+    if (!rc) { leep = 100; }
+    else { taskBme680.run(); }
+    sensorCO1.configure(SensorEventsHandle);
+    sensorCO1.run();
     for (;;) {
         BSP_LED_Toggle(LED2);
         vTaskDelay(pdMS_TO_TICKS(leep));
