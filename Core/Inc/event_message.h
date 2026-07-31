@@ -19,6 +19,7 @@
         uint32_t timestamp_ms;
         union {
             struct DataBME680 bme680;
+            struct DataUiValue uiValue;
             // BmpData bmp; etc. for other sensors
         } payload;
     };

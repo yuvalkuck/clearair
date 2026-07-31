@@ -26,5 +26,9 @@ typedef enum __attribute__((packed)){
         uint8_t accuracy; // BSEC accuracy 0-3, or 0xFF if n/a
     };
 
+    struct DataUiValue {
+        uint32_t value;
+    };
+
 
 #endif //CLEARAIR_EVENT_DATA_H
