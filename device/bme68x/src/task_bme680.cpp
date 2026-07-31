@@ -11,6 +11,7 @@
 #include "bsec_iaq.h"
 #include "event_message.h"
 #include "queue.h"
+#include "timestamp.h"
 extern osThreadId_t bmeSensorTaskHandle;
 static uint8_t work_buffer[BSEC_MAX_WORKBUFFER_SIZE];
 static bme68x_dev commBridgeCfg = {0};
@@ -44,7 +45,7 @@ void TaskBme680::run() {
 }
 
 bool TaskBme680::configure(osMessageQueueId_t output_queue, I2C_HandleTypeDef* hi2c, uint8_t i2c_addr8) {
-    msgQueue_ = (QueueHandle_t)output_queue;
+    msgQueue_ = static_cast<QueueHandle_t>(output_queue);
     auto rc = initBridgeBME68x(hi2c, commBridgeCfg, i2c_addr8);
     if (rc != BME68X_OK) {
         return false;
@@ -77,17 +78,6 @@ bool TaskBme680::configure(osMessageQueueId_t output_queue, I2C_HandleTypeDef* h
                                   requiredSensorSettings, &nRequired);
 
     return (rc == BSEC_OK);
-}
-
-static uint32_t getTimestampMs() {
-    // Convert ticks to milliseconds safely based on your RTOS clock rate
-    // (If configTICK_RATE_HZ is 1000, ms directly equals ticks)
-    return osKernelGetTickCount() * 1000 / osKernelGetTickFreq();
-}
-
-static int64_t getTimestampNs() {
-    // Convert milliseconds to nanoseconds
-    return 1000000ULL * getTimestampMs();
 }
 
 void TaskBme680::readAndSendToQueue(const bsec_bme_settings_t& s, int64_t timestamp_ns) {
