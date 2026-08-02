@@ -19,22 +19,24 @@ void SensorCO1::run() {
 constexpr uint32_t HEATER_TIME_MS_ON = 60 * 1000;
 constexpr uint32_t HEATER_TIME_MS_OFF = 89 * 1000;
 extern ADC_HandleTypeDef hadc1;
-extern TIM_HandleTypeDef htim5;
-constexpr uint32_t TIM_CHANNEL = TIM_CHANNEL_2;
 
 [[noreturn]] void SensorCO1::taskLoop() const {
-    const uint32_t PwmPeriod5v = __HAL_TIM_GET_AUTORELOAD(&htim5);
-    const uint32_t PwmPeriod1v4 = (PwmPeriod5v * 28) / 100; // ~28% Duty
     CommonMessage msg{};
     msg.id = MQ7CO1;
+    HAL_GPIO_WritePin(MQ7_HEATER_CTRL_GPIO_Port, MQ7_HEATER_CTRL_Pin, GPIO_PIN_SET);
+    /**
+     * because the heater state by default is on,
+     * pull off the heater to indicate the has cycle start
+     */
+    vTaskDelay(100); //
     HAL_ADC_Start(&hadc1); // Start ADC conversion
     for (;;) {
-        // turn on Heater
-        __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL, PwmPeriod5v);
+        HAL_GPIO_WritePin(MQ7_HEATER_CTRL_GPIO_Port, MQ7_HEATER_CTRL_Pin, GPIO_PIN_RESET); // short R → heater sees ~5V
         vTaskDelay(pdMS_TO_TICKS(HEATER_TIME_MS_ON));
-        __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL, PwmPeriod1v4);
+        HAL_GPIO_WritePin(MQ7_HEATER_CTRL_GPIO_Port, MQ7_HEATER_CTRL_Pin, GPIO_PIN_SET); // short R → heater sees ~5V
         vTaskDelay(pdMS_TO_TICKS(HEATER_TIME_MS_OFF));
         if (HAL_ADC_PollForConversion(&hadc1, 10) == HAL_OK) {
+            // to prevent long block in case of communication down, wait 10ms
             msg.timestamp_ms = getTimestampMs();
             msg.payload.uiValue.value = HAL_ADC_GetValue(&hadc1);
             xQueueSend(msgQueue_, &msg, pdMS_TO_TICKS(5));
