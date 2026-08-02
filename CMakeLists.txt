@@ -67,8 +67,8 @@ target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
 list(REMOVE_ITEM CMAKE_C_IMPLICIT_LINK_LIBRARIES ob)
 target_link_libraries(${CMAKE_PROJECT_NAME}
         stm32cubemx
-        # Add user defined libraries
 )
 
-ADD_SUBDIRECTORY(app/bme68x)
+ADD_SUBDIRECTORY(device/bme68x)
+ADD_SUBDIRECTORY(device/co1sensor)
 # Add linked libraries

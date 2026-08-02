@@ -8,7 +8,9 @@
 #include "event_data.h"
 
     typedef enum __attribute__((packed)) {
-        BME680 = 0,
+        InvalidSensor = 0,
+        BME680,
+        MQ7CO1,
         // Add other sensors here, e.g. LSM6DS3, BMP280, etc.
     } UniqueID;
 
@@ -17,6 +19,7 @@
         uint32_t timestamp_ms;
         union {
             struct DataBME680 bme680;
+            struct DataUiValue uiValue;
             // BmpData bmp; etc. for other sensors
         } payload;
     };

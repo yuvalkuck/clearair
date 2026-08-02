@@ -4,7 +4,7 @@
 
 #ifndef CLEARAIR_TASK_BME680_H
 #define CLEARAIR_TASK_BME680_H
-#include "cmsis_os2.h"
+#include "cmsis_os.h"
 #include "stm32f4xx_hal_i2c.h"
 #include "bme68x_defs.h"
 #include "bsec_datatypes.h"

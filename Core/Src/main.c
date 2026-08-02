@@ -75,6 +75,13 @@ const osThreadAttr_t msgLoopTask_attributes = {
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityLow,
 };
+/* Definitions for co1SensorTask */
+osThreadId_t co1SensorTaskHandle;
+const osThreadAttr_t co1SensorTask_attributes = {
+  .name = "co1SensorTask",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityLow,
+};
 /* Definitions for SensorEvents */
 osMessageQueueId_t SensorEventsHandle;
 const osMessageQueueAttr_t SensorEvents_attributes = {
@@ -95,6 +102,7 @@ static void MX_USART2_UART_Init(void);
 void StartDefaultTask(void *argument);
 extern void appBmeSensorTask(void *argument);
 extern void mainSensorsMsgLoop(void *argument);
+extern void co1SensorHandler(void *argument);
 
 /* USER CODE BEGIN PFP */
 extern void appStartDefaultTask(void *argument);
@@ -142,7 +150,6 @@ int main(void)
   MX_TIM2_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-
   /* USER CODE END 2 */
 
   /* Init scheduler */
@@ -162,7 +169,7 @@ int main(void)
 
   /* Create the queue(s) */
   /* creation of SensorEvents */
-  SensorEventsHandle = osMessageQueueNew (32, sizeof(struct CommonMessage), &SensorEvents_attributes);
+  SensorEventsHandle = osMessageQueueNew (42, sizeof(struct CommonMessage), &SensorEvents_attributes);
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
@@ -177,6 +184,9 @@ int main(void)
 
   /* creation of msgLoopTask */
   msgLoopTaskHandle = osThreadNew(mainSensorsMsgLoop, NULL, &msgLoopTask_attributes);
+
+  /* creation of co1SensorTask */
+  co1SensorTaskHandle = osThreadNew(co1SensorHandler, NULL, &co1SensorTask_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
 
@@ -479,10 +489,10 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1|GPIO_PIN_6, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, MQ7_HEATER_CTRL_Pin|GPIO_PIN_6, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : PA1 PA6 */
-  GPIO_InitStruct.Pin = GPIO_PIN_1|GPIO_PIN_6;
+  /*Configure GPIO pins : MQ7_HEATER_CTRL_Pin PA6 */
+  GPIO_InitStruct.Pin = MQ7_HEATER_CTRL_Pin|GPIO_PIN_6;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
