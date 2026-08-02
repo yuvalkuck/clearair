@@ -82,6 +82,13 @@ const osThreadAttr_t co1SensorTask_attributes = {
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityLow,
 };
+/* Definitions for partSensorTask */
+osThreadId_t partSensorTaskHandle;
+const osThreadAttr_t partSensorTask_attributes = {
+  .name = "partSensorTask",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityLow,
+};
 /* Definitions for SensorEvents */
 osMessageQueueId_t SensorEventsHandle;
 const osMessageQueueAttr_t SensorEvents_attributes = {
@@ -103,6 +110,7 @@ void StartDefaultTask(void *argument);
 extern void appBmeSensorTask(void *argument);
 extern void mainSensorsMsgLoop(void *argument);
 extern void co1SensorHandler(void *argument);
+extern void particleSensorHandler(void *argument);
 
 /* USER CODE BEGIN PFP */
 extern void appStartDefaultTask(void *argument);
@@ -187,6 +195,9 @@ int main(void)
 
   /* creation of co1SensorTask */
   co1SensorTaskHandle = osThreadNew(co1SensorHandler, NULL, &co1SensorTask_attributes);
+
+  /* creation of partSensorTask */
+  partSensorTaskHandle = osThreadNew(particleSensorHandler, NULL, &partSensorTask_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
 

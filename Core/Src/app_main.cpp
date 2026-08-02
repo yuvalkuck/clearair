@@ -4,6 +4,7 @@
 #include "app_main.h"
 #include "task_bme680.h"
 #include "task_mq7.h"
+#include "task_particle.h"
 #include "cmsis_os.h"
 /*
  * Red LED set of 4 error status
@@ -25,6 +26,7 @@ extern osThreadId_t bmeSensorHandle;
 extern osMessageQueueId_t SensorEventsHandle;
 TaskBme680 taskBme680;
 SensorCO1 sensorCO1;
+TaskParticle taskParticle;
 
 int app_main(void) {
     /* Start scheduler */
@@ -72,5 +74,8 @@ extern "C" [[noreturn]] void co1SensorHandler(void* argument) {
     osThreadSuspend(osThreadGetId()); // suspend - will be release elseware
     sensorCO1.taskLoop();
 }
-
+extern "C" void particleSensorHandler(void *argument) {
+    osThreadSuspend(osThreadGetId()); // suspend - will be release elseware
+    taskParticle.taskLoop();
+}
 //

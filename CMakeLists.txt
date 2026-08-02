@@ -37,6 +37,7 @@ add_executable(${CMAKE_PROJECT_NAME})
 # Add STM32CubeMX generated sources
 add_subdirectory(cmake/stm32cubemx)
 add_subdirectory(cmake/stm32bsec2bme)
+add_subdirectory(cmake/stm32sps30)
 
 
 # Link directories setup
@@ -71,4 +72,5 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
 
 ADD_SUBDIRECTORY(device/bme68x)
 ADD_SUBDIRECTORY(device/co1sensor)
+ADD_SUBDIRECTORY(device/particle)
 # Add linked libraries

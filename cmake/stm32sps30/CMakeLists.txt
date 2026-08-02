@@ -1,0 +1,30 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 3.22)
+
+ENABLE_LANGUAGE(C)
+INCLUDE(../scope-share.cmake)
+STM_SET_LIBNAME()
+
+
+# Interface library for includes and symbols
+ADD_LIBRARY(${INTERFACE_NAME} INTERFACE)
+SET(DRIVER_ROOT "${PROJECT_ROOT_DIR}/Drivers/SPS30")
+TARGET_INCLUDE_DIRECTORIES(${INTERFACE_NAME} INTERFACE
+        ${DRIVER_ROOT}
+)
+# Create STM32_Drivers static library
+ADD_LIBRARY(${LIBRARY_NAME} OBJECT)
+TARGET_INCLUDE_DIRECTORIES(${LIBRARY_NAME} PRIVATE
+        ${DRIVER_ROOT}
+)
+
+TARGET_SOURCES(${LIBRARY_NAME} PRIVATE
+        ${DRIVER_ROOT}/sensirion_common.c
+        ${DRIVER_ROOT}/sensirion_i2c.c
+        ${DRIVER_ROOT}/sensirion_i2c_hal.c
+        ${DRIVER_ROOT}/sps30_i2c.c
+)
+
+# Add libraries to the project
+TARGET_LINK_LIBRARIES(${CMAKE_PROJECT_NAME}
+        ${LIBRARY_NAME}
+)
