@@ -5,17 +5,6 @@
 #include "timestamp.h"
 #include "main.h"
 
-extern osThreadId_t co1SensorTaskHandle;
-
-bool SensorCO1::configure(osMessageQueueId_t output_queue) {
-    msgQueue_ = static_cast<QueueHandle_t>(output_queue);
-    return true;
-}
-
-void SensorCO1::run() {
-    osThreadResume(co1SensorTaskHandle);
-}
-
 constexpr uint32_t HEATER_TIME_MS_ON = 60 * 1000;
 constexpr uint32_t HEATER_TIME_MS_OFF = 89 * 1000;
 extern ADC_HandleTypeDef hadc1;

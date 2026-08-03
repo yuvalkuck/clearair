@@ -22,11 +22,10 @@ enum ExDeviceErrState {
 };
 
 extern I2C_HandleTypeDef hi2c2;
-extern osThreadId_t bmeSensorHandle;
+extern osThreadId_t bmeSensorTaskHandle;
+extern osThreadId_t co1SensorTaskHandle;
+extern osThreadId_t partSensorTaskHandle;
 extern osMessageQueueId_t SensorEventsHandle;
-TaskBme680 taskBme680;
-SensorCO1 sensorCO1;
-TaskParticle taskParticle;
 
 int app_main(void) {
     /* Start scheduler */
@@ -34,14 +33,21 @@ int app_main(void) {
 
     return 0;
 }
+TaskBme680 taskBme680;
+SensorCO1 taskSensorCO1;
+TaskParticle taskParticle;
 
 extern "C" [[noreturn]] void appStartDefaultTask(void* argument) {
+    taskBme680.setup(bmeSensorTaskHandle,SensorEventsHandle);
+    taskSensorCO1.setup( co1SensorTaskHandle, SensorEventsHandle);
+    taskParticle.setup(partSensorTaskHandle,SensorEventsHandle);
+    //
     auto leep = 1000;
-    auto rc = taskBme680.configure(SensorEventsHandle, &hi2c2,BME68X_I2C_ADDR_HIGH);
+    auto rc = taskBme680.configure( &hi2c2);
     if (!rc) { leep = 100; }
-    else { taskBme680.run(); }
-    sensorCO1.configure(SensorEventsHandle);
-    sensorCO1.run();
+    else { taskBme680.resume(); }
+    taskSensorCO1.resume();
+    taskParticle.configure(&hi2c2);
     for (;;) {
         BSP_LED_Toggle(LED2);
         vTaskDelay(pdMS_TO_TICKS(leep));
@@ -72,7 +78,7 @@ extern "C" [[noreturn]] void appBmeSensorTask(void* argument) {
 
 extern "C" [[noreturn]] void co1SensorHandler(void* argument) {
     osThreadSuspend(osThreadGetId()); // suspend - will be release elseware
-    sensorCO1.taskLoop();
+    taskSensorCO1.taskLoop();
 }
 extern "C" void particleSensorHandler(void *argument) {
     osThreadSuspend(osThreadGetId()); // suspend - will be release elseware

@@ -4,23 +4,18 @@
 
 #ifndef CLEARAIR_TASK_PARTICLE_H
 #define CLEARAIR_TASK_PARTICLE_H
-#include "cmsis_os.h"
+
 #include "stm32f4xx_hal_i2c.h"
-#include "FreeRTOS.h"
-#include "queue.h"
+#include "base_device_task.h"
 
 
-class TaskParticle {
-    QueueHandle_t msgQueue_;
+class TaskParticle : public BaseDeviceTask {
+
 public:
     TaskParticle() = default;
-
     bool configure(
-        osMessageQueueId_t output_queue,
-        I2C_HandleTypeDef* hi2c,
-        uint8_t i2c_addr8 = 0x69
-    );
-    void run();
+        I2C_HandleTypeDef* hi2c);
+
     [[noreturn]] void taskLoop();
 };
 

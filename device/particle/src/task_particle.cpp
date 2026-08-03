@@ -6,11 +6,12 @@
 #include "task_particle.h"
 
 #include "bridge_particle.h"
+#include "sps30_i2c.h"
 #include "cmsis_os.h"
 #include "event_message.h"
 #include "queue.h"
 // #include "timestamp.h"
-extern osThreadId_t partSensorTaskHandle;
+
 // static uint8_t work_buffer[BSEC_MAX_WORKBUFFER_SIZE];
 // static bme68x_dev commBridgeCfg = {0};
 // static constexpr uint32_t BSEC_TASK_MAX_WAIT_MS     = 2000; // BME68x max heater dur
@@ -38,13 +39,9 @@ extern osThreadId_t partSensorTaskHandle;
 //     rc = bme68x_set_op_mode(BME68X_FORCED_MODE, &commBridgeCfg);
 //     return rc;
 // }
-void TaskParticle::run() {
-    osThreadResume(partSensorTaskHandle);
-}
 //
-bool TaskParticle::configure(osMessageQueueId_t output_queue, I2C_HandleTypeDef* hi2c, uint8_t i2c_addr8) {
-    msgQueue_ = static_cast<QueueHandle_t>(output_queue);
-    initBridgeParticle(hi2c, i2c_addr8);
+bool TaskParticle::configure(I2C_HandleTypeDef* hi2c) {
+    initBridgeParticle(hi2c, SPS30_I2C_ADDR_69);
 //     rc = bsec_init();
 //     if (rc != BSEC_OK) {
 //         return false;
@@ -77,7 +74,7 @@ bool TaskParticle::configure(osMessageQueueId_t output_queue, I2C_HandleTypeDef*
 }
 //
 void TaskParticle::taskLoop() {
-//     for (;;) {
+     for (;;) {
 //         int64_t timestamp_ns = getTimestampNs();
 //
 //         bsec_bme_settings_t bme_settings;
@@ -100,5 +97,5 @@ void TaskParticle::taskLoop() {
 //         int64_t next_call_ns = bme_settings.next_call - timestamp_ns;
 //         uint32_t delay_ms = (next_call_ns > 0) ? (uint32_t)(next_call_ns / 1000000) : 1;
 //         vTaskDelay(pdMS_TO_TICKS(delay_ms));
-//     }
+     }
 }

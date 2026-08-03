@@ -10,6 +10,7 @@ ADD_LIBRARY(${LIBRARY_NAME} STATIC
 target_include_directories(${LIBRARY_NAME} PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/inc
         ${PROJECT_ROOT_DIR}/Drivers/SPS30
+        ${APP_ROOT_DIR}/include
         stm32sps30_Drivers
         STM32_Drivers
 

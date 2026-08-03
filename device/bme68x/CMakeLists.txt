@@ -20,6 +20,7 @@ target_link_libraries(${LIBRARY_NAME} PUBLIC stm32cubemx)
 
 target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/inc
+        ${APP_ROOT_DIR}/include
         ${PROJECT_ROOT_DIR}/Drivers/BME68x/4.4.8
         ${PROJECT_ROOT_DIR}/Drivers/BSEC/2.6.1.0/inc
 )

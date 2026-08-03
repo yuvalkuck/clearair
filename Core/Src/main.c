@@ -22,7 +22,6 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "app_main.h"
 #include "event_message.h"
 #include "queue.h"
 /* USER CODE END Includes */
@@ -158,6 +157,7 @@ int main(void)
   MX_TIM2_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
+
   /* USER CODE END 2 */
 
   /* Init scheduler */
@@ -200,7 +200,6 @@ int main(void)
   partSensorTaskHandle = osThreadNew(particleSensorHandler, NULL, &partSensorTask_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
-
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
 
@@ -221,11 +220,12 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  while (1) {
+  while (1)
+  {
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-
   }
   /* USER CODE END 3 */
 }
@@ -540,7 +540,6 @@ void StartDefaultTask(void *argument)
   /* USER CODE BEGIN 5 */
   appStartDefaultTask(argument);
   /* Infinite loop */
-
   for(;;)
   {
     osDelay(1);
