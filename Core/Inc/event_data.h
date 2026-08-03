@@ -39,7 +39,7 @@ typedef enum __attribute__((packed)){
         float nc_2p5;
         float nc_4p0;
         float nc_10p0;
-        uint16_t typical_particle_size;
+        float typical_particle_size;
     };
 
 

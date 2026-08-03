@@ -12,6 +12,7 @@
         BME680,
         MQ7CO1,
         SPS30Particle,
+        SCD30CO2,
         // Add other sensors here, e.g. LSM6DS3, BMP280, etc.
     } UniqueID;
 

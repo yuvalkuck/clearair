@@ -5,12 +5,10 @@
 #include "stm32f4xx.h"
 #include "bridge_bme680.h"
 #include "task_bme680.h"
-#include "cmsis_os.h"
 #include "bme68x.h"
 #include "bsec_interface.h"
 #include "bsec_iaq.h"
 #include "event_message.h"
-#include "queue.h"
 #include "timestamp.h"
 static uint8_t work_buffer[BSEC_MAX_WORKBUFFER_SIZE];
 static bme68x_dev commBridgeCfg = {0};

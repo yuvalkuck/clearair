@@ -5,11 +5,13 @@
 #include "stm32f4xx.h"
 #include "task_particle.h"
 
+#include <stdio.h>
 #include "bridge_particle.h"
 #include "sps30_i2c.h"
-#include "cmsis_os.h"
+#include "sensirion_i2c_hal.h"
+#include "timestamp.h"
 #include "event_message.h"
-#include "queue.h"
+
 // #include "timestamp.h"
 
 // static uint8_t work_buffer[BSEC_MAX_WORKBUFFER_SIZE];
@@ -42,60 +44,48 @@
 //
 bool TaskParticle::configure(I2C_HandleTypeDef* hi2c) {
     initBridgeParticle(hi2c, SPS30_I2C_ADDR_69);
-//     rc = bsec_init();
-//     if (rc != BSEC_OK) {
-//         return false;
-//     }
-//
-//     rc = bsec_set_configuration(bsec_config_iaq, sizeof(bsec_config_iaq),
-//                                 work_buffer, sizeof(work_buffer));
-//     if (rc != BSEC_OK) {
-//         return false;
-//     }
-//
-//     bsec_sensor_configuration_t requestedOutputs[BSEC_REQUESTED_OUTPUTS];
-//     uint8_t nRequested = 0;
-//
-//     requestedOutputs[nRequested++] = {BSEC_SAMPLE_RATE_LP, BSEC_OUTPUT_IAQ};
-//     requestedOutputs[nRequested++] = {BSEC_SAMPLE_RATE_LP, BSEC_OUTPUT_STATIC_IAQ};
-//     requestedOutputs[nRequested++] = {BSEC_SAMPLE_RATE_LP, BSEC_OUTPUT_CO2_EQUIVALENT};
-//     requestedOutputs[nRequested++] = {BSEC_SAMPLE_RATE_LP, BSEC_OUTPUT_BREATH_VOC_EQUIVALENT};
-//     requestedOutputs[nRequested++] = {BSEC_SAMPLE_RATE_LP, BSEC_OUTPUT_RAW_TEMPERATURE};
-//     requestedOutputs[nRequested++] = {BSEC_SAMPLE_RATE_LP, BSEC_OUTPUT_RAW_HUMIDITY};
-//
-//     bsec_sensor_configuration_t requiredSensorSettings[BSEC_MAX_PHYSICAL_SENSOR];
-//     uint8_t nRequired = BSEC_MAX_PHYSICAL_SENSOR;
-//
-//     rc = bsec_update_subscription(requestedOutputs, nRequested,
-//                                   requiredSensorSettings, &nRequired);
-//
-//     return (rc == BSEC_OK);
-    return true;
+    sps30_init(SPS30_I2C_ADDR_69);
+    auto rc = sps30_stop_measurement();
+    // int8_t serial_number[32] = {0};
+    // int8_t product_type[8] = {0};
+    // rc = sps30_read_serial_number(serial_number, 32);
+    // printf("serial_number: %p\n", serial_number);
+    // rc = sps30_read_product_type(product_type, 8);
+    // printf("product_type: %p\n", product_type);
+
+    return (rc == 0);
 }
+
 //
+constexpr auto PARTICAL_CYCLE_TIME_MS = 60 * 1000;
+constexpr auto PARTICAL_ONERROR_CYCLE_MS = 10 * 1000;
+
 void TaskParticle::taskLoop() {
-     for (;;) {
-//         int64_t timestamp_ns = getTimestampNs();
-//
-//         bsec_bme_settings_t bme_settings;
-//         bsec_sensor_control(timestamp_ns, &bme_settings);
-//
-//         if (bme_settings.trigger_measurement) {
-//             applyBsecSensorSettings(bme_settings);
-//
-//             uint32_t wait_ms = 10;
-//             if (bme_settings.run_gas && bme_settings.heater_duration > 0) {
-//                 wait_ms = (uint32_t)bme_settings.heater_duration + 10;
-//                 if (wait_ms > BSEC_TASK_MAX_WAIT_MS)   // critical fix #2: hard cap
-//                     wait_ms = BSEC_TASK_MAX_WAIT_MS;
-//             }
-//             vTaskDelay(pdMS_TO_TICKS(wait_ms));
-//
-//             readAndSendToQueue(bme_settings, timestamp_ns);
-//         }
-//
-//         int64_t next_call_ns = bme_settings.next_call - timestamp_ns;
-//         uint32_t delay_ms = (next_call_ns > 0) ? (uint32_t)(next_call_ns / 1000000) : 1;
-//         vTaskDelay(pdMS_TO_TICKS(delay_ms));
-     }
+    CommonMessage msg{};
+    msg.id = SPS30Particle;
+    auto& payload = msg.payload.particle;
+    auto rc = sps30_start_measurement(SPS30_OUTPUT_FORMAT_OUTPUT_FORMAT_FLOAT);
+    sensirion_i2c_hal_sleep_usec(10000);
+    uint16_t data_ready_flag = 0;
+    for (;;) {
+        rc = sps30_read_data_ready_flag(&data_ready_flag);
+        if (rc != 0) {
+            printf("error executing read_data_ready_flag(): %i\n", rc);
+            vTaskDelay(pdMS_TO_TICKS(PARTICAL_ONERROR_CYCLE_MS));
+            continue;
+        }
+        rc = sps30_read_measurement_values_float(
+            &payload.mc_1p0, &payload.mc_2p5, &payload.mc_4p0, &payload.mc_10p0, &payload.nc_0p5,
+            &payload.nc_1p0, &payload.nc_2p5,
+            &payload.nc_4p0, &payload.nc_10p0, &payload.typical_particle_size);
+        if (rc != 0) {
+            printf("rc executing read_measurement_values_uint16(): %i\n",
+                   rc);
+            vTaskDelay(pdMS_TO_TICKS(PARTICAL_ONERROR_CYCLE_MS));
+            continue;
+        }
+        msg.timestamp_ms = getTimestampMs();
+        xQueueSend(msgQueue_, &msg, pdMS_TO_TICKS(5));
+        vTaskDelay(pdMS_TO_TICKS(PARTICAL_CYCLE_TIME_MS));
+    }
 }

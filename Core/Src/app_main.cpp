@@ -33,21 +33,30 @@ int app_main(void) {
 
     return 0;
 }
+
 TaskBme680 taskBme680;
 SensorCO1 taskSensorCO1;
 TaskParticle taskParticle;
+constexpr auto LED_INDICATE_ERROR = 100;
+constexpr auto LED_INDICATE_OK = 1000;
 
 extern "C" [[noreturn]] void appStartDefaultTask(void* argument) {
-    taskBme680.setup(bmeSensorTaskHandle,SensorEventsHandle);
-    taskSensorCO1.setup( co1SensorTaskHandle, SensorEventsHandle);
-    taskParticle.setup(partSensorTaskHandle,SensorEventsHandle);
+    taskBme680.setup(bmeSensorTaskHandle, SensorEventsHandle);
+    taskSensorCO1.setup(co1SensorTaskHandle, SensorEventsHandle);
+    taskParticle.setup(partSensorTaskHandle, SensorEventsHandle);
     //
-    auto leep = 1000;
-    auto rc = taskBme680.configure( &hi2c2);
-    if (!rc) { leep = 100; }
-    else { taskBme680.resume(); }
+    auto leep = LED_INDICATE_OK;
+    auto rc = taskBme680.configure(&hi2c2);
+    if (!rc) { leep = LED_INDICATE_ERROR; }
+    else {
+        taskBme680.resume();
+    }
     taskSensorCO1.resume();
-    taskParticle.configure(&hi2c2);
+    rc = taskParticle.configure(&hi2c2);
+    if (!rc) { leep = LED_INDICATE_ERROR; }
+    else {
+        taskParticle.resume();
+    }
     for (;;) {
         BSP_LED_Toggle(LED2);
         vTaskDelay(pdMS_TO_TICKS(leep));
@@ -60,11 +69,23 @@ extern "C" [[noreturn]] void mainSensorsMsgLoop(void* argument) {
     for (;;) {
         if (xQueueReceive(xQueue, &msg, portMAX_DELAY) == pdTRUE) {
             switch (msg.id) {
-                case UniqueID::BME680:
-                    break;
-                case UniqueID::MQ7CO1:
+                case BME680: {
+                    auto payload = msg.payload.bme680;
+                }
+                break;
+                case MQ7CO1: {
+                    auto payload = msg.payload.uiValue;
+                }
+
+                break;
+                case SPS30Particle: {
+                    auto payload = msg.payload.particle;
+                }
+                break;
+                case SCD30CO2:
                     break;
                 default:
+                    // WARNING
                     break;
             }
         }
@@ -80,8 +101,10 @@ extern "C" [[noreturn]] void co1SensorHandler(void* argument) {
     osThreadSuspend(osThreadGetId()); // suspend - will be release elseware
     taskSensorCO1.taskLoop();
 }
-extern "C" void particleSensorHandler(void *argument) {
+
+extern "C" void particleSensorHandler(void* argument) {
     osThreadSuspend(osThreadGetId()); // suspend - will be release elseware
     taskParticle.taskLoop();
 }
+
 //
