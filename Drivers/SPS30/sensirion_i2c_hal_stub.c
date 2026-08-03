@@ -30,10 +30,9 @@
  */
 
 #include "sensirion_i2c_hal.h"
-
-#include <string.h>
 #include "sensirion_common.h"
 #include "sensirion_config.h"
+
 /*
  * INSTRUCTIONS
  * ============
@@ -41,11 +40,6 @@
  * Implement all functions where they are marked as IMPLEMENT.
  * Follow the function specification in the comments.
  */
-
-static sensirion_cb_t extCB = {0};
-void sensirion_i2c_hal_setup(sensirion_cb_t *extern_cb) {
-    memmove(&extCB,extern_cb,sizeof(sensirion_cb_t));
-}
 
 /**
  * Select the current i2c bus by index.
@@ -61,10 +55,7 @@ int16_t sensirion_i2c_hal_select_bus(uint8_t bus_idx) {
     /* TODO:IMPLEMENT or leave empty if all sensors are located on one single
      * bus
      */
-    if ( NULL != extCB.sensirion_i2c_hal_select_bus) {
-        return extCB.sensirion_i2c_hal_select_bus(bus_idx);
-    }
-    return NO_ERROR;
+    return NOT_IMPLEMENTED_ERROR;
 }
 
 /**
@@ -72,10 +63,7 @@ int16_t sensirion_i2c_hal_select_bus(uint8_t bus_idx) {
  * communication.
  */
 void sensirion_i2c_hal_init(void) {
-    /* TODO:IMPLEMENT or leave empty if init is doen else ware */
-    if ( NULL != extCB.sensirion_i2c_hal_init) {
-        extCB.sensirion_i2c_hal_init();
-    }
+    /* TODO:IMPLEMENT */
 }
 
 /**
@@ -83,9 +71,6 @@ void sensirion_i2c_hal_init(void) {
  */
 void sensirion_i2c_hal_free(void) {
     /* TODO:IMPLEMENT or leave empty if no resources need to be freed */
-    if ( NULL != extCB.sensirion_i2c_hal_free) {
-        extCB.sensirion_i2c_hal_free();
-    }
 }
 
 /**
@@ -100,7 +85,7 @@ void sensirion_i2c_hal_free(void) {
  */
 int8_t sensirion_i2c_hal_read(uint8_t address, uint8_t* data, uint8_t count) {
     /* TODO:IMPLEMENT */
-    return extCB.sensirion_i2c_hal_read(address,data,count);
+    return NOT_IMPLEMENTED_ERROR;
 }
 
 /**
@@ -117,7 +102,7 @@ int8_t sensirion_i2c_hal_read(uint8_t address, uint8_t* data, uint8_t count) {
 int8_t sensirion_i2c_hal_write(uint8_t address, const uint8_t* data,
                                uint8_t count) {
     /* TODO:IMPLEMENT */
-    return extCB.sensirion_i2c_hal_write(address,data,count);
+    return NOT_IMPLEMENTED_ERROR;
 }
 
 /**
@@ -130,5 +115,4 @@ int8_t sensirion_i2c_hal_write(uint8_t address, const uint8_t* data,
  */
 void sensirion_i2c_hal_sleep_usec(uint32_t useconds) {
     /* TODO:IMPLEMENT */
-    extCB.sensirion_i2c_hal_sleep_usec(useconds);
 }

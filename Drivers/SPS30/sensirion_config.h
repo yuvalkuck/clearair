@@ -65,8 +65,17 @@
  * typedef unsigned char uint8_t;
  */
 
-#ifndef __cplusplus
 
+typedef struct {
+   int16_t (*sensirion_i2c_hal_select_bus)(uint8_t bus_idx);
+   void (*sensirion_i2c_hal_init)(void);
+   void (*sensirion_i2c_hal_free)(void);
+   int8_t (*sensirion_i2c_hal_read)(uint8_t address, uint8_t* data, uint8_t count);
+   int8_t (*sensirion_i2c_hal_write)(uint8_t address, const uint8_t* data, uint8_t count);
+   void (*sensirion_i2c_hal_sleep_usec)(uint32_t useconds);
+} sensirion_cb_t;
+
+#ifndef __cplusplus
 /**
  * If your platform doesn't define the bool type we define it as int. Depending
  * on your system update the definition below.
