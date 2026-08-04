@@ -2,8 +2,7 @@ INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/../scope-share.cmake)
 stm_set_libname()
 
 ADD_LIBRARY(${LIBRARY_NAME} STATIC
-        src/task_mq7.cpp
-
+        src/task_mq131.cpp
 )
 
 # Expose header files to consumers of this library
