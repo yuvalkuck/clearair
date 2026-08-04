@@ -8,12 +8,13 @@
 #include "event_data.h"
 
     typedef enum __attribute__((packed)) {
-        InvalidSensor = 0,
+        InvalidID = 0,
+        // Sensors
         BME680,
-        MQ7CO1,
+        MQ131CO3,
         SPS30Particle,
-        SCD30CO2,
-        // Add other sensors here, e.g. LSM6DS3, BMP280, etc.
+        MICS4514CO1NO2,
+        // Other Events
     } UniqueID;
 
     struct CommonMessage {

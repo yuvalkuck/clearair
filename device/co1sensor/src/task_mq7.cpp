@@ -11,7 +11,7 @@ extern ADC_HandleTypeDef hadc1;
 
 [[noreturn]] void SensorCO1::taskLoop() const {
     CommonMessage msg{};
-    msg.id = MQ7CO1;
+    msg.id = MQ131CO3;
     HAL_ADC_Start(&hadc1); // Start ADC conversion
     for (;;) {
         HAL_GPIO_WritePin(MQ7_HEATER_CTRL_GPIO_Port, MQ7_HEATER_CTRL_Pin, GPIO_PIN_RESET); // short R → heater sees ~5V

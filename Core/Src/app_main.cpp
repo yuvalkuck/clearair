@@ -73,7 +73,7 @@ extern "C" [[noreturn]] void mainSensorsMsgLoop(void* argument) {
                     auto payload = msg.payload.bme680;
                 }
                 break;
-                case MQ7CO1: {
+                case MQ131CO3: {
                     auto payload = msg.payload.uiValue;
                 }
 
@@ -82,7 +82,7 @@ extern "C" [[noreturn]] void mainSensorsMsgLoop(void* argument) {
                     auto payload = msg.payload.particle;
                 }
                 break;
-                case SCD30CO2:
+                case MICS4514CO1NO2:
                     break;
                 default:
                     // WARNING
