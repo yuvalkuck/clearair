@@ -4,6 +4,7 @@
 #include "app_main.h"
 #include "task_bme680.h"
 #include "task_mq7.h"
+#include "task_particle.h"
 #include "cmsis_os.h"
 /*
  * Red LED set of 4 error status
@@ -21,10 +22,10 @@ enum ExDeviceErrState {
 };
 
 extern I2C_HandleTypeDef hi2c2;
-extern osThreadId_t bmeSensorHandle;
+extern osThreadId_t bmeSensorTaskHandle;
+extern osThreadId_t co1SensorTaskHandle;
+extern osThreadId_t partSensorTaskHandle;
 extern osMessageQueueId_t SensorEventsHandle;
-TaskBme680 taskBme680;
-SensorCO1 sensorCO1;
 
 int app_main(void) {
     /* Start scheduler */
@@ -33,13 +34,29 @@ int app_main(void) {
     return 0;
 }
 
+TaskBme680 taskBme680;
+SensorCO1 taskSensorCO1;
+TaskParticle taskParticle;
+constexpr auto LED_INDICATE_ERROR = 100;
+constexpr auto LED_INDICATE_OK = 1000;
+
 extern "C" [[noreturn]] void appStartDefaultTask(void* argument) {
-    auto leep = 1000;
-    auto rc = taskBme680.configure(SensorEventsHandle, &hi2c2,BME68X_I2C_ADDR_HIGH);
-    if (!rc) { leep = 100; }
-    else { taskBme680.run(); }
-    sensorCO1.configure(SensorEventsHandle);
-    sensorCO1.run();
+    taskBme680.setup(bmeSensorTaskHandle, SensorEventsHandle);
+    taskSensorCO1.setup(co1SensorTaskHandle, SensorEventsHandle);
+    taskParticle.setup(partSensorTaskHandle, SensorEventsHandle);
+    //
+    auto leep = LED_INDICATE_OK;
+    auto rc = taskBme680.configure(&hi2c2);
+    if (!rc) { leep = LED_INDICATE_ERROR; }
+    else {
+        taskBme680.resume();
+    }
+    taskSensorCO1.resume();
+    rc = taskParticle.configure(&hi2c2);
+    if (!rc) { leep = LED_INDICATE_ERROR; }
+    else {
+        taskParticle.resume();
+    }
     for (;;) {
         BSP_LED_Toggle(LED2);
         vTaskDelay(pdMS_TO_TICKS(leep));
@@ -52,11 +69,23 @@ extern "C" [[noreturn]] void mainSensorsMsgLoop(void* argument) {
     for (;;) {
         if (xQueueReceive(xQueue, &msg, portMAX_DELAY) == pdTRUE) {
             switch (msg.id) {
-                case UniqueID::BME680:
-                    break;
-                case UniqueID::MQ7CO1:
+                case BME680: {
+                    auto payload = msg.payload.bme680;
+                }
+                break;
+                case MQ7CO1: {
+                    auto payload = msg.payload.uiValue;
+                }
+
+                break;
+                case SPS30Particle: {
+                    auto payload = msg.payload.particle;
+                }
+                break;
+                case SCD30CO2:
                     break;
                 default:
+                    // WARNING
                     break;
             }
         }
@@ -70,7 +99,12 @@ extern "C" [[noreturn]] void appBmeSensorTask(void* argument) {
 
 extern "C" [[noreturn]] void co1SensorHandler(void* argument) {
     osThreadSuspend(osThreadGetId()); // suspend - will be release elseware
-    sensorCO1.taskLoop();
+    taskSensorCO1.taskLoop();
+}
+
+extern "C" void particleSensorHandler(void* argument) {
+    osThreadSuspend(osThreadGetId()); // suspend - will be release elseware
+    taskParticle.taskLoop();
 }
 
 //

@@ -11,6 +11,8 @@
         InvalidSensor = 0,
         BME680,
         MQ7CO1,
+        SPS30Particle,
+        SCD30CO2,
         // Add other sensors here, e.g. LSM6DS3, BMP280, etc.
     } UniqueID;
 
@@ -20,6 +22,7 @@
         union {
             struct DataBME680 bme680;
             struct DataUiValue uiValue;
+            struct DataParticle particle;
             // BmpData bmp; etc. for other sensors
         } payload;
     };

@@ -22,7 +22,6 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "app_main.h"
 #include "event_message.h"
 #include "queue.h"
 /* USER CODE END Includes */
@@ -82,6 +81,13 @@ const osThreadAttr_t co1SensorTask_attributes = {
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityLow,
 };
+/* Definitions for partSensorTask */
+osThreadId_t partSensorTaskHandle;
+const osThreadAttr_t partSensorTask_attributes = {
+  .name = "partSensorTask",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityLow,
+};
 /* Definitions for SensorEvents */
 osMessageQueueId_t SensorEventsHandle;
 const osMessageQueueAttr_t SensorEvents_attributes = {
@@ -103,6 +109,7 @@ void StartDefaultTask(void *argument);
 extern void appBmeSensorTask(void *argument);
 extern void mainSensorsMsgLoop(void *argument);
 extern void co1SensorHandler(void *argument);
+extern void particleSensorHandler(void *argument);
 
 /* USER CODE BEGIN PFP */
 extern void appStartDefaultTask(void *argument);
@@ -150,6 +157,7 @@ int main(void)
   MX_TIM2_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
+
   /* USER CODE END 2 */
 
   /* Init scheduler */
@@ -188,8 +196,10 @@ int main(void)
   /* creation of co1SensorTask */
   co1SensorTaskHandle = osThreadNew(co1SensorHandler, NULL, &co1SensorTask_attributes);
 
-  /* USER CODE BEGIN RTOS_THREADS */
+  /* creation of partSensorTask */
+  partSensorTaskHandle = osThreadNew(particleSensorHandler, NULL, &partSensorTask_attributes);
 
+  /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
 
@@ -210,11 +220,12 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  while (1) {
+  while (1)
+  {
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-
   }
   /* USER CODE END 3 */
 }
@@ -489,7 +500,10 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, MQ7_HEATER_CTRL_Pin|GPIO_PIN_6, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(MQ7_HEATER_CTRL_GPIO_Port, MQ7_HEATER_CTRL_Pin, GPIO_PIN_SET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET);
 
   /*Configure GPIO pins : MQ7_HEATER_CTRL_Pin PA6 */
   GPIO_InitStruct.Pin = MQ7_HEATER_CTRL_Pin|GPIO_PIN_6;
@@ -529,7 +543,6 @@ void StartDefaultTask(void *argument)
   /* USER CODE BEGIN 5 */
   appStartDefaultTask(argument);
   /* Infinite loop */
-
   for(;;)
   {
     osDelay(1);

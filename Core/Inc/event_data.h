@@ -29,6 +29,18 @@ typedef enum __attribute__((packed)){
     struct DataUiValue {
         uint32_t value;
     };
+    struct DataParticle {
+        float mc_1p0;
+        float mc_2p5;
+        float mc_4p0;
+        float mc_10p0;
+        float nc_0p5;
+        float nc_1p0;
+        float nc_2p5;
+        float nc_4p0;
+        float nc_10p0;
+        float typical_particle_size;
+    };
 
 
 #endif //CLEARAIR_EVENT_DATA_H
