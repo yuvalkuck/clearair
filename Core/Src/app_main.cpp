@@ -35,7 +35,7 @@ int app_main(void) {
 }
 
 TaskBme680 taskBme680;
-SensorCO1 taskSensorCO1;
+SensorO3 taskSensorCO1;
 TaskParticle taskParticle;
 constexpr auto LED_INDICATE_ERROR = 100;
 constexpr auto LED_INDICATE_OK = 1000;

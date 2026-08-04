@@ -9,7 +9,7 @@ constexpr uint32_t HEATER_TIME_MS_ON = 60 * 1000;
 constexpr uint32_t HEATER_TIME_MS_OFF = 89 * 1000;
 extern ADC_HandleTypeDef hadc1;
 
-[[noreturn]] void SensorCO1::taskLoop() const {
+[[noreturn]] void SensorO3::taskLoop() const {
     CommonMessage msg{};
     msg.id = MQ131CO3;
     HAL_ADC_Start(&hadc1); // Start ADC conversion

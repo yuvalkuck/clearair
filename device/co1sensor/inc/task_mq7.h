@@ -6,9 +6,9 @@
 #define CLEARAIR_TASK_MQ7_H
 #include "base_device_task.h"
 
-class SensorCO1 : public BaseDeviceTask {
+class SensorO3 : public BaseDeviceTask {
     public:
-    SensorCO1() = default;
+    SensorO3() = default;
     [[noreturn]] void taskLoop() const;
 
 };
