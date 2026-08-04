@@ -71,6 +71,6 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
 )
 
 ADD_SUBDIRECTORY(device/bme68x)
-ADD_SUBDIRECTORY(device/co1sensor)
+ADD_SUBDIRECTORY(device/o3sensor)
 ADD_SUBDIRECTORY(device/particle)
 # Add linked libraries

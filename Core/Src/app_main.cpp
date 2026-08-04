@@ -3,7 +3,7 @@
 //
 #include "app_main.h"
 #include "task_bme680.h"
-#include "task_mq7.h"
+#include "task_mq131.h"
 #include "task_particle.h"
 #include "cmsis_os.h"
 /*
