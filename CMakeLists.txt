@@ -38,6 +38,7 @@ add_executable(${CMAKE_PROJECT_NAME})
 add_subdirectory(cmake/stm32cubemx)
 add_subdirectory(cmake/stm32bsec2bme)
 add_subdirectory(cmake/stm32sps30)
+add_subdirectory(cmake/stm32rtt)
 
 
 # Link directories setup
