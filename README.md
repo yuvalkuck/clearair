@@ -89,8 +89,8 @@ graph TD
         Mutex[Shared Memory Mutex]
     end
 
-    FanTask <=>|State Sync| Mutex
-    BSECTask <=>|Sensor Data| Mutex
+    FanTask -->|State Sync| Mutex
+    BSECTask -->|Sensor Data| Mutex
     SPSTask -->|PM Data| Queue
     Queue --> FanTask
     Mutex -->|System Profiles| TeleTask
