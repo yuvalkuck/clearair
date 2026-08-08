@@ -22,6 +22,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include <stdio.h>
+
 #include "event_message.h"
 #include "queue.h"
 /* USER CODE END Includes */
@@ -114,7 +116,18 @@ extern void particleSensorHandler(void *argument);
 /* USER CODE BEGIN PFP */
 extern void appStartDefaultTask(void *argument);
 
+#ifdef __GNUC__
+#define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
+#else
+#define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
+#endif
 
+PUTCHAR_PROTOTYPE
+{
+  // Replace huart1 with your actual UART instance (e.g., huart2 or huart3)
+  HAL_UART_Transmit(&huart2, (uint8_t *)&ch, 1, HAL_MAX_DELAY);
+  return ch;
+}
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -212,7 +225,7 @@ int main(void)
 
   /* Initialize USER push-button, will be used to trigger an interrupt each time it's pressed.*/
   BSP_PB_Init(BUTTON_USER, BUTTON_MODE_EXTI);
-
+  printf("osKernelStart()\r\n");
   /* Start scheduler */
   osKernelStart();
 
