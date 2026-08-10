@@ -1,0 +1,23 @@
+[ PHYSICAL SENSOR ARRAYS ]               [ ASYNCHRONOUS DATA BUFFER ENTRY ]
+
+┌──────────────────────────────┐
+│  MQ131 / MiCS-4514 (Analog)  │ ──► Reads rapidly every 20ms to smooth noise spikes.
+└──────────────┬───────────────┘
+               ▼
+┌──────────────────────────────┐
+│  BME680 Gas Plate (I2C)      │ ──► Reads every 1.5s to 3.0s (Plate needs time to heat up/cool down).
+└──────────────┬───────────────┘
+               ▼
+┌──────────────────────────────┐
+│  SPS30 Laser Fan (UART)      │ ──► Reads every 1.0s to 2.0s (Limited by physical laser processing).
+└──────────────┬───────────────┘
+               │
+               ▼ Updates immediately upon fresh data arrival
+┌──────────────────────────────┐
+│ Shared Thread-Safe Variable  │ ◄── [ Always holds the latest valid value from each room zone ]
+└──────────────┬───────────────┘
+               │
+               ▼ Unblocks via a clean timer tick
+┌──────────────────────────────┐
+│ Task 5: Central Controller   │ ◄── Wakes up precisely every 1 second to run
+└──────────────────────────────┘     proportional speed math and check the 30s stall rule.

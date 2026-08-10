@@ -77,25 +77,97 @@ The software stack runs on top of a priority-preemptive FreeRTOS kernel. It segm
 
 ```mermaid
 graph TD
-    subgraph FreeRTOS Kernel
-        FanTask[Fan Controller Task<br>Priority: 4]
-        BSECTask[BSEC2 Engine Task<br>Priority: 3]
-        SPSTask[SPS30 Driver Task<br>Priority: 2]
-        TeleTask[Telemetry & Logging Task<br>Priority: 1]
+    %% High-Voltage Side
+    subgraph HV [HIGH-VOLTAGE AC SIDE - 50Hz]
+        AC_Mains[220V Mains AC]
+        AC_Fan[AC FAN MOTOR]
     end
 
-    subgraph Inter-Task IPC
-        Queue[FreeRTOS Queues]
-        Mutex[Shared Memory Mutex]
+    %% Low-Voltage Side
+    subgraph LV [LOW-VOLTAGE CONTROL SIDE - 5V / 3.3V / 12V]
+        %% Power Domain
+        Power_5V[5V Power Rails]
+        LDO_33[3.3V LDO]
+        StepUp_12[5V-to-12V Step-Up]
+        Buzzer_12[12V BUZZER]
+        Trans_2N2222[NPN 2N2222 Transistor]
+        GND[System GND]
+        
+        %% Microcontroller Internal Modules
+        subgraph STM32 [STM32F4 MCU]
+            EXTI[EXTI Line]
+            Timer_B[Timer B Phase-Cut]
+            subgraph RTOS [FreeRTOS Tasks]
+                T1[Task 1: SPS30]
+                T2[Task 2: BME680]
+                T3[Task 3: MQ131]
+                T4[Task 4: MiCS4514]
+                T5[Task 5: Central Control]
+            end
+        end
+        
+        %% Isolation Barriers
+        ZC_Circ[Zero-Crossing Circuit]
+        TRIAC_Dim[Isolated TRIAC Dimmer]
     end
 
-    FanTask -->|State Sync| Mutex
-    BSECTask -->|Sensor Data| Mutex
-    SPSTask -->|PM Data| Queue
-    Queue --> FanTask
-    Mutex -->|System Profiles| TeleTask
+    %% Power Routing Connections
+    AC_Mains -->|Mains Feed| ZC_Circ
+    AC_Mains -->|Mains Feed| TRIAC_Dim
+    Power_5V --> LDO_33
+    Power_5V --> StepUp_12
+    LDO_33 -->|3.3V Core VCC| STM32
+    StepUp_12 -->|12V VCC| Buzzer_12
+
+    %% Signal and Control Connections
+    ZC_Circ -->|Opto-Isolated Pulse| EXTI
+    EXTI -->|Trigger Reset| Timer_B
+    Timer_B -->|Opto-Isolated Gate| TRIAC_Dim
+    TRIAC_Dim -->|Phase-Cut Output| AC_Fan
+    
+    T5 -->|GPIO Output| Trans_2N2222
+    Buzzer_12 -->|Collector| Trans_2N2222
+    Trans_2N2222 -->|Emitter| GND
 ```
+### Central Safety Loop State Machine
+```mermaid
+stateDiagram-v2
+    [*] --> STATE_NORMAL
+    
+    state STATE_NORMAL {
+        [*] --> WakeUp
+        WakeUp --> Lock_Mutex : 1.0s Frame Expiry
+        Lock_Mutex --> Copy_Data
+        Copy_Data --> Unlock_Mutex
+        Unlock_Mutex --> Calculate_Fan_Curves
+        Calculate_Fan_Curves --> Check_Max_Speed : Find Maximum Target Speed (0-100%)
+    }
+    
+    Check_Max_Speed --> STATE_NORMAL : Target Speed < 100%\n[Set FanSpeed = Target Speed, Reset Counter = 30s]
+    Check_Max_Speed --> STATE_VENTING_MAX : Target Speed == 100%\n[Set FanSpeed = 100%, Load Counter = 30s]
+    
+    state STATE_VENTING_MAX {
+        [*] --> Evaluate_Trends
+        Evaluate_Trends --> Reset_Counter : Metrics improving vs previous second
+        Reset_Counter --> Check_Threshold : Values drop below 100%?
+        Check_Threshold --> STATE_NORMAL : Yes
+        Check_Threshold --> Evaluate_Trends : No
+        
+        Evaluate_Trends --> Decrement_Counter : Metrics flat or rising
+        Decrement_Counter --> Check_Timeout
+        Check_Timeout --> Evaluate_Trends : Counter > 0
+    }
+    
+    Check_Timeout --> STATE_EVACUATE_LATCHED : Counter == 0
+    
+    state STATE_EVACUATE_LATCHED {
+        [*] --> Lock_System
+        Lock_System --> Force_Buzzer_High : Drive Buzzer GPIO Pin HIGH
+        Force_Buzzer_High --> Stay_Locked : Fan locked at 100% / Ignore sensors
+        Stay_Locked --> [*] : Requires Manual Hardware Reset
+    }
 
+```
 ### Execution Strategy
 *   **Low-Overhead Data Capture:** `ADC1` runs continuously in multi-channel Scan Mode handled via DMA. It updates a local 3-element array in RAM with fresh voltages from the `MQ131` and `MiCS-4514` sensors without generating any CPU overhead.
 *   **AC Phase Control Loop:**
@@ -106,6 +178,57 @@ graph TD
 
 ---
 
+### Thread safe adyncronic flow
+```mermaid
+graph TD
+    %% Asynchronous Inputs
+    subgraph Loops [ASYNCHRONOUS INDEPENDENT SENSOR LOOPS]
+        T1[Task 1: SPS30 Laser UART]
+        T2[Task 2: BME680 Gas Plate I2C]
+        T3[Task 3: MQ131 Ozone Analog ADC]
+        T4[Task 4: MiCS4514 Dual Gas Analog]
+    end
+
+    %% Shared Struct Protected by Mutex
+    subgraph Buffer [THREAD-SAFE REGISTRATION LAYER]
+        direction TB
+        Mutex((xSensorMutex))
+        Struct[Shared Memory Block Structure]
+    end
+
+    %% Sync / Control Layer
+    subgraph Decision [PROCESSING & DECISION ENGINE]
+        T5[Task 5: Central Controller Wakes every 1.0s]
+        FanSpeed[Global Fan Speed Variable 0-100%]
+        BuzzerPin[GPIO Pin Latch to 2N2222 Base]
+    end
+
+    %% Hardware Real-Time Layer
+    subgraph ISR_Layer [REAL-TIME HARDWARE TIMING LAYER - Bypasses RTOS]
+        ZC_Pulse[Zero-Crossing Pulse Input]
+        EXTI_ISR[EXTI Hardware Interrupt]
+        Timer_ISR[STM32 Timer B Interrupt]
+        TRIAC_Gate[Fires Pulse to Isolated TRIAC]
+    end
+
+    %% Async Data flow
+    T1 -->|Writes every 1.0s| Mutex
+    T2 -->|Writes every 3.0s| Mutex
+    T3 -->|Writes every 20ms| Mutex
+    T4 -->|Writes every 20ms| Mutex
+    Mutex --- Struct
+
+    %% Central Decision flow
+    Struct -->|Pulls Data Snapshot| T5
+    T5 -->|Updates| FanSpeed
+    T5 -->|Drives High on Stall| BuzzerPin
+
+    %% Precise Timing Hardware Loop
+    ZC_Pulse --> EXTI_ISR
+    EXTI_ISR -->|Resets and Restarts| Timer_ISR
+    FanSpeed -.->|Read microsecond duration| Timer_ISR
+    Timer_ISR -->|Delays Phase-Cut| TRIAC_Gate
+```
 ## 📉 Compensation & Normalization Models
 
 *   **Pneumatic Lag Tracking:** Air taking a 3-meter path through a dense P100 filter introduces a noticeable physical delay. The control software channels open-air $SPS30$ data packets into an internal software ring buffer. This matches delayed chamber sensor gas metrics with historical particulate conditions.

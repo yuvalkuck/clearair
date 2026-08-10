@@ -1,0 +1,29 @@
+[ HIGH-VOLTAGE AC SIDE (50Hz) ]         [ LOW-VOLTAGE INDUSTRIAL CONTROL SIDE (5V / 3.3V) ]
+
+ 220V Mains AC ──┬──────────────────────────────────────────────────────────────────┐
+                 │                                                                  │
+                 ▼ (Mains Feed)                                                     ▼
+        ┌─────────────────┐                                                ┌────────────────┐
+        │ Zero-Crossing   │                                                │ 5V Power Rails │
+        │ Circuit         │                                                └──────┬─────────┘
+        └────────┬────────┘                                                       │
+                 │ (Opto-Isolated Pulse)                                          ├────────────────┐
+                 ▼                                                                ▼                ▼
+        ┌─────────────────┐                                                ┌────────────┐   ┌──────────────┐
+        │ STM32 EXTI Line │                                                │ 3.3V LDO   │   │ 5V-to-12V    │
+        └────────┬────────┘                                                └─────┬──────┘   │ Step-Up      │
+                 │ (Timer B Trigger)                                             │          └──────┬───────┘
+                 ▼                                                               ▼                 │
+        ┌─────────────────┐             ┌─────────────────────────────┐    ┌────────────┐          ▼
+        │ STM32 Timer B   │◄───────────►│       STM32F4 MCU           │    │ STM32F4    │   ┌──────────────┐
+        │ (Phase-Cut)     │             │                             │    │ Core VCC   │   │ 12V BUZZER   │
+        └────────┬────────┘             │  [RTOS Tasks]               │    └────────────┘   └──────┬───────┘
+                 │                      │  - Task 1: SPS30 (1.0s)     │                            │
+                 ▼ (Opto-Isolated Gate) │  - Task 2: BME680 (3.0s)    │                            ▼ (Collector)
+        ┌─────────────────┐             │  - Task 3: MQ131 (20ms)     │                     ┌──────────────┐
+        │ Isolated TRIAC  │             │  - Task 4: MiCS4514 (20ms)  │                     │ NPN 2N2222   │
+        │ Fan Dimmer      │             │  - Task 5: Central Control  │◄───(GPIO Output)───►│ Transistor   │
+        └────────┬────────┘             └─────────────────────────────┘                     └──────┬───────┘
+                 │                                                                                 │
+                 ▼                                                                                 ▼
+           [ AC FAN MOTOR ]                                                                   [ System GND ]

@@ -1,0 +1,39 @@
+  [ STATE_NORMAL ]
+                         │
+                         ▼
+             Woke Up (1.0s Frame Expiry)
+             Lock Mutex -> Copy Shared Data Structure -> Unlock Mutex
+                         │
+                         ▼
+             Calculate Proportional Fan Curves:
+             - Higher dust/ozone/gas levels = Higher Fan %
+             - Lower BME680 resistance = Higher Fan %
+                         │
+                         ▼
+             Find Maximum Requested Fan Speed (0 - 100%)
+                         │
+                         ▼
+             Is Target Speed == 100%?
+             ├───► NO: Set FanSpeed = Target Speed; Reset Timeout Counter = 30s
+             │
+             └───► YES: Set FanSpeed = 100%; Move State to [ STATE_VENTING_MAX ]
+                         │
+                         ▼
+                 [ STATE_VENTING_MAX ]
+                         │
+                         ▼
+             Are sensor metrics actively improving vs previous second?
+             ├───► YES: Reset Timeout Counter = 15s; (If values drop below 100%, return to Normal)
+             │
+             └───► NO (Values flat or rising): Decrement Timeout Counter (Timeout--)
+                         │
+                         ▼
+                Did Timeout Hit 0?
+             ├───► NO: Keep waiting in STATE_VENTING_MAX
+             │
+             └───► YES: Drive Buzzer GPIO Pin HIGH; Move State to [ STATE_EVACUATE_LATCHED ]
+                         │
+                         ▼
+              [ STATE_EVACUATE_LATCHED ]
+             (Fan locked at 100% / Buzzer locked ON via 2N2222)
+             (Ignores sensor readings; requires a manual hardware power reset)
