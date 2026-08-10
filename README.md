@@ -56,18 +56,18 @@ graph TD
 ## 🛠️ Hardware Peripheral Mapping
 
 | Subsystem Component | Peripheral Identifier | Physical Hardware Pin | Hardware Mode & Execution Profile |
-| :--- | :--- | :--- | :--- |
-| **SPS30 + BME680** | I2C2 | PB10 (SCL), PB3 (SDA) | Standard Open-Drain. JTAG-SWO trace disabled on PB3. |
-| **MQ-131 Output** | ADC1_IN0 | PA0 | Single-Ended Analog Input (Requires External Divider). |
-| **MiCS-4514 (CO)** | ADC1_IN1 | PA1 | Single-Ended Analog Input ($V_{OUT1}$). |
-| **MiCS-4514 ($NO_2$)** | ADC1_IN7 | PA7 | Single-Ended Analog Input ($V_{OUT2}$). |
-| **RobotDyn ZC Input** | EXTI10 | PA10 | Digital Input, configured for falling-edge interrupts. |
-| **RobotDyn Gate Out** | GPIO Output | PA6 | Push-Pull, High-Speed Output driven by Timer ISR. |
-| **Phase-Delay Tracking** | TIM2 | Internal | One-Pulse Hardware Mode (Triggered by ZC Interrupt). |
-| **OS Kernel Clock** | SysTick | Internal | Dedicated exclusively to FreeRTOS Scheduler operations. |
-| **HAL Timebase** | TIM6 | Internal | Dedicated strictly to standard HAL delay and timeout loops. |
-| **Debug & Telemetry** | USART2 | PA2 (TX), PA3 (RX) | Asynchronous communication mapped to ST-LINK VCP. |
-| **Status Indicator** | GPIO Output | PA5 | Mapped to Nucleo User LED (`LD2`). |
+| :--- |:----------------------|:----------------------| :--- |
+| **SPS30 + BME680** | I2C2                  | PB10 (SCL), PB3 (SDA) | Standard Open-Drain. JTAG-SWO trace disabled on PB3. |
+| **MQ-131 Output** | ADC1_IN0              | PA0                   | Single-Ended Analog Input (Requires External Divider). |
+| **MiCS-4514 (CO)** | ADC1_IN1              | PA1                   | Single-Ended Analog Input ($V_{OUT1}$). |
+| **MiCS-4514 ($NO_2$)** | ADC1_IN7              | PA7                   | Single-Ended Analog Input ($V_{OUT2}$). |
+| **RobotDyn ZC Input** | EXTI16                | PC6                   | Digital Input, configured for falling-edge interrupts. |
+| **RobotDyn Gate Out** | GPIO Output           | PC7                   | Push-Pull, High-Speed Output driven by Timer ISR. |
+| **Phase-Delay Tracking** | TIM3                  | Internal              | One-Pulse Hardware Mode (Triggered by ZC Interrupt). |
+| **OS Kernel Clock** | SysTick               | Internal              | Dedicated exclusively to FreeRTOS Scheduler operations. |
+| **HAL Timebase** | TIM6                  | Internal              | Dedicated strictly to standard HAL delay and timeout loops. |
+| **Debug & Telemetry** | USART2                | PA2 (TX), PA3 (RX)    | Asynchronous communication mapped to ST-LINK VCP. |
+| **Status Indicator** | GPIO Output           | PA5                   | Mapped to Nucleo User LED (`LD2`). |
 
 ---
 
