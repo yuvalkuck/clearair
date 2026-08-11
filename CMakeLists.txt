@@ -39,9 +39,6 @@ add_subdirectory(cmake/stm32cubemx)
 add_subdirectory(cmake/stm32bsec2bme)
 add_subdirectory(cmake/stm32sps30)
 
-
-
-
 # Link directories setup
 target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined library search paths
@@ -75,4 +72,5 @@ ADD_SUBDIRECTORY(device/bme68x)
 ADD_SUBDIRECTORY(device/o3sensor)
 ADD_SUBDIRECTORY(device/particle)
 ADD_SUBDIRECTORY(device/co1no2)
+ADD_SUBDIRECTORY(device/fanmotor)
 # Add linked libraries
