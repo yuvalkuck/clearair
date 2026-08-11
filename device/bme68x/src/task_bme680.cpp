@@ -13,7 +13,7 @@
 static uint8_t work_buffer[BSEC_MAX_WORKBUFFER_SIZE];
 static bme68x_dev commBridgeCfg = {0};
 static constexpr uint32_t BSEC_TASK_MAX_WAIT_MS     = 2000; // BME68x max heater dur
-#define BSEC_REQUESTED_OUTPUTS 6
+#define BSEC_REQUESTED_OUTPUTS 3
 
 static auto applyBsecSensorSettings(const bsec_bme_settings_t& settings) {
     bme68x_conf conf{};
@@ -57,9 +57,6 @@ bool SensorBme68x::configure(I2C_HandleTypeDef* hi2c) {
     bsec_sensor_configuration_t requestedOutputs[BSEC_REQUESTED_OUTPUTS];
     uint8_t nRequested = 0;
 
-    requestedOutputs[nRequested++] = {BSEC_SAMPLE_RATE_LP, BSEC_OUTPUT_IAQ};
-    requestedOutputs[nRequested++] = {BSEC_SAMPLE_RATE_LP, BSEC_OUTPUT_STATIC_IAQ};
-    requestedOutputs[nRequested++] = {BSEC_SAMPLE_RATE_LP, BSEC_OUTPUT_CO2_EQUIVALENT};
     requestedOutputs[nRequested++] = {BSEC_SAMPLE_RATE_LP, BSEC_OUTPUT_BREATH_VOC_EQUIVALENT};
     requestedOutputs[nRequested++] = {BSEC_SAMPLE_RATE_LP, BSEC_OUTPUT_RAW_TEMPERATURE};
     requestedOutputs[nRequested++] = {BSEC_SAMPLE_RATE_LP, BSEC_OUTPUT_RAW_HUMIDITY};
