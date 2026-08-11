@@ -62,10 +62,10 @@ const osThreadAttr_t defaultTask_attributes = {
   .stack_size = 512 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
-/* Definitions for bmeSensorTask */
-osThreadId_t bmeSensorTaskHandle;
-const osThreadAttr_t bmeSensorTask_attributes = {
-  .name = "bmeSensorTask",
+/* Definitions for bmeTask */
+osThreadId_t bmeTaskHandle;
+const osThreadAttr_t bmeTask_attributes = {
+  .name = "bmeTask",
   .stack_size = 512 * 4,
   .priority = (osPriority_t) osPriorityLow,
 };
@@ -76,17 +76,31 @@ const osThreadAttr_t msgLoopTask_attributes = {
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityLow,
 };
-/* Definitions for co1SensorTask */
-osThreadId_t co1SensorTaskHandle;
-const osThreadAttr_t co1SensorTask_attributes = {
-  .name = "co1SensorTask",
+/* Definitions for co1no2Task */
+osThreadId_t co1no2TaskHandle;
+const osThreadAttr_t co1no2Task_attributes = {
+  .name = "co1no2Task",
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityLow,
 };
-/* Definitions for partSensorTask */
-osThreadId_t partSensorTaskHandle;
-const osThreadAttr_t partSensorTask_attributes = {
-  .name = "partSensorTask",
+/* Definitions for particleTask */
+osThreadId_t particleTaskHandle;
+const osThreadAttr_t particleTask_attributes = {
+  .name = "particleTask",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityLow,
+};
+/* Definitions for fanCtrlTask */
+osThreadId_t fanCtrlTaskHandle;
+const osThreadAttr_t fanCtrlTask_attributes = {
+  .name = "fanCtrlTask",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
+};
+/* Definitions for o3Task */
+osThreadId_t o3TaskHandle;
+const osThreadAttr_t o3Task_attributes = {
+  .name = "o3Task",
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityLow,
 };
@@ -108,10 +122,12 @@ static void MX_I2C2_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_TIM3_Init(void);
 void StartDefaultTask(void *argument);
-extern void appBmeSensorTask(void *argument);
+void fanCtrlTaskHandler(void *argument);
 extern void mainSensorsMsgLoop(void *argument);
-extern void co1SensorHandler(void *argument);
-extern void particleSensorHandler(void *argument);
+extern void bmeTaskHandler(void *argument);
+extern void co1no2TaskHandler(void *argument);
+extern void particleTaskHandler(void *argument);
+extern void o3TaskHandler(void *argument);
 
 /* USER CODE BEGIN PFP */
 extern void appStartDefaultTask(void *argument);
@@ -200,17 +216,23 @@ int main(void)
   /* creation of defaultTask */
   defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
 
-  /* creation of bmeSensorTask */
-  bmeSensorTaskHandle = osThreadNew(appBmeSensorTask, NULL, &bmeSensorTask_attributes);
+  /* creation of bmeTask */
+  bmeTaskHandle = osThreadNew(bmeTaskHandler, NULL, &bmeTask_attributes);
 
   /* creation of msgLoopTask */
   msgLoopTaskHandle = osThreadNew(mainSensorsMsgLoop, NULL, &msgLoopTask_attributes);
 
-  /* creation of co1SensorTask */
-  co1SensorTaskHandle = osThreadNew(co1SensorHandler, NULL, &co1SensorTask_attributes);
+  /* creation of co1no2Task */
+  co1no2TaskHandle = osThreadNew(co1no2TaskHandler, NULL, &co1no2Task_attributes);
 
-  /* creation of partSensorTask */
-  partSensorTaskHandle = osThreadNew(particleSensorHandler, NULL, &partSensorTask_attributes);
+  /* creation of particleTask */
+  particleTaskHandle = osThreadNew(particleTaskHandler, NULL, &particleTask_attributes);
+
+  /* creation of fanCtrlTask */
+  fanCtrlTaskHandle = osThreadNew(fanCtrlTaskHandler, NULL, &fanCtrlTask_attributes);
+
+  /* creation of o3Task */
+  o3TaskHandle = osThreadNew(o3TaskHandler, NULL, &o3Task_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -568,6 +590,24 @@ void StartDefaultTask(void *argument)
     osDelay(1);
   }
   /* USER CODE END 5 */
+}
+
+/* USER CODE BEGIN Header_fanCtrlTaskHandler */
+/**
+* @brief Function implementing the fanCtrlTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_fanCtrlTaskHandler */
+void fanCtrlTaskHandler(void *argument)
+{
+  /* USER CODE BEGIN fanCtrlTaskHandler */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END fanCtrlTaskHandler */
 }
 
 /**

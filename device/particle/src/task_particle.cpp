@@ -42,7 +42,7 @@
 //     return rc;
 // }
 //
-bool TaskParticle::configure(I2C_HandleTypeDef* hi2c) {
+bool SensorParticle::configure(I2C_HandleTypeDef* hi2c) {
     initBridgeParticle(hi2c, SPS30_I2C_ADDR_69);
     sps30_init(SPS30_I2C_ADDR_69);
     auto rc = sps30_stop_measurement();
@@ -60,13 +60,15 @@ bool TaskParticle::configure(I2C_HandleTypeDef* hi2c) {
 constexpr auto PARTICAL_CYCLE_TIME_MS = 60 * 1000;
 constexpr auto PARTICAL_ONERROR_CYCLE_MS = 10 * 1000;
 
-void TaskParticle::taskLoop() {
+void SensorParticle::taskLoop() {
     CommonMessage msg{};
     msg.id = SPS30Particle;
     auto& payload = msg.payload.particle;
+
     auto rc = sps30_start_measurement(SPS30_OUTPUT_FORMAT_OUTPUT_FORMAT_FLOAT);
     sensirion_i2c_hal_sleep_usec(10000);
     uint16_t data_ready_flag = 0;
+    float unusedRead[7];
     for (;;) {
         rc = sps30_read_data_ready_flag(&data_ready_flag);
         if (rc != 0) {
@@ -74,10 +76,12 @@ void TaskParticle::taskLoop() {
             vTaskDelay(pdMS_TO_TICKS(PARTICAL_ONERROR_CYCLE_MS));
             continue;
         }
-        rc = sps30_read_measurement_values_float(
-            &payload.mc_1p0, &payload.mc_2p5, &payload.mc_4p0, &payload.mc_10p0, &payload.nc_0p5,
-            &payload.nc_1p0, &payload.nc_2p5,
-            &payload.nc_4p0, &payload.nc_10p0, &payload.typical_particle_size);
+
+        rc = sps30_read_measurement_values_float(&unusedRead[0], &payload.mc_2p5,
+                                                 &unusedRead[1], &payload.mc_10p0,
+                                                 &unusedRead[2], &unusedRead[3],
+                                                 &unusedRead[4], &unusedRead[5],
+                                                 &unusedRead[6],&payload.tps);
         if (rc != 0) {
             printf("rc executing read_measurement_values_uint16(): %i\n",
                    rc);

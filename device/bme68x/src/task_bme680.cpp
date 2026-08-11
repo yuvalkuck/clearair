@@ -38,7 +38,7 @@ static auto applyBsecSensorSettings(const bsec_bme_settings_t& settings) {
     return rc;
 }
 
-bool TaskBme680::configure(I2C_HandleTypeDef* hi2c) {
+bool SensorBme68x::configure(I2C_HandleTypeDef* hi2c) {
     auto rc = initBridgeBME68x(hi2c, commBridgeCfg, BME68X_I2C_ADDR_HIGH);
     if (rc != BME68X_OK) {
         return false;
@@ -73,7 +73,7 @@ bool TaskBme680::configure(I2C_HandleTypeDef* hi2c) {
     return (rc == BSEC_OK);
 }
 
-void TaskBme680::readAndSendToQueue(const bsec_bme_settings_t& s, int64_t timestamp_ns) {
+void SensorBme68x::readAndSendToQueue(const bsec_bme_settings_t& s, int64_t timestamp_ns) {
     bme68x_data data;
     uint8_t n_data = 0;
     if (bme68x_get_data(BME68X_FORCED_MODE, &data, &n_data, &commBridgeCfg) != BME68X_OK || n_data == 0)
@@ -158,7 +158,7 @@ void TaskBme680::readAndSendToQueue(const bsec_bme_settings_t& s, int64_t timest
     }
 }
 
-void TaskBme680::taskLoop() {
+void SensorBme68x::taskLoop() {
     for (;;) {
         int64_t timestamp_ns = getTimestampNs();
 

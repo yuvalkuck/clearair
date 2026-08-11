@@ -17,10 +17,10 @@
  * " Calling .run(), If the internal sampling interval X seconds has not elapsed,
  * .run() does nothing and exits immediately."
  */
-class TaskBme680 : public BaseDeviceTask {
+class SensorBme68x : public BaseDeviceTask {
     void readAndSendToQueue(const bsec_bme_settings_t& s, int64_t timestamp_ns);
 public:
-    TaskBme680() = default;
+    SensorBme68x() = default;
 
     bool configure(
         I2C_HandleTypeDef* hi2c

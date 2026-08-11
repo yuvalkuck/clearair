@@ -24,6 +24,7 @@
             struct DataBME680 bme680;
             struct DataUiValue uiValue;
             struct DataParticle particle;
+            struct DataCO1NO2 co1_no2;
             // BmpData bmp; etc. for other sensors
         } payload;
     };

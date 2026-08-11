@@ -9,10 +9,10 @@
 #include "base_device_task.h"
 
 
-class TaskParticle : public BaseDeviceTask {
+class SensorParticle : public BaseDeviceTask {
 
 public:
-    TaskParticle() = default;
+    SensorParticle() = default;
     bool configure(
         I2C_HandleTypeDef* hi2c);
 

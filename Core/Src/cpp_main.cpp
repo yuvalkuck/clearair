@@ -5,32 +5,37 @@
 #include "task_bme680.h"
 #include "task_mq131.h"
 #include "task_particle.h"
+#include "task_mics4514.h"
 #include "cmsis_os.h"
+#include "collected_data.h"
 
 extern I2C_HandleTypeDef hi2c2;
-extern osThreadId_t bmeSensorTaskHandle;
-extern osThreadId_t co1SensorTaskHandle;
-extern osThreadId_t partSensorTaskHandle;
 extern osMessageQueueId_t SensorEventsHandle;
+extern osThreadId_t bmeTaskHandle;
+extern osThreadId_t co1no2TaskHandle;
+extern osThreadId_t particleTaskHandle;
+extern osThreadId_t o3TaskHandle;
 
-TaskBme680 taskBme680;
-SensorO3 taskSensorCO1;
-TaskParticle taskParticle;
+SensorBme68x taskBme68x;
+SensorO3 taskSensorO3;
+SensorParticle taskParticle;
+SensorCO1NO2 taskCO1NO2;
 constexpr auto LED_INDICATE_ERROR = 100;
 constexpr auto LED_INDICATE_OK = 1000;
 
 extern "C" [[noreturn]] void appStartDefaultTask(void* argument) {
-    taskBme680.setup(bmeSensorTaskHandle, SensorEventsHandle);
-    taskSensorCO1.setup(co1SensorTaskHandle, SensorEventsHandle);
-    taskParticle.setup(partSensorTaskHandle, SensorEventsHandle);
+    taskBme68x.setup(bmeTaskHandle, SensorEventsHandle);
+    taskSensorO3.setup(o3TaskHandle, SensorEventsHandle);
+    taskParticle.setup(particleTaskHandle, SensorEventsHandle);
+    taskCO1NO2.setup(co1no2TaskHandle, SensorEventsHandle);
     //
     auto leep = LED_INDICATE_OK;
-    auto rc = taskBme680.configure(&hi2c2);
+    auto rc = taskBme68x.configure(&hi2c2);
     if (!rc) { leep = LED_INDICATE_ERROR; }
     else {
-        taskBme680.resume();
+        taskBme68x.resume();
     }
-    taskSensorCO1.resume();
+    taskSensorO3.resume();
     rc = taskParticle.configure(&hi2c2);
     if (!rc) { leep = LED_INDICATE_ERROR; }
     else {
@@ -61,7 +66,9 @@ extern "C" [[noreturn]] void mainSensorsMsgLoop(void* argument) {
                     auto payload = msg.payload.particle;
                 }
                 break;
-                case MICS4514CO1NO2:
+                case MICS4514CO1NO2: {
+                    auto payload = msg.payload.co1_no2;
+                }
                     break;
                 default:
                     // WARNING
@@ -71,19 +78,27 @@ extern "C" [[noreturn]] void mainSensorsMsgLoop(void* argument) {
     }
 }
 
-extern "C" [[noreturn]] void appBmeSensorTask(void* argument) {
+extern "C" [[noreturn]] void bmeTaskHandler(void* argument) {
     osThreadSuspend(osThreadGetId()); // suspend - will be release elseware
-    taskBme680.taskLoop();
+    taskBme68x.taskLoop();
 }
 
-extern "C" [[noreturn]] void co1SensorHandler(void* argument) {
-    osThreadSuspend(osThreadGetId()); // suspend - will be release elseware
-    taskSensorCO1.taskLoop();
-}
-
-extern "C" void particleSensorHandler(void* argument) {
+extern "C" [[noreturn]] void particleTaskHandler(void* argument) {
     osThreadSuspend(osThreadGetId()); // suspend - will be release elseware
     taskParticle.taskLoop();
 }
+
+extern "C" [[noreturn]] void co1no2TaskHandler(void* argument) {
+    osThreadSuspend(osThreadGetId()); // suspend - will be release elseware
+    taskCO1NO2.taskLoop();
+}
+
+extern "C" [[noreturn]] void o3TaskHandler(void* argument) {
+    osThreadSuspend(osThreadGetId()); // suspend - will be release elseware
+    taskSensorO3.taskLoop();
+}
+
+
+
 
 //
