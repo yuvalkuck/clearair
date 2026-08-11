@@ -10,6 +10,7 @@
 #include "bsec_iaq.h"
 #include "event_message.h"
 #include "timestamp.h"
+#include <cstring>
 static uint8_t work_buffer[BSEC_MAX_WORKBUFFER_SIZE];
 static bme68x_dev commBridgeCfg = {0};
 static constexpr uint32_t BSEC_TASK_MAX_WAIT_MS     = 2000; // BME68x max heater dur
@@ -113,46 +114,23 @@ void SensorBme68x::readAndSendToQueue(const bsec_bme_settings_t& s, int64_t time
     msg.id = BME680;
     msg.timestamp_ms = getTimestampMs();
     auto& payload = msg.payload.bme680;
-
+    std::memset(&payload, 0, sizeof(msg.payload.bme680));
     for (uint8_t i = 0; i < n_outputs; i++) {
-        payload.type = NO_VALUE;
-        payload.value = outputs[i].signal;
         switch (outputs[i].sensor_id) {
-            case BSEC_OUTPUT_IAQ:
-                payload.type = IAQ;
-                payload.accuracy = outputs[i].accuracy;
-                break;
-            case BSEC_OUTPUT_STATIC_IAQ:
-                payload.type = STATIC_IAQ;
-                break;
-            case BSEC_OUTPUT_CO2_EQUIVALENT:
-                payload.type = CO2_EQUIVALENT;
-                break;
             case BSEC_OUTPUT_BREATH_VOC_EQUIVALENT:
-                payload.type = VOC_EQUIVALENT;
+                payload.indoorAirQualityIndex = static_cast<uint16_t>(outputs[i].signal);
                 break;
             case BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_TEMPERATURE:
-                payload.type = TEMPERATURE;
+                payload.temperature = static_cast<int8_t>(outputs[i].signal);
                 break;
             case BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_HUMIDITY:
-                payload.type = HUMIDITY;
+                payload.humidity = static_cast<uint8_t>(outputs[i].signal);
                 break;
-            case BSEC_OUTPUT_RAW_PRESSURE:
-                payload.type = PRESSURE;
-                break;
-            case BSEC_OUTPUT_RAW_GAS:
-                payload.type = VOC_EQUIVALENT;
-                break;
-            case BSEC_OUTPUT_STABILIZATION_STATUS:
-            case BSEC_OUTPUT_RUN_IN_STATUS:
             default:
                 break;
         }
-        if (payload.type != NO_VALUE) {
-            // Never block indefinitely: system is never low power, task must keep BSEC cadence
-            xQueueSend(msgQueue_, &msg, pdMS_TO_TICKS(5));
-        }
     }
+    xQueueSend(msgQueue_, &msg, pdMS_TO_TICKS(5));
 }
 
 void SensorBme68x::taskLoop() {
