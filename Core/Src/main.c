@@ -122,11 +122,11 @@ static void MX_I2C2_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_TIM3_Init(void);
 void StartDefaultTask(void *argument);
-void fanCtrlTaskHandler(void *argument);
-extern void mainSensorsMsgLoop(void *argument);
 extern void bmeTaskHandler(void *argument);
+extern void mainSensorsMsgLoop(void *argument);
 extern void co1no2TaskHandler(void *argument);
 extern void particleTaskHandler(void *argument);
+extern void fanCtrlTaskHandler(void *argument);
 extern void o3TaskHandler(void *argument);
 
 /* USER CODE BEGIN PFP */
@@ -590,24 +590,6 @@ void StartDefaultTask(void *argument)
     osDelay(1);
   }
   /* USER CODE END 5 */
-}
-
-/* USER CODE BEGIN Header_fanCtrlTaskHandler */
-/**
-* @brief Function implementing the fanCtrlTask thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_fanCtrlTaskHandler */
-void fanCtrlTaskHandler(void *argument)
-{
-  /* USER CODE BEGIN fanCtrlTaskHandler */
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
-  }
-  /* USER CODE END fanCtrlTaskHandler */
 }
 
 /**

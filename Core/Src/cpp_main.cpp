@@ -98,6 +98,9 @@ extern "C" [[noreturn]] void o3TaskHandler(void* argument) {
     taskSensorO3.taskLoop();
 }
 
+extern "C" void fanCtrlTaskHandler(void *argument) {
+    osThreadSuspend(osThreadGetId()); // suspend - will be release elseware
+}
 
 
 
