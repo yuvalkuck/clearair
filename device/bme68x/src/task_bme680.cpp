@@ -11,12 +11,15 @@
 #include "event_message.h"
 #include "timestamp.h"
 #include <cstring>
+
+#include "logger.h"
 static uint8_t work_buffer[BSEC_MAX_WORKBUFFER_SIZE];
 static bme68x_dev commBridgeCfg = {0};
 static constexpr uint32_t BSEC_TASK_MAX_WAIT_MS     = 2000; // BME68x max heater dur
 #define BSEC_REQUESTED_OUTPUTS 3
 
 static auto applyBsecSensorSettings(const bsec_bme_settings_t& settings) {
+    METHODTRACE
     bme68x_conf conf{};
     bme68x_heatr_conf heatr_conf{};
 
@@ -40,18 +43,22 @@ static auto applyBsecSensorSettings(const bsec_bme_settings_t& settings) {
 }
 
 bool SensorBme68x::configure(I2C_HandleTypeDef* hi2c) {
+    METHODTRACE
     auto rc = initBridgeBME68x(hi2c, commBridgeCfg, BME68X_I2C_ADDR_HIGH);
     if (rc != BME68X_OK) {
+        METHODTRACE_E("initBridgeBME68x != BME68X_OK: {}",rc)
         return false;
     }
     rc = bsec_init();
     if (rc != BSEC_OK) {
+        METHODTRACE_E("bsec_init != BME68X_OK: {}",rc)
         return false;
     }
 
     rc = bsec_set_configuration(bsec_config_iaq, sizeof(bsec_config_iaq),
                                 work_buffer, sizeof(work_buffer));
     if (rc != BSEC_OK) {
+        METHODTRACE_E("bsec_set_configuration != BME68X_OK: {}",rc)
         return false;
     }
 
@@ -71,7 +78,9 @@ bool SensorBme68x::configure(I2C_HandleTypeDef* hi2c) {
     return (rc == BSEC_OK);
 }
 
+
 void SensorBme68x::readAndSendToQueue(const bsec_bme_settings_t& s, int64_t timestamp_ns) {
+    METHODTRACE
     bme68x_data data;
     uint8_t n_data = 0;
     if (bme68x_get_data(BME68X_FORCED_MODE, &data, &n_data, &commBridgeCfg) != BME68X_OK || n_data == 0)
@@ -130,10 +139,12 @@ void SensorBme68x::readAndSendToQueue(const bsec_bme_settings_t& s, int64_t time
                 break;
         }
     }
+    LOGTRACE("air:{},tmp:{},hum:{}", payload.indoorAirQualityIndex,payload.temperature,payload.humidity)
     xQueueSend(msgQueue_, &msg, pdMS_TO_TICKS(5));
 }
 
 void SensorBme68x::taskLoop() {
+    METHODENTER
     for (;;) {
         int64_t timestamp_ns = getTimestampNs();
 

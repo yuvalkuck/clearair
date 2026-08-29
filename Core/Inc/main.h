@@ -61,10 +61,8 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define MQ7_READ_Pin GPIO_PIN_0
-#define MQ7_READ_GPIO_Port GPIOA
-#define MQ7_HEATER_CTRL_Pin GPIO_PIN_1
-#define MQ7_HEATER_CTRL_GPIO_Port GPIOA
+#define MQ131_READ_Pin GPIO_PIN_0
+#define MQ131_READ_GPIO_Port GPIOA
 #define USART_TX_Pin GPIO_PIN_2
 #define USART_TX_GPIO_Port GPIOA
 #define USART_RX_Pin GPIO_PIN_3

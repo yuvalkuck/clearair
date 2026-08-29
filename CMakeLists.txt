@@ -33,12 +33,25 @@ enable_language(C CXX ASM)
 
 # Create an executable object type
 add_executable(${CMAKE_PROJECT_NAME})
+IF (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+    ADD_COMPILE_DEFINITIONS(FMT_HEADER_ONLY FMT_USE_EXCEPTION=0 FMT_USE_RTTI=0 FMT_USE_LOCALE=0)
+    include(FetchContent)
+    FetchContent_Declare(
+            fmtlib
+            URL https://github.com/fmtlib/fmt/archive/refs/tags/12.2.0.tar.gz
+            DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+    )
+    FetchContent_MakeAvailable( fmtlib)
+    include_directories(
+            ${FMT_SOURCE_DIR}/include
+    )
+ENDIF (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+
 
 # Add STM32CubeMX generated sources
 add_subdirectory(cmake/stm32cubemx)
 add_subdirectory(cmake/stm32bsec2bme)
 add_subdirectory(cmake/stm32sps30)
-
 # Link directories setup
 target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined library search paths
@@ -54,6 +67,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
 
 # Add include paths
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
+        PUBLIC ${FMT_SOURCE_DIR}/include
     # Add user defined include paths
 )
 

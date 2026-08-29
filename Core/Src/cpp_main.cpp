@@ -9,6 +9,7 @@
 #include "task_fanctrl.h"
 #include "cmsis_os.h"
 #include "collected_data.h"
+#include "logger.h"
 
 extern I2C_HandleTypeDef hi2c2;
 extern osMessageQueueId_t SensorEventsHandle;
@@ -41,6 +42,7 @@ extern "C" void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 }
 
 extern "C" [[noreturn]] void appStartDefaultTask(void* argument) {
+    METHODTRACE
     taskBme68x.setup(bmeTaskHandle, SensorEventsHandle);
     taskSensorO3.setup(o3TaskHandle, SensorEventsHandle);
     taskParticle.setup(particleTaskHandle, SensorEventsHandle);
@@ -66,6 +68,7 @@ extern "C" [[noreturn]] void appStartDefaultTask(void* argument) {
 }
 
 extern "C" [[noreturn]] void mainSensorsMsgLoop(void* argument) {
+    METHODENTER
     CommonMessage msg{};
     auto xQueue = (QueueHandle_t)SensorEventsHandle;
     for (;;) {
