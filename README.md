@@ -33,7 +33,7 @@ graph TD
 
 *   **External 5V Rail:** The STM32 Nucleo board and all high-draw sensor sub-components are powered by a dedicated, regulated external 5V supply line. The Nucleo power selection jumper (`JP5`) must be placed in the `E5V` configuration position.
 *   **Electrical Noise Isolation:** The internal 5V heating elements of the gas sensors are powered directly from the external 5V supply rail rather than drawing from the MCU. This layout keeps heavy electrical switching current ripples completely away from the sensitive STM32 analog circuitry.
-*   **Logic Interfacing:** The `I2C2` bus uses 4.7 kΩ pull-up resistors tied strictly to the Nucleo's 3.3V rail. High-voltage analog sensor outputs are routed through passive hardware voltage dividers to safely drop raw 5V signals under the 3.3V ADC limit.
+*   **Logic Interfacing:** The `I2C3` bus uses 4.7 kΩ pull-up resistors tied strictly to the Nucleo's 3.3V rail. High-voltage analog sensor outputs are routed through passive hardware voltage dividers to safely drop raw 5V signals under the 3.3V ADC limit.
 
 ---
 
@@ -57,7 +57,7 @@ graph TD
 
 | Subsystem Component | Peripheral Identifier | Physical Hardware Pin | Hardware Mode & Execution Profile |
 | :--- |:----------------------|:----------------------| :--- |
-| **SPS30 + BME680** | I2C2                  | PB10 (SCL), PB3 (SDA) | Standard Open-Drain. JTAG-SWO trace disabled on PB3. |
+| **SPS30 + BME680** | I2C3                  | PA8 (SCL), PC9 (SDA) | Standard Open-Drain. |
 | **MQ-131 Output** | ADC1_IN0              | PA0                   | Single-Ended Analog Input (Requires External Divider). |
 | **MiCS-4514 (CO)** | ADC1_IN1              | PA1                   | Single-Ended Analog Input ($V_{OUT1}$). |
 | **MiCS-4514 ($NO_2$)** | ADC1_IN7              | PA7                   | Single-Ended Analog Input ($V_{OUT2}$). |
@@ -238,6 +238,6 @@ graph TD
 
 ## 🚨 Safety Core & Fail-Safes
 
-*   **Loss of Signal Safeguard:** If the `I2C2` communication lines stall, or if the `ADC1` DMA buffer fails to cycle for 5 consecutive periods, the firmware shifts into an Emergency Override state, locking the TRIAC delay to 0% to force the exhaust fan to run continuously at 100% capacity.
+*   **Loss of Signal Safeguard:** If the `I2C3` communication lines stall, or if the `ADC1` DMA buffer fails to cycle for 5 consecutive periods, the firmware shifts into an Emergency Override state, locking the TRIAC delay to 0% to force the exhaust fan to run continuously at 100% capacity.
 *   **Electrical Fault Monitoring:** If any analog channel detects an out-of-bounds voltage (0V matching a short circuit, or 3.3V matching a ruptured line), the event is reported over telemetry and the ventilation loop steps up to full speed.
 *   **Non-Volatile Baseline Recovery:** The system stores the active BSEC2 engine state data matrix to internal internal flash sectors every hour to prevent calibration degradation during unexpected system power losses.

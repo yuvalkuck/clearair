@@ -4,13 +4,14 @@
 //
 #include "stm32f4xx.h"
 #include "task_particle.h"
-
+#include "sensirion_common.h"
 #include <stdio.h>
 #include "bridge_particle.h"
 #include "sps30_i2c.h"
 #include "sensirion_i2c_hal.h"
 #include "timestamp.h"
 #include "event_message.h"
+#include "logger.h"
 
 // #include "timestamp.h"
 
@@ -43,9 +44,13 @@
 // }
 //
 bool SensorParticle::configure(I2C_HandleTypeDef* hi2c) {
+    METHODTRACE
     initBridgeParticle(hi2c, SPS30_I2C_ADDR_69);
     sps30_init(SPS30_I2C_ADDR_69);
     auto rc = sps30_stop_measurement();
+    if ( rc != NO_ERROR) {
+        METHODLOG(fatal, "sps30_stop_measurement failed")
+    }
     // int8_t serial_number[32] = {0};
     // int8_t product_type[8] = {0};
     // rc = sps30_read_serial_number(serial_number, 32);
@@ -61,11 +66,16 @@ constexpr auto PARTICAL_CYCLE_TIME_MS = 60 * 1000;
 constexpr auto PARTICAL_ONERROR_CYCLE_MS = 10 * 1000;
 
 void SensorParticle::taskLoop() {
+    METHODTRACE
     CommonMessage msg{};
     msg.id = SPS30Particle;
     auto& payload = msg.payload.particle;
 
     auto rc = sps30_start_measurement(SPS30_OUTPUT_FORMAT_OUTPUT_FORMAT_FLOAT);
+    if (rc != NO_ERROR) {
+        METHODLOG(fatal, "sps30_start_measurement failed")
+        return;
+    }
     sensirion_i2c_hal_sleep_usec(10000);
     uint16_t data_ready_flag = 0;
     float unusedRead[7];

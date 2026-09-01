@@ -11,7 +11,7 @@
 #include "collected_data.h"
 #include "logger.h"
 
-extern I2C_HandleTypeDef hi2c2;
+extern I2C_HandleTypeDef hi2c3;
 extern osMessageQueueId_t SensorEventsHandle;
 extern osThreadId_t bmeTaskHandle;
 extern osThreadId_t co1no2TaskHandle;
@@ -50,14 +50,19 @@ extern "C" [[noreturn]] void appStartDefaultTask(void* argument) {
     taskFanMotor.setup(fanCtrlTaskHandle, SensorEventsHandle);
     //
     auto leep = LED_INDICATE_OK;
-    auto rc = taskBme68x.configure(&hi2c2);
-    if (!rc) { leep = LED_INDICATE_ERROR; }
-    else {
+    auto rc = taskBme68x.configure(&hi2c3);
+    if (!rc) {
+        leep = LED_INDICATE_ERROR;
+        METHODLOG(error, "taskBme68x configure failed")
+    } else {
         taskBme68x.resume();
     }
-    taskSensorO3.resume();
-    rc = taskParticle.configure(&hi2c2);
-    if (!rc) { leep = LED_INDICATE_ERROR; }
+    // FIXME: add code there taskSensorO3.resume();
+    rc = taskParticle.configure(&hi2c3);
+    if (!rc) {
+        leep = LED_INDICATE_ERROR;
+        METHODLOG(error, "taskParticle configure failed")
+    }
     else {
         taskParticle.resume();
     }

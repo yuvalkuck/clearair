@@ -11,7 +11,6 @@
 #include "event_message.h"
 #include "timestamp.h"
 #include <cstring>
-
 #include "logger.h"
 static uint8_t work_buffer[BSEC_MAX_WORKBUFFER_SIZE];
 static bme68x_dev commBridgeCfg = {0};
@@ -46,19 +45,19 @@ bool SensorBme68x::configure(I2C_HandleTypeDef* hi2c) {
     METHODTRACE
     auto rc = initBridgeBME68x(hi2c, commBridgeCfg, BME68X_I2C_ADDR_HIGH);
     if (rc != BME68X_OK) {
-        METHODTRACE_E("initBridgeBME68x != BME68X_OK: {}",rc)
+        METHODLOGF(error, "initBridgeBME68x != BME68X_OK: {}",rc)
         return false;
     }
     rc = bsec_init();
     if (rc != BSEC_OK) {
-        METHODTRACE_E("bsec_init != BME68X_OK: {}",rc)
+        METHODLOGF(error,"bsec_init != BME68X_OK: {}",rc)
         return false;
     }
 
     rc = bsec_set_configuration(bsec_config_iaq, sizeof(bsec_config_iaq),
                                 work_buffer, sizeof(work_buffer));
     if (rc != BSEC_OK) {
-        METHODTRACE_E("bsec_set_configuration != BME68X_OK: {}",rc)
+        METHODLOGF(error,"bsec_set_configuration != BME68X_OK: {}",rc)
         return false;
     }
 
@@ -139,7 +138,7 @@ void SensorBme68x::readAndSendToQueue(const bsec_bme_settings_t& s, int64_t time
                 break;
         }
     }
-    LOGTRACE("air:{},tmp:{},hum:{}", payload.indoorAirQualityIndex,payload.temperature,payload.humidity)
+    METHODLOGF(debug, "air:{},tmp:{},hum:{}", payload.indoorAirQualityIndex,payload.temperature,payload.humidity)
     xQueueSend(msgQueue_, &msg, pdMS_TO_TICKS(5));
 }
 
