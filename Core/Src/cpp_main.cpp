@@ -43,22 +43,23 @@ extern "C" void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 
 extern "C" [[noreturn]] void appStartDefaultTask(void* argument) {
     METHODTRACE
-    taskBme68x.setup(bmeTaskHandle, SensorEventsHandle);
-    taskSensorO3.setup(o3TaskHandle, SensorEventsHandle);
+    // taskBme68x.setup(bmeTaskHandle, SensorEventsHandle);
+    // taskSensorO3.setup(o3TaskHandle, SensorEventsHandle);
     taskParticle.setup(particleTaskHandle, SensorEventsHandle);
     taskCO1NO2.setup(co1no2TaskHandle, SensorEventsHandle);
     taskFanMotor.setup(fanCtrlTaskHandle, SensorEventsHandle);
     //
     auto leep = LED_INDICATE_OK;
-    auto rc = taskBme68x.configure(&hi2c3);
-    if (!rc) {
-        leep = LED_INDICATE_ERROR;
-        METHODLOG(error, "taskBme68x configure failed")
-    } else {
-        taskBme68x.resume();
-    }
-    // FIXME: add code there taskSensorO3.resume();
-    rc = taskParticle.configure(&hi2c3);
+    // auto rc = taskBme68x.configure(&hi2c3);
+    // if (!rc) {
+    //     leep = LED_INDICATE_ERROR;
+    //     METHODLOG(error, "taskBme68x configure failed")
+    // } else {
+    //     taskBme68x.resume();
+    // }
+    // add code there taskSensorO3.resume();
+
+    auto rc = taskParticle.configure(&hi2c3);
     if (!rc) {
         leep = LED_INDICATE_ERROR;
         METHODLOG(error, "taskParticle configure failed")
@@ -66,6 +67,7 @@ extern "C" [[noreturn]] void appStartDefaultTask(void* argument) {
     else {
         taskParticle.resume();
     }
+    rc = taskCO1NO2.
     for (;;) {
         BSP_LED_Toggle(LED2);
         vTaskDelay(pdMS_TO_TICKS(leep));

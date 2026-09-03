@@ -48,7 +48,7 @@ extern "C" void sensirion_i2c_hal_setup(sensirion_cb_t*);
  * @returns 0 on success, error code otherwise
  */
 static int8_t hal_read(uint8_t address, uint8_t* data, uint8_t count) {
-    auto rc = HAL_I2C_Master_Receive(i2cH_, dev_addr_, data, count, I2C_TIMEOUT_MS);
+    auto rc = HAL_I2C_Master_Receive(i2cH_, dev_addr_, data, count, HAL_MAX_DELAY);
     if (rc == HAL_OK) {
         return 0; // Success
     }
@@ -68,7 +68,7 @@ static int8_t hal_read(uint8_t address, uint8_t* data, uint8_t count) {
  */
 
 static int8_t hal_write(uint8_t address, const uint8_t* data, uint8_t count) {
-    auto rc = HAL_I2C_Master_Transmit(i2cH_, dev_addr_, (uint8_t*)data, count, I2C_TIMEOUT_MS);
+    auto rc = HAL_I2C_Master_Transmit(i2cH_, dev_addr_, (uint8_t*)data, count, HAL_MAX_DELAY);
     if (rc == HAL_OK) {
         return 0; // Success
     }
