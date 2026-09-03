@@ -19,10 +19,10 @@ extern osThreadId_t particleTaskHandle;
 extern osThreadId_t o3TaskHandle;
 extern osThreadId_t fanCtrlTaskHandle;
 
-SensorBme68x taskBme68x;
+// SensorBme68x taskBme68x;
 SensorO3 taskSensorO3;
 SensorParticle taskParticle;
-SensorCO1NO2 taskCO1NO2;
+// SensorCO1NO2 taskCO1NO2;
 ControllerFanMotor taskFanMotor;
 
 constexpr auto LED_INDICATE_ERROR = 100;
@@ -43,10 +43,13 @@ extern "C" void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 
 extern "C" [[noreturn]] void appStartDefaultTask(void* argument) {
     METHODTRACE
+    if ( o3TaskHandle == NULL) {
+        METHODLOG(debug, "o3TaskHandle is NULL");
+    }
     // taskBme68x.setup(bmeTaskHandle, SensorEventsHandle);
-    // taskSensorO3.setup(o3TaskHandle, SensorEventsHandle);
+    taskSensorO3.setup(o3TaskHandle, SensorEventsHandle);
     taskParticle.setup(particleTaskHandle, SensorEventsHandle);
-    taskCO1NO2.setup(co1no2TaskHandle, SensorEventsHandle);
+    //taskCO1NO2.setup(co1no2TaskHandle, SensorEventsHandle);
     taskFanMotor.setup(fanCtrlTaskHandle, SensorEventsHandle);
     //
     auto leep = LED_INDICATE_OK;
@@ -57,9 +60,14 @@ extern "C" [[noreturn]] void appStartDefaultTask(void* argument) {
     // } else {
     //     taskBme68x.resume();
     // }
-    // add code there taskSensorO3.resume();
-
-    auto rc = taskParticle.configure(&hi2c3);
+    auto rc = taskSensorO3.configure();
+    if (!rc) {
+        leep = LED_INDICATE_ERROR;
+        METHODLOG(error, "taskSensorO3 configure failed")
+    } else {
+        taskSensorO3.resume();
+    }
+    rc = taskParticle.configure(&hi2c3);
     if (!rc) {
         leep = LED_INDICATE_ERROR;
         METHODLOG(error, "taskParticle configure failed")
@@ -67,7 +75,6 @@ extern "C" [[noreturn]] void appStartDefaultTask(void* argument) {
     else {
         taskParticle.resume();
     }
-    rc = taskCO1NO2.
     for (;;) {
         BSP_LED_Toggle(LED2);
         vTaskDelay(pdMS_TO_TICKS(leep));
@@ -75,7 +82,7 @@ extern "C" [[noreturn]] void appStartDefaultTask(void* argument) {
 }
 
 extern "C" [[noreturn]] void mainSensorsMsgLoop(void* argument) {
-    METHODENTER
+    METHODTRACE
     CommonMessage msg{};
     auto xQueue = (QueueHandle_t)SensorEventsHandle;
     for (;;) {
@@ -107,27 +114,27 @@ extern "C" [[noreturn]] void mainSensorsMsgLoop(void* argument) {
 }
 
 extern "C" [[noreturn]] void bmeTaskHandler(void* argument) {
-    osThreadSuspend(osThreadGetId()); // suspend - will be release elseware
-    taskBme68x.taskLoop();
+    osThreadSuspend(osThreadGetId()); // suspend - will be release elsewhere
+    // taskBme68x.taskLoop();
 }
 
 extern "C" [[noreturn]] void particleTaskHandler(void* argument) {
-    osThreadSuspend(osThreadGetId()); // suspend - will be release elseware
+    osThreadSuspend(osThreadGetId()); // suspend - will be release elsewhere
     taskParticle.taskLoop();
 }
 
 extern "C" [[noreturn]] void co1no2TaskHandler(void* argument) {
-    osThreadSuspend(osThreadGetId()); // suspend - will be release elseware
-    taskCO1NO2.taskLoop();
+    osThreadSuspend(osThreadGetId()); // suspend - will be release elsewhere
+    // taskCO1NO2.taskLoop();
 }
 
 extern "C" [[noreturn]] void o3TaskHandler(void* argument) {
-    osThreadSuspend(osThreadGetId()); // suspend - will be release elseware
+    osThreadSuspend(osThreadGetId()); // suspend - will be release elsewhere
     taskSensorO3.taskLoop();
 }
 
 extern "C" void fanCtrlTaskHandler(void *argument) {
-    osThreadSuspend(osThreadGetId()); // suspend - will be release elseware
+    osThreadSuspend(osThreadGetId()); // suspend - will be release elsewhere
     taskFanMotor.taskLoop();
 }
 

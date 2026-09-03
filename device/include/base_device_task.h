@@ -24,7 +24,8 @@ public:
             osThreadTerminate(osThreadId_);
             return;
         }
-        osThreadResume(osThreadId_);
+        auto rc = osThreadResume(osThreadId_);
+        vTaskDelay(pdMS_TO_TICKS(50));
     }
 };
 #endif //CLEARAIR_BASE_TASK_H

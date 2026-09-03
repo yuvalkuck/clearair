@@ -4,10 +4,10 @@
 
 #ifndef CLEARAIR_LOGGER_H
 #define CLEARAIR_LOGGER_H
+#ifdef  DEBUG
 #include <cstdint>
 #include <cstring>
 #include <cstdio>
-
 class MethodTracer {
     char name_[128]{};
 
@@ -30,17 +30,17 @@ class MethodTracer {
     void error(int line, const char* str) { logmsg_("Error", line, str); }
     void debug(int line, const char* str) { logmsg_("Debugr", line, str); }
     void trace(int line, const char* str) { logmsg_("Trace", line, str); }
+    void warn(int line, const char* str) { logmsg_("Warning", line, str); }
 };
-#ifdef  DEBUG
+
 #include "fmt/base.h"
 #define METHODTRACE MethodTracer __methodTracer(__PRETTY_FUNCTION__,sizeof(__PRETTY_FUNCTION__)-1);
 #define METHODLOG(lvl, str) __methodTracer.lvl(__LINE__, str);
 #define METHODLOGF(lvl, fmt_str, ...) { char traceBuffer[128]={0}; fmt::format_to_n(traceBuffer, sizeof(traceBuffer)-1,fmt_str,##__VA_ARGS__); __methodTracer.lvl(__LINE__, traceBuffer);}
-#define METHODENTER printf("MethodEnter:%s\r\n",__PRETTY_FUNCTION__);
 #else
 #define METHODLOG(lvl, str)
 #define METHODLOGF(lvl, fmt_str, ...)
 #define METHODTRACE
-#define METHODENTER
 #endif
+#define LOGMSG printf(">>>:%s\r\n",__PRETTY_FUNCTION__);
 #endif //CLEARAIR_LOGGER_H

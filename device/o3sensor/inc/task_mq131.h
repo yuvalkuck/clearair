@@ -9,6 +9,7 @@
 class SensorO3 : public BaseDeviceTask {
     public:
     SensorO3() = default;
+    bool configure() const;
     [[noreturn]] void taskLoop() const;
 
 };

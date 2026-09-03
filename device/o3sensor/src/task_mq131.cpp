@@ -1,29 +1,52 @@
 #include "task_mq131.h"
 
 #include "event_message.h"
+#include "logger.h"
 #include "stm32f4xx.h"
 #include "timestamp.h"
 #include "main.h"
 
-constexpr uint32_t HEATER_TIME_MS_ON = 60 * 1000;
-constexpr uint32_t HEATER_TIME_MS_OFF = 89 * 1000;
 extern ADC_HandleTypeDef hadc1;
 
+bool SensorO3::configure() const {
+    METHODTRACE
+
+    uint32_t value = 0;
+    for (auto limit = 5; limit > 0; --limit) {
+        HAL_ADC_Start(&hadc1); // Start ADC conversion
+        auto rc= HAL_ADC_PollForConversion(&hadc1, 10);
+        if (rc == HAL_OK) {
+            value = HAL_ADC_GetValue(&hadc1);
+        } else {
+            vTaskDelay(pdMS_TO_TICKS(1));
+        }
+        HAL_ADC_Stop(&hadc1); // Start ADC conversion
+        if (value > 0) {
+            break;
+        }
+    }
+    return (value > 0 ? true : false);
+}
+static CommonMessage msg{};
 [[noreturn]] void SensorO3::taskLoop() const {
-    CommonMessage msg{};
+    METHODTRACE
     msg.id = MQ131CO3;
-    HAL_ADC_Start(&hadc1); // Start ADC conversion
     for (;;) {
-        // HAL_GPIO_WritePin(MQ7_HEATER_CTRL_GPIO_Port, MQ7_HEATER_CTRL_Pin, GPIO_PIN_RESET); // short R → heater sees ~5V
-        // vTaskDelay(pdMS_TO_TICKS(HEATER_TIME_MS_ON));
-        // HAL_GPIO_WritePin(MQ7_HEATER_CTRL_GPIO_Port, MQ7_HEATER_CTRL_Pin, GPIO_PIN_SET); // short R → heater sees ~5V
-        // vTaskDelay(pdMS_TO_TICKS(HEATER_TIME_MS_OFF));
-        // if (HAL_ADC_PollForConversion(&hadc1, 10) == HAL_OK) {
-        //     // to prevent long block in case of communication down, wait 10ms
-        //     msg.timestamp_ms = getTimestampMs();
-        //     msg.payload.uiValue.value = HAL_ADC_GetValue(&hadc1);
-        //     xQueueSend(msgQueue_, &msg, pdMS_TO_TICKS(5));
-        // }
+        for (auto limit = 5; limit > 0; --limit) {
+            HAL_ADC_Start(&hadc1); // Start ADC conversion
+            auto rc = HAL_ADC_PollForConversion(&hadc1, 50);
+            if (rc == HAL_OK) {
+                msg.timestamp_ms = getTimestampMs();
+                msg.payload.uiValue.value = HAL_ADC_GetValue(&hadc1);
+                xQueueSend(msgQueue_, &msg, pdMS_TO_TICKS(5));
+            } else {
+                METHODLOGF(warn, "ADC1 timeout:{}", limit);
+            }
+            HAL_ADC_Stop(&hadc1); // Start ADC conversion
+            if (rc == HAL_OK) {
+                break;
+            }
+        }
         vTaskDelay(pdMS_TO_TICKS(60000));
     }
 }

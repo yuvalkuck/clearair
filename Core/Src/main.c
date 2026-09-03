@@ -58,7 +58,7 @@ UART_HandleTypeDef huart2;
 osThreadId_t defaultTaskHandle;
 const osThreadAttr_t defaultTask_attributes = {
   .name = "defaultTask",
-  .stack_size = 512 * 4,
+  .stack_size = 1024 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for bmeTask */
@@ -66,42 +66,42 @@ osThreadId_t bmeTaskHandle;
 const osThreadAttr_t bmeTask_attributes = {
   .name = "bmeTask",
   .stack_size = 512 * 4,
-  .priority = (osPriority_t) osPriorityLow,
+  .priority = (osPriority_t) osPriorityAboveNormal,
 };
 /* Definitions for msgLoopTask */
 osThreadId_t msgLoopTaskHandle;
 const osThreadAttr_t msgLoopTask_attributes = {
   .name = "msgLoopTask",
   .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityLow,
+  .priority = (osPriority_t) osPriorityAboveNormal,
 };
 /* Definitions for co1no2Task */
 osThreadId_t co1no2TaskHandle;
 const osThreadAttr_t co1no2Task_attributes = {
   .name = "co1no2Task",
   .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityLow,
+  .priority = (osPriority_t) osPriorityAboveNormal,
 };
 /* Definitions for particleTask */
 osThreadId_t particleTaskHandle;
 const osThreadAttr_t particleTask_attributes = {
   .name = "particleTask",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityLow,
+  .stack_size = 512 * 4,
+  .priority = (osPriority_t) osPriorityAboveNormal,
 };
 /* Definitions for fanCtrlTask */
 osThreadId_t fanCtrlTaskHandle;
 const osThreadAttr_t fanCtrlTask_attributes = {
   .name = "fanCtrlTask",
   .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityNormal,
+  .priority = (osPriority_t) osPriorityHigh,
 };
 /* Definitions for o3Task */
 osThreadId_t o3TaskHandle;
 const osThreadAttr_t o3Task_attributes = {
   .name = "o3Task",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityLow,
+  .stack_size = 512 * 4,
+  .priority = (osPriority_t) osPriorityAboveNormal,
 };
 /* Definitions for SensorEvents */
 osMessageQueueId_t SensorEventsHandle;
@@ -390,7 +390,7 @@ static void MX_I2C3_Init(void)
   hi2c3.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
   hi2c3.Init.OwnAddress2 = 0;
   hi2c3.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
-  hi2c3.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
+  hi2c3.Init.NoStretchMode = I2C_NOSTRETCH_ENABLE;
   if (HAL_I2C_Init(&hi2c3) != HAL_OK)
   {
     Error_Handler();

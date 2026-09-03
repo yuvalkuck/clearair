@@ -6,9 +6,8 @@
 #include "main.h"
 #include "event_message.h"
 #include "task_mics4514.h"
-
+static CommonMessage msg{};
 [[noreturn]] void SensorCO1NO2::taskLoop() const {
-    CommonMessage msg{};
     msg.id = MICS4514CO1NO2;
     while (1) {
         vTaskDelay(1);

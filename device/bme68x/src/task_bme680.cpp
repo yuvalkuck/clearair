@@ -77,7 +77,7 @@ bool SensorBme68x::configure(I2C_HandleTypeDef* hi2c) {
     return (rc == BSEC_OK);
 }
 
-
+static CommonMessage msg{};
 void SensorBme68x::readAndSendToQueue(const bsec_bme_settings_t& s, int64_t timestamp_ns) {
     METHODTRACE
     bme68x_data data;
@@ -118,7 +118,6 @@ void SensorBme68x::readAndSendToQueue(const bsec_bme_settings_t& s, int64_t time
     if (n_inputs == 0) return;
     if (bsec_do_steps(inputs, n_inputs, outputs, &n_outputs) != BSEC_OK) return;
 
-    CommonMessage msg{};
     msg.id = BME680;
     msg.timestamp_ms = getTimestampMs();
     auto& payload = msg.payload.bme680;
@@ -143,7 +142,7 @@ void SensorBme68x::readAndSendToQueue(const bsec_bme_settings_t& s, int64_t time
 }
 
 void SensorBme68x::taskLoop() {
-    METHODENTER
+    METHODTRACE
     for (;;) {
         int64_t timestamp_ns = getTimestampNs();
 

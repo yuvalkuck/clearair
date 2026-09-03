@@ -64,10 +64,9 @@ bool SensorParticle::configure(I2C_HandleTypeDef* hi2c) {
 //
 constexpr auto PARTICAL_CYCLE_TIME_MS = 60 * 1000;
 constexpr auto PARTICAL_ONERROR_CYCLE_MS = 10 * 1000;
-
+static CommonMessage msg{};
 void SensorParticle::taskLoop() {
     METHODTRACE
-    CommonMessage msg{};
     msg.id = SPS30Particle;
     auto& payload = msg.payload.particle;
 
