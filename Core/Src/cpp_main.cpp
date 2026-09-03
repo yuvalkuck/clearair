@@ -19,10 +19,10 @@ extern osThreadId_t particleTaskHandle;
 extern osThreadId_t o3TaskHandle;
 extern osThreadId_t fanCtrlTaskHandle;
 
-// SensorBme68x taskBme68x;
+SensorBme68x taskBme68x;
 SensorO3 taskSensorO3;
 SensorParticle taskParticle;
-// SensorCO1NO2 taskCO1NO2;
+SensorCO1NO2 taskCO1NO2;
 ControllerFanMotor taskFanMotor;
 
 constexpr auto LED_INDICATE_ERROR = 100;
@@ -43,24 +43,21 @@ extern "C" void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 
 extern "C" [[noreturn]] void appStartDefaultTask(void* argument) {
     METHODTRACE
-    if ( o3TaskHandle == NULL) {
-        METHODLOG(debug, "o3TaskHandle is NULL");
-    }
-    // taskBme68x.setup(bmeTaskHandle, SensorEventsHandle);
+    taskBme68x.setup(bmeTaskHandle, SensorEventsHandle);
     taskSensorO3.setup(o3TaskHandle, SensorEventsHandle);
     taskParticle.setup(particleTaskHandle, SensorEventsHandle);
-    //taskCO1NO2.setup(co1no2TaskHandle, SensorEventsHandle);
+    taskCO1NO2.setup(co1no2TaskHandle, SensorEventsHandle);
     taskFanMotor.setup(fanCtrlTaskHandle, SensorEventsHandle);
     //
     auto leep = LED_INDICATE_OK;
-    // auto rc = taskBme68x.configure(&hi2c3);
-    // if (!rc) {
-    //     leep = LED_INDICATE_ERROR;
-    //     METHODLOG(error, "taskBme68x configure failed")
-    // } else {
-    //     taskBme68x.resume();
-    // }
-    auto rc = taskSensorO3.configure();
+    auto rc = taskBme68x.configure(&hi2c3);
+    if (!rc) {
+        leep = LED_INDICATE_ERROR;
+        METHODLOG(error, "taskBme68x configure failed")
+    } else {
+        taskBme68x.resume();
+    }
+    rc = taskSensorO3.configure();
     if (!rc) {
         leep = LED_INDICATE_ERROR;
         METHODLOG(error, "taskSensorO3 configure failed")
