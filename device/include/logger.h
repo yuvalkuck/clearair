@@ -37,9 +37,11 @@ class MethodTracer {
 #define METHODTRACE MethodTracer __methodTracer(__PRETTY_FUNCTION__,sizeof(__PRETTY_FUNCTION__)-1);
 #define METHODLOG(lvl, str) __methodTracer.lvl(__LINE__, str);
 #define METHODLOGF(lvl, fmt_str, ...) { char traceBuffer[128]={0}; fmt::format_to_n(traceBuffer, sizeof(traceBuffer)-1,fmt_str,##__VA_ARGS__); __methodTracer.lvl(__LINE__, traceBuffer);}
+#define METHODLOGS(lvl, fmt_str, ...) { char traceBuffer[128]={0}; snprintf(traceBuffer, sizeof(traceBuffer)-1, fmt_str, ##__VA_ARGS__); __methodTracer.lvl(__LINE__, traceBuffer);}
 #else
 #define METHODLOG(lvl, str)
 #define METHODLOGF(lvl, fmt_str, ...)
+#define METHODLOGS(lvl, fmt_str, ...)
 #define METHODTRACE
 #endif
 #define LOGMSG printf(">>>:%s\r\n",__PRETTY_FUNCTION__);
