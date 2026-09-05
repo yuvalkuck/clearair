@@ -69,6 +69,8 @@ void Error_Handler(void);
 #define USART_RX_GPIO_Port GPIOA
 #define ZC_INPUT_Pin GPIO_PIN_6
 #define ZC_INPUT_GPIO_Port GPIOC
+#define DIMMER_LEVEL_Pin GPIO_PIN_7
+#define DIMMER_LEVEL_GPIO_Port GPIOC
 #define TMS_Pin GPIO_PIN_13
 #define TMS_GPIO_Port GPIOA
 #define TCK_Pin GPIO_PIN_14
