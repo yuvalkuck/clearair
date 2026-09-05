@@ -89,13 +89,6 @@ const osThreadAttr_t particleTask_attributes = {
   .stack_size = 512 * 4,
   .priority = (osPriority_t) osPriorityAboveNormal,
 };
-/* Definitions for fanCtrlTask */
-osThreadId_t fanCtrlTaskHandle;
-const osThreadAttr_t fanCtrlTask_attributes = {
-  .name = "fanCtrlTask",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityHigh,
-};
 /* Definitions for o3Task */
 osThreadId_t o3TaskHandle;
 const osThreadAttr_t o3Task_attributes = {
@@ -124,7 +117,6 @@ extern void bmeTaskHandler(void *argument);
 extern void mainSensorsMsgLoop(void *argument);
 extern void co1no2TaskHandler(void *argument);
 extern void particleTaskHandler(void *argument);
-extern void fanCtrlTaskHandler(void *argument);
 extern void o3TaskHandler(void *argument);
 
 /* USER CODE BEGIN PFP */
@@ -224,9 +216,6 @@ int main(void)
 
   /* creation of particleTask */
   particleTaskHandle = osThreadNew(particleTaskHandler, NULL, &particleTask_attributes);
-
-  /* creation of fanCtrlTask */
-  fanCtrlTaskHandle = osThreadNew(fanCtrlTaskHandler, NULL, &fanCtrlTask_attributes);
 
   /* creation of o3Task */
   o3TaskHandle = osThreadNew(o3TaskHandler, NULL, &o3Task_attributes);
@@ -415,7 +404,6 @@ static void MX_TIM3_Init(void)
 
   TIM_ClockConfigTypeDef sClockSourceConfig = {0};
   TIM_MasterConfigTypeDef sMasterConfig = {0};
-  TIM_OC_InitTypeDef sConfigOC = {0};
 
   /* USER CODE BEGIN TIM3_Init 1 */
 
@@ -435,28 +423,15 @@ static void MX_TIM3_Init(void)
   {
     Error_Handler();
   }
-  if (HAL_TIM_OC_Init(&htim3) != HAL_OK)
-  {
-    Error_Handler();
-  }
   sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
   if (HAL_TIMEx_MasterConfigSynchronization(&htim3, &sMasterConfig) != HAL_OK)
   {
     Error_Handler();
   }
-  sConfigOC.OCMode = TIM_OCMODE_TIMING;
-  sConfigOC.Pulse = 0;
-  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
-  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
-  if (HAL_TIM_OC_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_2) != HAL_OK)
-  {
-    Error_Handler();
-  }
   /* USER CODE BEGIN TIM3_Init 2 */
 
   /* USER CODE END TIM3_Init 2 */
-  HAL_TIM_MspPostInit(&htim3);
 
 }
 
@@ -510,11 +485,25 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOH_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
 
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(DIMMER_LEVEL_GPIO_Port, DIMMER_LEVEL_Pin, GPIO_PIN_RESET);
+
   /*Configure GPIO pin : ZC_INPUT_Pin */
   GPIO_InitStruct.Pin = ZC_INPUT_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(ZC_INPUT_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : DIMMER_LEVEL_Pin */
+  GPIO_InitStruct.Pin = DIMMER_LEVEL_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(DIMMER_LEVEL_GPIO_Port, &GPIO_InitStruct);
+
+  /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI9_5_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
 

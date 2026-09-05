@@ -51,8 +51,6 @@ extern "C" {
 
 /* USER CODE END EM */
 
-void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
-
 /* Exported functions prototypes ---------------------------------------------*/
 void Error_Handler(void);
 
@@ -69,6 +67,7 @@ void Error_Handler(void);
 #define USART_RX_GPIO_Port GPIOA
 #define ZC_INPUT_Pin GPIO_PIN_6
 #define ZC_INPUT_GPIO_Port GPIOC
+#define ZC_INPUT_EXTI_IRQn EXTI9_5_IRQn
 #define DIMMER_LEVEL_Pin GPIO_PIN_7
 #define DIMMER_LEVEL_GPIO_Port GPIOC
 #define TMS_Pin GPIO_PIN_13
