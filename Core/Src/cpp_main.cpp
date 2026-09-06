@@ -8,7 +8,6 @@
 #include "task_mics4514.h"
 #include "task_fanctrl.h"
 #include "cmsis_os.h"
-#include "collected_data.h"
 #include "logger.h"
 
 extern I2C_HandleTypeDef hi2c3;
@@ -58,8 +57,7 @@ extern "C" [[noreturn]] void appStartDefaultTask(void* argument) {
     if (!rc) {
         leep = LED_INDICATE_ERROR;
         METHODLOG(error, "taskParticle configure failed")
-    }
-    else {
+    } else {
         taskParticle.resume();
     }
     for (;;) {
@@ -91,7 +89,7 @@ extern "C" [[noreturn]] void mainSensorsMsgLoop(void* argument) {
                 case MICS4514CO1NO2: {
                     auto payload = msg.payload.co1_no2;
                 }
-                    break;
+                break;
                 default:
                     // WARNING
                     break;
@@ -102,7 +100,7 @@ extern "C" [[noreturn]] void mainSensorsMsgLoop(void* argument) {
 
 extern "C" [[noreturn]] void bmeTaskHandler(void* argument) {
     osThreadSuspend(osThreadGetId()); // suspend - will be release elsewhere
-    // taskBme68x.taskLoop();
+    taskBme68x.taskLoop();
 }
 
 extern "C" [[noreturn]] void particleTaskHandler(void* argument) {
@@ -112,7 +110,7 @@ extern "C" [[noreturn]] void particleTaskHandler(void* argument) {
 
 extern "C" [[noreturn]] void co1no2TaskHandler(void* argument) {
     osThreadSuspend(osThreadGetId()); // suspend - will be release elsewhere
-    // taskCO1NO2.taskLoop();
+    taskCO1NO2.taskLoop();
 }
 
 extern "C" [[noreturn]] void o3TaskHandler(void* argument) {

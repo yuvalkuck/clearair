@@ -66,35 +66,35 @@ osThreadId_t bmeTaskHandle;
 const osThreadAttr_t bmeTask_attributes = {
   .name = "bmeTask",
   .stack_size = 512 * 4,
-  .priority = (osPriority_t) osPriorityAboveNormal,
+  .priority = (osPriority_t) osPriorityNormal1,
 };
 /* Definitions for msgLoopTask */
 osThreadId_t msgLoopTaskHandle;
 const osThreadAttr_t msgLoopTask_attributes = {
   .name = "msgLoopTask",
   .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityAboveNormal,
+  .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for co1no2Task */
 osThreadId_t co1no2TaskHandle;
 const osThreadAttr_t co1no2Task_attributes = {
   .name = "co1no2Task",
   .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityAboveNormal,
+  .priority = (osPriority_t) osPriorityNormal1,
 };
 /* Definitions for particleTask */
 osThreadId_t particleTaskHandle;
 const osThreadAttr_t particleTask_attributes = {
   .name = "particleTask",
   .stack_size = 512 * 4,
-  .priority = (osPriority_t) osPriorityAboveNormal,
+  .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for o3Task */
 osThreadId_t o3TaskHandle;
 const osThreadAttr_t o3Task_attributes = {
   .name = "o3Task",
   .stack_size = 512 * 4,
-  .priority = (osPriority_t) osPriorityAboveNormal,
+  .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for SensorEvents */
 osMessageQueueId_t SensorEventsHandle;
