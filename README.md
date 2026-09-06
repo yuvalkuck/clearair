@@ -34,6 +34,7 @@ graph TD
 *   **External 5V Rail:** The STM32 Nucleo board and all high-draw sensor sub-components are powered by a dedicated, regulated external 5V supply line. The Nucleo power selection jumper (`JP5`) must be placed in the `E5V` configuration position.
 *   **Electrical Noise Isolation:** The internal 5V heating elements of the gas sensors are powered directly from the external 5V supply rail rather than drawing from the MCU. This layout keeps heavy electrical switching current ripples completely away from the sensitive STM32 analog circuitry.
 *   **Logic Interfacing:** The `I2C3` bus uses 4.7 kΩ pull-up resistors tied strictly to the Nucleo's 3.3V rail. High-voltage analog sensor outputs are routed through passive hardware voltage dividers to safely drop raw 5V signals under the 3.3V ADC limit.
+*   **I2C Level Translation:** A bidirectional 3.3V↔5V I2C level shifter bridges the Nucleo's 3.3V `I2C3` bus to a secondary **Arduino Micro** running on its native 5V logic domain, allowing both boards to share the same physical bus without over-driving the STM32's 3.3V-rated I2C lines.
 
 ---
 
@@ -68,6 +69,8 @@ graph TD
 | **HAL Timebase** | TIM6                  | Internal              | Dedicated strictly to standard HAL delay and timeout loops. |
 | **Debug & Telemetry** | USART2                | PA2 (TX), PA3 (RX)    | Asynchronous communication mapped to ST-LINK VCP. |
 | **Status Indicator** | GPIO Output           | PA5                   | Mapped to Nucleo User LED (`LD2`). |
+| **I2C Level Shifter** | I2C3 (Bridged)        | PA8 (SCL), PC9 (SDA)  | Bidirectional 3.3V↔5V translator bridging `I2C3` to the Arduino Micro's 5V I2C bus. |
+| **LED Indicator Array** | Arduino Micro (I2C Slave) | External 5V Domain | Drives up to 18 bi-color (red/green) LEDs, each switched by its own MOSFET, one per monitored peripheral sensor - green for nominal, red for fault. Offloads this from the STM32; receives status/command bytes over the level-shifted `I2C3` bus. |
 
 ---
 

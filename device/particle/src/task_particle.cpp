@@ -23,12 +23,11 @@ bool SensorParticle::configure(I2C_HandleTypeDef* hi2c) {
 #if defined(DEBUG)
     int8_t serial_number[32] = {0};
     int8_t product_type[8] = {0};
-    rc = sps30_read_serial_number(serial_number, 32);
+    rc = sps30_read_serial_number(serial_number, sizeof(serial_number));
     METHODLOGS(trace, "sps30_read_serial_number(): %p", serial_number);
-    rc = sps30_read_product_type(product_type, 8);
+    rc = sps30_read_product_type(product_type, sizeof(product_type));
     METHODLOGS(trace, "product_type: %p", product_type);
 #endif
-
     return (rc == 0);
 }
 

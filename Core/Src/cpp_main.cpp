@@ -49,6 +49,11 @@ extern "C" [[noreturn]] void appStartDefaultTask(void* argument) {
     } else {
         taskSensorO3.resume();
     }
+    rc = taskFanMotor.configure();
+    if (!rc) {
+        leep = LED_INDICATE_ERROR;
+        METHODLOG(error, "taskFanMotor configure failed")
+    }
     rc = taskParticle.configure(&hi2c3);
     if (!rc) {
         leep = LED_INDICATE_ERROR;
@@ -56,11 +61,6 @@ extern "C" [[noreturn]] void appStartDefaultTask(void* argument) {
     }
     else {
         taskParticle.resume();
-    }
-    rc = taskFanMotor.configure();
-    if (!rc) {
-        leep = LED_INDICATE_ERROR;
-        METHODLOG(error, "taskFanMotor configure failed")
     }
     for (;;) {
         BSP_LED_Toggle(LED2);
