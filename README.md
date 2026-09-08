@@ -1,12 +1,14 @@
-# CleanAir — Intelligent AC Vent Fan Controller
+# ClearAir — Intelligent AC Vent Fan Controller
 
-An industrial-grade, real-time environmental control and safety monitoring system running on the **STM32F446RE (Nucleo-64)** platform. The project is designed to capture ambient air particulates and track highly toxic electrode gases generated during industrial processes (such as welding, EDM, or plasma cutting) to dynamically regulate an AC ventilation fan using a solid-state TRIAC module.
+An industrial-grade, real-time environmental control and safety monitoring system running on the **STM32F4** platform. The project is designed to capture ambient air particulates and track highly toxic electrode gases generated during industrial processes (such as welding, EDM, or plasma cutting) to dynamically regulate an AC ventilation fan using a solid-state TRIAC module.
+
+> **Migration note:** This project is planned to migrate to **STM32G4** in a future revision.
 
 ---
 
 ## 🚀 System Architecture Overview
 
-To protect sensitive metal-oxide gas sensors from destructive metallic dust and electrode debris while keeping ambient tracking responsive, CleanAir uses a **dual-zone sampling topology**:
+To protect sensitive metal-oxide gas sensors from destructive metallic dust and electrode debris while keeping ambient tracking responsive, ClearAir uses a **dual-zone sampling topology**:
 
 ```mermaid
 graph TD
@@ -31,10 +33,10 @@ graph TD
 
 ## ⚡ Power & Logic Integration
 
-*   **External 5V Rail:** The STM32 Nucleo board and all high-draw sensor sub-components are powered by a dedicated, regulated external 5V supply line. The Nucleo power selection jumper (`JP5`) must be placed in the `E5V` configuration position.
+*   **External 5V Rail:** The STM32 board and all high-draw sensor sub-components are powered by a dedicated, regulated external 5V supply line.
 *   **Electrical Noise Isolation:** The internal 5V heating elements of the gas sensors are powered directly from the external 5V supply rail rather than drawing from the MCU. This layout keeps heavy electrical switching current ripples completely away from the sensitive STM32 analog circuitry.
-*   **Logic Interfacing:** The `I2C3` bus uses 4.7 kΩ pull-up resistors tied strictly to the Nucleo's 3.3V rail. High-voltage analog sensor outputs are routed through passive hardware voltage dividers to safely drop raw 5V signals under the 3.3V ADC limit.
-*   **I2C Level Translation:** A bidirectional 3.3V↔5V I2C level shifter bridges the Nucleo's 3.3V `I2C3` bus to a secondary **Arduino Micro** running on its native 5V logic domain, allowing both boards to share the same physical bus without over-driving the STM32's 3.3V-rated I2C lines.
+*   **Logic Interfacing:** The `I2C3` bus uses 4.7 kΩ pull-up resistors tied strictly to the STM32's 3.3V rail. High-voltage analog sensor outputs are routed through passive hardware voltage dividers to safely drop raw 5V signals under the 3.3V ADC limit.
+*   **I2C Level Translation (planned):** A bidirectional 3.3V↔5V I2C level shifter is planned to bridge the STM32's 3.3V `I2C3` bus to a secondary **Arduino Micro** (already in stock) running on its native 5V logic domain, allowing both boards to share the same physical bus without over-driving the STM32's 3.3V-rated I2C lines. The Arduino Micro would drive a planned visualization/alert stage — an LED array or 7-segment display plus a buzzer — for per-sensor status indication.
 
 ---
 
@@ -68,9 +70,9 @@ graph TD
 | **OS Kernel Clock** | SysTick               | Internal              | Dedicated exclusively to FreeRTOS Scheduler operations. |
 | **HAL Timebase** | TIM6                  | Internal              | Dedicated strictly to standard HAL delay and timeout loops. |
 | **Debug & Telemetry** | USART2                | PA2 (TX), PA3 (RX)    | Asynchronous communication mapped to ST-LINK VCP. |
-| **Status Indicator** | GPIO Output           | PA5                   | Mapped to Nucleo User LED (`LD2`). |
-| **I2C Level Shifter** | I2C3 (Bridged)        | PA8 (SCL), PC9 (SDA)  | Bidirectional 3.3V↔5V translator bridging `I2C3` to the Arduino Micro's 5V I2C bus. |
-| **LED Indicator Array** | Arduino Micro (I2C Slave) | External 5V Domain | Drives up to 18 bi-color (red/green) LEDs, each switched by its own MOSFET, one per monitored peripheral sensor - green for nominal, red for fault. Offloads this from the STM32; receives status/command bytes over the level-shifted `I2C3` bus. |
+| **Status Indicator** | GPIO Output           | PA5                   | Mapped to onboard status LED. |
+| **I2C Level Shifter (planned)** | I2C3 (Bridged)        | PA8 (SCL), PC9 (SDA)  | Bidirectional 3.3V↔5V translator bridging `I2C3` to the Arduino Micro's 5V I2C bus. |
+| **Visualization Controller (planned)** | Arduino Micro (I2C Slave) | External 5V Domain | Planned status/alert output stage using an existing Arduino Micro already in stock — driving an LED array or 7-segment display, plus a buzzer, for per-sensor nominal/fault indication. Offloads this from the STM32; would receive status/command bytes over the level-shifted `I2C3` bus. |
 
 ---
 
@@ -139,10 +141,9 @@ stateDiagram-v2
     
     state STATE_NORMAL {
         [*] --> WakeUp
-        WakeUp --> Lock_Mutex : 1.0s Frame Expiry
-        Lock_Mutex --> Copy_Data
-        Copy_Data --> Unlock_Mutex
-        Unlock_Mutex --> Calculate_Fan_Curves
+        WakeUp --> Receive_Queue : New Reading Posted
+        Receive_Queue --> Update_Latest
+        Update_Latest --> Calculate_Fan_Curves
         Calculate_Fan_Curves --> Check_Max_Speed : Find Maximum Target Speed (0-100%)
     }
     
@@ -181,7 +182,7 @@ stateDiagram-v2
 
 ---
 
-### Thread safe adyncronic flow
+### Message-queue asynchronous flow
 ```mermaid
 graph TD
     %% Asynchronous Inputs
@@ -192,16 +193,15 @@ graph TD
         T4[Task 4: MiCS4514 Dual Gas Analog]
     end
 
-    %% Shared Struct Protected by Mutex
-    subgraph Buffer [THREAD-SAFE REGISTRATION LAYER]
+    %% Central Message Queue
+    subgraph Buffer [FREERTOS MESSAGE QUEUE]
         direction TB
-        Mutex((xSensorMutex))
-        Struct[Shared Memory Block Structure]
+        Queue[[xSensorQueue]]
     end
 
     %% Sync / Control Layer
     subgraph Decision [PROCESSING & DECISION ENGINE]
-        T5[Task 5: Central Controller Wakes every 1.0s]
+        T5[Task 5: Central Controller — evaluates each reading on arrival]
         FanSpeed[Global Fan Speed Variable 0-100%]
         BuzzerPin[GPIO Pin Latch to 2N2222 Base]
     end
@@ -215,14 +215,13 @@ graph TD
     end
 
     %% Async Data flow
-    T1 -->|Writes every 1.0s| Mutex
-    T2 -->|Writes every 3.0s| Mutex
-    T3 -->|Writes every 20ms| Mutex
-    T4 -->|Writes every 20ms| Mutex
-    Mutex --- Struct
+    T1 -->|Posts reading every 1.0s| Queue
+    T2 -->|Posts reading every 3.0s| Queue
+    T3 -->|Posts reading every 20ms| Queue
+    T4 -->|Posts reading every 20ms| Queue
 
     %% Central Decision flow
-    Struct -->|Pulls Data Snapshot| T5
+    Queue -->|Receives Each Reading| T5
     T5 -->|Updates| FanSpeed
     T5 -->|Drives High on Stall| BuzzerPin
 
@@ -235,7 +234,7 @@ graph TD
 ## 📉 Compensation & Normalization Models
 
 *   **Pneumatic Lag Tracking:** Air taking a 3-meter path through a dense P100 filter introduces a noticeable physical delay. The control software channels open-air $SPS30$ data packets into an internal software ring buffer. This matches delayed chamber sensor gas metrics with historical particulate conditions.
-*   **Environmental Compensation:** Temperature, humidity, and barometric drops alter the baseline resistance ($R_0$) of metal-oxide sensors. CleanAir feeds live ambient calculation layers from the Bosch BSEC2 library into the conversion algorithms to scale raw sensor voltages ($V_{OUT}$ to PPM) relative to the physical conditions inside the chamber.
+*   **Environmental Compensation:** Temperature, humidity, and barometric drops alter the baseline resistance ($R_0$) of metal-oxide sensors. ClearAir feeds live ambient calculation layers from the Bosch BSEC2 library into the conversion algorithms to scale raw sensor voltages ($V_{OUT}$ to PPM) relative to the physical conditions inside the chamber.
 
 ---
 
