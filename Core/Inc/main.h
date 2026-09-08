@@ -61,15 +61,21 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define MQ131_READ_Pin GPIO_PIN_0
 #define MQ131_READ_GPIO_Port GPIOA
+#define MICS4514_CO_Pin GPIO_PIN_1
+#define MICS4514_CO_GPIO_Port GPIOA
 #define USART_TX_Pin GPIO_PIN_2
 #define USART_TX_GPIO_Port GPIOA
 #define USART_RX_Pin GPIO_PIN_3
 #define USART_RX_GPIO_Port GPIOA
+#define MICS4514_NO2_Pin GPIO_PIN_7
+#define MICS4514_NO2_GPIO_Port GPIOA
 #define ZC_INPUT_Pin GPIO_PIN_6
 #define ZC_INPUT_GPIO_Port GPIOC
 #define ZC_INPUT_EXTI_IRQn EXTI9_5_IRQn
 #define DIMMER_LEVEL_Pin GPIO_PIN_7
 #define DIMMER_LEVEL_GPIO_Port GPIOC
+#define MICS4514_PREHEAT_Pin GPIO_PIN_8
+#define MICS4514_PREHEAT_GPIO_Port GPIOC
 #define TMS_Pin GPIO_PIN_13
 #define TMS_GPIO_Port GPIOA
 #define TCK_Pin GPIO_PIN_14

@@ -486,7 +486,7 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOA_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(DIMMER_LEVEL_GPIO_Port, DIMMER_LEVEL_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOC, DIMMER_LEVEL_Pin|MICS4514_PREHEAT_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : ZC_INPUT_Pin */
   GPIO_InitStruct.Pin = ZC_INPUT_Pin;
@@ -494,12 +494,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(ZC_INPUT_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : DIMMER_LEVEL_Pin */
-  GPIO_InitStruct.Pin = DIMMER_LEVEL_Pin;
+  /*Configure GPIO pins : DIMMER_LEVEL_Pin MICS4514_PREHEAT_Pin */
+  GPIO_InitStruct.Pin = DIMMER_LEVEL_Pin|MICS4514_PREHEAT_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(DIMMER_LEVEL_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
   /* EXTI interrupt init*/
   HAL_NVIC_SetPriority(EXTI9_5_IRQn, 5, 0);
