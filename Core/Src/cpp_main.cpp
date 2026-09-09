@@ -53,6 +53,7 @@ extern "C" [[noreturn]] void appStartDefaultTask(void* argument) {
         leep = LED_INDICATE_ERROR;
         METHODLOG(error, "taskFanMotor configure failed")
     }
+    // Particle takes some time to configure
     rc = taskParticle.configure(&hi2c3);
     if (!rc) {
         leep = LED_INDICATE_ERROR;
