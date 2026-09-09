@@ -59,23 +59,23 @@ graph TD
 
 ## 🛠️ Hardware Peripheral Mapping
 
-| Subsystem Component | Peripheral Identifier     | Physical Hardware Pin | Hardware Mode & Execution Profile |
-| :--- |:--------------------------|:----------------------| :--- |
-| **SPS30 + BME680** | I2C3                      | PA8 (SCL), PC9 (SDA) | Standard Open-Drain. |
-| **MQ-131 Output** | ADC1_IN0                  | PA0                   | Single-Ended Analog Input (Requires External Divider). |
-| **MiCS-4514 (CO)** | ADC2_IN1                  | PA1                   | Single-Ended Analog Input ($V_{OUT1}$). |
-| **MiCS-4514 ($NO_2$)** | ADC2_IN7                  | PA7                   | Single-Ended Analog Input ($V_{OUT2}$). |
-| **MiCS-4514 (Preheat)** | GPIO Output               | PC8                   | Push-Pull digital output, driven HIGH during heater warm-up (not PWM). |
-| **RobotDyn ZC Input** | EXTI16                    | PC6                   | Digital Input, configured for falling-edge interrupts. |
-| **RobotDyn Gate Out** | GPIO Output               | PC7                   | Push-Pull, High-Speed Output driven by Timer ISR. |
-| **Phase-Delay Tracking** | TIM3                      | Internal              | One-Pulse Hardware Mode (Triggered by ZC Interrupt). |
-| **OS Kernel Clock** | SysTick                   | Internal              | Dedicated exclusively to FreeRTOS Scheduler operations. |
-| **HAL Timebase** | TIM6                      | Internal              | Dedicated strictly to standard HAL delay and timeout loops. |
-| **Debug & Telemetry** | USART2                    | PA2 (TX), PA3 (RX)    | Asynchronous communication mapped to ST-LINK VCP. |
-| **Status Indicator** | GPIO Output               | PA5                   | Mapped to onboard status LED. |
-| **Arduino Visualization Controller (future)** | USART3 (via 2N7000 level shifter) | PC10 (TX), PC11 (RX) | Future status output stage: an Arduino Nano (5V logic, already in stock) drives an LED array or 7-segment display for per-sensor nominal/fault indication, receiving status bytes over `USART3`; a pair of 2N7000 MOSFETs handle bidirectional 3.3V↔5V level shifting on the TX/RX lines. Uses `PC10`/`PC11` specifically to avoid the fried `I2C2` pin footprint (`PB10`/`PB11`). The safety-latch buzzer remains directly on the STM32, independent of the Arduino. |
-| **Manual Reset (external button)** | NRST | NRST (exposed on morpho header) | External hardware reset button wired directly to the STM32's `NRST` pin, in parallel with the onboard Nucleo reset button. True hardware system reset; no firmware or GPIO involvement. |
-| **Cold/Warm Boot Select (external button)** | GPIO Input (EXTI13) | PC13 | External momentary button wired to the already-allocated `PC13` (the Nucleo `B1 USER` button position). Pressing it writes the selected cold/warm mode to NVS/flash immediately; firmware reads the stored value at boot, not the button state itself. |
+| Subsystem Component | Peripheral Identifier             | Physical Hardware Pin           | Hardware Mode & Execution Profile |
+| :--- |:----------------------------------|:--------------------------------| :--- |
+| **SPS30 + BME680** | I2C3                              | PA8 (SCL), PC9 (SDA)            | Standard Open-Drain. |
+| **MQ-131 Output** | ADC1_IN0                          | PA0                             | Single-Ended Analog Input (Requires External Divider). |
+| **MiCS-4514 (CO)** | ADC2_IN1                          | PA1                             | Single-Ended Analog Input ($V_{OUT1}$). |
+| **MiCS-4514 ($NO_2$)** | ADC2_IN7                          | PA7                             | Single-Ended Analog Input ($V_{OUT2}$). |
+| **MiCS-4514 (Preheat)** | GPIO Output                       | PC8                             | Push-Pull digital output, driven HIGH during heater warm-up (not PWM). |
+| **RobotDyn ZC Input** | EXTI16                            | PC6                             | Digital Input, configured for falling-edge interrupts. |
+| **RobotDyn Gate Out** | GPIO Output                       | PC7                             | Push-Pull, High-Speed Output driven by Timer ISR. |
+| **Phase-Delay Tracking** | TIM3                              | Internal                        | One-Pulse Hardware Mode (Triggered by ZC Interrupt). |
+| **OS Kernel Clock** | SysTick                           | Internal                        | Dedicated exclusively to FreeRTOS Scheduler operations. |
+| **HAL Timebase** | TIM6                              | Internal                        | Dedicated strictly to standard HAL delay and timeout loops. |
+| **Debug & Telemetry** | USART2                            | PA2 (TX), PA3 (RX)              | Asynchronous communication mapped to ST-LINK VCP. |
+| **Status Indicator** | GPIO Output                       | PA5                             | Mapped to onboard status LED. |
+| **Arduino Visualization Controller (future)** | USART3 (via 2N7000 level shifter) | PC10 (TX), PC11 (RX)            | Future status output stage: an Arduino Nano (5V logic, already in stock) drives an LED array or 7-segment display for per-sensor nominal/fault indication, receiving status bytes over `USART3`; a pair of 2N7000 MOSFETs handle bidirectional 3.3V↔5V level shifting on the TX/RX lines. Uses `PC10`/`PC11` specifically to avoid the fried `I2C2` pin footprint (`PB10`/`PB11`). The safety-latch buzzer remains directly on the STM32, independent of the Arduino. |
+| **Manual Reset (external button)** | NRST                              | NRST (exposed on morpho header) | External hardware reset button wired directly to the STM32's `NRST` pin, in parallel with the onboard Nucleo reset button. True hardware system reset; no firmware or GPIO involvement. |
+| **Cold/Warm Boot Select (external button)** | GPIO Input                        | PC12                            | External momentary button wired to the already-allocated `PC13` (the Nucleo `B1 USER` button position). Pressing it writes the selected cold/warm mode to NVS/flash immediately; firmware reads the stored value at boot, not the button state itself. |
 
 ---
 

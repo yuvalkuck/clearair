@@ -80,6 +80,8 @@ void Error_Handler(void);
 #define TMS_GPIO_Port GPIOA
 #define TCK_Pin GPIO_PIN_14
 #define TCK_GPIO_Port GPIOA
+#define BOOT_TY_SELECT_Pin GPIO_PIN_12
+#define BOOT_TY_SELECT_GPIO_Port GPIOC
 
 /* USER CODE BEGIN Private defines */
 #define DETECTION_SLEEP_LOOP_LIMIT 50000 // 5sec of sleep
