@@ -73,14 +73,14 @@ const osThreadAttr_t bmeTask_attributes = {
 osThreadId_t msgLoopTaskHandle;
 const osThreadAttr_t msgLoopTask_attributes = {
   .name = "msgLoopTask",
-  .stack_size = 128 * 4,
+  .stack_size = 256 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for co1no2Task */
 osThreadId_t co1no2TaskHandle;
 const osThreadAttr_t co1no2Task_attributes = {
   .name = "co1no2Task",
-  .stack_size = 128 * 4,
+  .stack_size = 512 * 4,
   .priority = (osPriority_t) osPriorityNormal1,
 };
 /* Definitions for particleTask */
