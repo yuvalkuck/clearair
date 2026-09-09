@@ -58,21 +58,21 @@ graph TD
 
 ## 🛠️ Hardware Peripheral Mapping
 
-| Subsystem Component | Peripheral Identifier | Physical Hardware Pin | Hardware Mode & Execution Profile |
-| :--- |:----------------------|:----------------------| :--- |
-| **SPS30 + BME680** | I2C3                  | PA8 (SCL), PC9 (SDA) | Standard Open-Drain. |
-| **MQ-131 Output** | ADC1_IN0              | PA0                   | Single-Ended Analog Input (Requires External Divider). |
-| **MiCS-4514 (CO)** | ADC1_IN1              | PA1                   | Single-Ended Analog Input ($V_{OUT1}$). |
-| **MiCS-4514 ($NO_2$)** | ADC1_IN7              | PA7                   | Single-Ended Analog Input ($V_{OUT2}$). |
-| **MiCS-4514 (Preheat)** | GPIO Output           | PC8                   | Push-Pull digital output, driven HIGH during heater warm-up (not PWM). |
-| **RobotDyn ZC Input** | EXTI16                | PC6                   | Digital Input, configured for falling-edge interrupts. |
-| **RobotDyn Gate Out** | GPIO Output           | PC7                   | Push-Pull, High-Speed Output driven by Timer ISR. |
-| **Phase-Delay Tracking** | TIM3                  | Internal              | One-Pulse Hardware Mode (Triggered by ZC Interrupt). |
-| **OS Kernel Clock** | SysTick               | Internal              | Dedicated exclusively to FreeRTOS Scheduler operations. |
-| **HAL Timebase** | TIM6                  | Internal              | Dedicated strictly to standard HAL delay and timeout loops. |
-| **Debug & Telemetry** | USART2                | PA2 (TX), PA3 (RX)    | Asynchronous communication mapped to ST-LINK VCP. |
-| **Status Indicator** | GPIO Output           | PA5                   | Mapped to onboard status LED. |
-| **I2C Level Shifter (planned)** | I2C3 (Bridged)        | PA8 (SCL), PC9 (SDA)  | Bidirectional 3.3V↔5V translator bridging `I2C3` to the Arduino Micro's 5V I2C bus. |
+| Subsystem Component | Peripheral Identifier     | Physical Hardware Pin | Hardware Mode & Execution Profile |
+| :--- |:--------------------------|:----------------------| :--- |
+| **SPS30 + BME680** | I2C3                      | PA8 (SCL), PC9 (SDA) | Standard Open-Drain. |
+| **MQ-131 Output** | ADC1_IN0                  | PA0                   | Single-Ended Analog Input (Requires External Divider). |
+| **MiCS-4514 (CO)** | ADC2_IN1                  | PA1                   | Single-Ended Analog Input ($V_{OUT1}$). |
+| **MiCS-4514 ($NO_2$)** | ADC2_IN7                  | PA7                   | Single-Ended Analog Input ($V_{OUT2}$). |
+| **MiCS-4514 (Preheat)** | GPIO Output               | PC8                   | Push-Pull digital output, driven HIGH during heater warm-up (not PWM). |
+| **RobotDyn ZC Input** | EXTI16                    | PC6                   | Digital Input, configured for falling-edge interrupts. |
+| **RobotDyn Gate Out** | GPIO Output               | PC7                   | Push-Pull, High-Speed Output driven by Timer ISR. |
+| **Phase-Delay Tracking** | TIM3                      | Internal              | One-Pulse Hardware Mode (Triggered by ZC Interrupt). |
+| **OS Kernel Clock** | SysTick                   | Internal              | Dedicated exclusively to FreeRTOS Scheduler operations. |
+| **HAL Timebase** | TIM6                      | Internal              | Dedicated strictly to standard HAL delay and timeout loops. |
+| **Debug & Telemetry** | USART2                    | PA2 (TX), PA3 (RX)    | Asynchronous communication mapped to ST-LINK VCP. |
+| **Status Indicator** | GPIO Output               | PA5                   | Mapped to onboard status LED. |
+| **I2C Level Shifter (planned)** | I2C3 (Bridged)            | PA8 (SCL), PC9 (SDA)  | Bidirectional 3.3V↔5V translator bridging `I2C3` to the Arduino Micro's 5V I2C bus. |
 | **Visualization Controller (planned)** | Arduino Micro (I2C Slave) | External 5V Domain | Planned status/alert output stage using an existing Arduino Micro already in stock — driving an LED array or 7-segment display, plus a buzzer, for per-sensor nominal/fault indication. Offloads this from the STM32; would receive status/command bytes over the level-shifted `I2C3` bus. |
 
 ---
