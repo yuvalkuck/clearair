@@ -29,6 +29,7 @@ void SensorCO1NO2::configure() {
     double voltage, Rs;
 
     while (1) {
+        auto startTM = getTimestampMs();
         HAL_ADC_Start(&hadc2);
         auto rc = HAL_ADC_PollForConversion(&hadc2, 50);
         if (rc == HAL_OK) {
@@ -56,6 +57,6 @@ void SensorCO1NO2::configure() {
             METHODLOG(warn, "ADC2 timeout");
         }
         HAL_ADC_Stop(&hadc2);
-        vTaskDelay(30000);
+        boundedDelay(getTimestampMs() - startTM);
     }
 }

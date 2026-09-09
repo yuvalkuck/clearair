@@ -48,6 +48,7 @@ void SensorParticle::taskLoop() {
     uint16_t data_ready_flag = 0;
     float unusedRead[7];
     for (;;) {
+        auto startTM = getTimestampMs();
         rc = sps30_read_data_ready_flag(&data_ready_flag);
         if (rc != 0) {
             printf("error executing read_data_ready_flag(): %i\n", rc);
@@ -68,6 +69,6 @@ void SensorParticle::taskLoop() {
         }
         msg.timestamp_ms = getTimestampMs();
         xQueueSend(msgQueue_, &msg, pdMS_TO_TICKS(5));
-        vTaskDelay(pdMS_TO_TICKS(PARTICAL_CYCLE_TIME_MS));
+        boundedDelay(getTimestampMs() - startTM);
     }
 }

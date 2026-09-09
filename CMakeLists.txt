@@ -64,6 +64,7 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user sources here
         Core/Src/cpp_main.cpp
+        Core/Src/base_device_task.cpp
 )
 
 # Add include paths
