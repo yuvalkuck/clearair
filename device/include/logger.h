@@ -28,7 +28,7 @@ class MethodTracer {
 
     void fatal(int line, const char* str) { logmsg_("Fatal", line, str); }
     void error(int line, const char* str) { logmsg_("Error", line, str); }
-    void debug(int line, const char* str) { logmsg_("Debugr", line, str); }
+    void debug(int line, const char* str) { logmsg_("Debug", line, str); }
     void trace(int line, const char* str) { logmsg_("Trace", line, str); }
     void warn(int line, const char* str) { logmsg_("Warning", line, str); }
     void info(int line, const char* str) { logmsg_("Info", line, str); }
