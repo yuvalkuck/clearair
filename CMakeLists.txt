@@ -51,6 +51,7 @@ ENDIF (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
 # Add STM32CubeMX generated sources
 add_subdirectory(cmake/stm32cubemx)
 add_subdirectory(cmake/stm32bsec2bme)
+add_subdirectory(cmake/stm32sps30)
 
 # Link directories setup
 target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
