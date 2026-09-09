@@ -17,12 +17,15 @@
 extern ADC_HandleTypeDef hadc2;
 static CommonMessage msg{};
 // reference taken from: https://github.com/paulopereira98/mics4514-stm32-driver
-[[noreturn]] void SensorCO1NO2::taskLoop() const {
+void SensorCO1NO2::configure() {
     METHODTRACE
-    msg.id = MICS4514CO1NO2;
     HAL_GPIO_WritePin(MICS4514_PREHEAT_GPIO_Port, MICS4514_PREHEAT_Pin, GPIO_PIN_SET);
     HAL_Delay(MICS4514_NOX_PREHEAT * 1000);
     HAL_GPIO_WritePin(MICS4514_PREHEAT_GPIO_Port, MICS4514_PREHEAT_Pin, GPIO_PIN_RESET);
+}
+[[noreturn]] void SensorCO1NO2::taskLoop() const {
+    METHODTRACE
+    msg.id = MICS4514CO1NO2;
     double voltage, Rs;
 
     while (1) {

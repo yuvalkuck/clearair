@@ -8,6 +8,7 @@
 class SensorCO1NO2 : public BaseDeviceTask {
 public:
     SensorCO1NO2() = default;
+    void configure();
     [[noreturn]] void taskLoop() const;
 
 };
