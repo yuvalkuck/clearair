@@ -52,6 +52,7 @@ ENDIF (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
 add_subdirectory(cmake/stm32cubemx)
 add_subdirectory(cmake/stm32bsec2bme)
 add_subdirectory(cmake/stm32sps30)
+
 # Link directories setup
 target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined library search paths
@@ -63,6 +64,7 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user sources here
         Core/Src/cpp_main.cpp
+        Core/Src/base_device_task.cpp
 )
 
 # Add include paths

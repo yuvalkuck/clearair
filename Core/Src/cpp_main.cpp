@@ -22,6 +22,14 @@ SensorO3 taskSensorO3;
 SensorParticle taskParticle;
 SensorCO1NO2 taskCO1NO2;
 ControllerFanMotor taskFanMotor;
+enum ElementReady {
+    Invalid = 0x00,
+    BME = 0x01,
+    O3 = 0x02,
+    CO = 0x04,
+    Particle = 0x08,
+    Fan = 0x10,
+};
 
 constexpr auto LED_INDICATE_ERROR = 100;
 constexpr auto LED_INDICATE_OK = 1000;
@@ -33,33 +41,46 @@ extern "C" [[noreturn]] void appStartDefaultTask(void* argument) {
     taskParticle.setup(particleTaskHandle, SensorEventsHandle);
     taskCO1NO2.setup(co1no2TaskHandle, SensorEventsHandle);
     //
+    uint8_t elementReady = ElementReady::Invalid;
     auto leep = LED_INDICATE_OK;
     auto rc = taskBme68x.configure(&hi2c3);
     if (!rc) {
         leep = LED_INDICATE_ERROR;
         METHODLOG(error, "taskBme68x configure failed")
     } else {
-        taskBme68x.resume();
+        elementReady |= ElementReady::BME;
     }
     rc = taskSensorO3.configure();
     if (!rc) {
         leep = LED_INDICATE_ERROR;
         METHODLOG(error, "taskSensorO3 configure failed")
     } else {
-        taskSensorO3.resume();
+        elementReady |= ElementReady::O3;
     }
     rc = taskFanMotor.configure();
     if (!rc) {
         leep = LED_INDICATE_ERROR;
         METHODLOG(error, "taskFanMotor configure failed")
+    } else {
+        elementReady |= ElementReady::Fan;
     }
+    elementReady |= ElementReady::CO;
+    taskCO1NO2.configure();
+    // Particle takes some time to configure
     rc = taskParticle.configure(&hi2c3);
     if (!rc) {
         leep = LED_INDICATE_ERROR;
         METHODLOG(error, "taskParticle configure failed")
     } else {
-        taskParticle.resume();
+        elementReady |= ElementReady::Particle;
     }
+    //////////////////
+    METHODLOG(info, "Resume available tasks");
+    if ( elementReady & ElementReady::BME) {taskBme68x.resume();}
+    if ( elementReady & ElementReady::O3) {taskSensorO3.resume();}
+    if ( elementReady & ElementReady::CO) {taskCO1NO2.resume();}
+    if ( elementReady & ElementReady::Particle) {taskParticle.resume();}
+    METHODLOG(info, "End startup");
     for (;;) {
         BSP_LED_Toggle(LED2);
         vTaskDelay(pdMS_TO_TICKS(leep));
@@ -75,23 +96,27 @@ extern "C" [[noreturn]] void mainSensorsMsgLoop(void* argument) {
             switch (msg.id) {
                 case BME680: {
                     auto payload = msg.payload.bme680;
+                    METHODLOGF(debug, "bme680: Temp:{}, Humid:{}, AirQ:{}", payload.temperature, payload.humidity, payload.indoorAirQualityIndex);
                 }
                 break;
                 case MQ131CO3: {
                     auto payload = msg.payload.uiValue;
+                    METHODLOGF(debug, "MQ131: CO3:{}", payload.value);
                 }
 
                 break;
                 case SPS30Particle: {
                     auto payload = msg.payload.particle;
+                    METHODLOGF(debug, "SPS30: 2p5:{}, 10p0:{}, tipical:{}", payload.mc_2p5,payload.mc_10p0, payload.tps);
                 }
                 break;
                 case MICS4514CO1NO2: {
                     auto payload = msg.payload.co1_no2;
+                    METHODLOGF(debug, "MiCS: co1:{} no2:{}", payload.co1,payload.no2);
                 }
                 break;
                 default:
-                    // WARNING
+                    METHODLOG(warn, "unrecognize message type");
                     break;
             }
         }

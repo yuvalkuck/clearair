@@ -36,7 +36,8 @@ graph TD
 *   **External 5V Rail:** The STM32 board and all high-draw sensor sub-components are powered by a dedicated, regulated external 5V supply line.
 *   **Electrical Noise Isolation:** The internal 5V heating elements of the gas sensors are powered directly from the external 5V supply rail rather than drawing from the MCU. This layout keeps heavy electrical switching current ripples completely away from the sensitive STM32 analog circuitry.
 *   **Logic Interfacing:** The `I2C3` bus uses 4.7 kΩ pull-up resistors tied strictly to the STM32's 3.3V rail. High-voltage analog sensor outputs are routed through passive hardware voltage dividers to safely drop raw 5V signals under the 3.3V ADC limit.
-*   **I2C Level Translation (planned):** A bidirectional 3.3V↔5V I2C level shifter is planned to bridge the STM32's 3.3V `I2C3` bus to a secondary **Arduino Micro** (already in stock) running on its native 5V logic domain, allowing both boards to share the same physical bus without over-driving the STM32's 3.3V-rated I2C lines. The Arduino Micro would drive a planned visualization/alert stage — an LED array or 7-segment display plus a buzzer — for per-sensor status indication.
+*   **Board Damage Note:** On this specific STM32F446RE board, the `I2C1` and `I2C2` peripherals and their associated GPIO pins are physically damaged ("fried") and unusable. `I2C3` (PA8/PC9) remains the only viable I2C peripheral, and any new pin assignment (e.g. the USART3 link below) must avoid the `I2C1`/`I2C2` pin footprints — including `PB10`/`PB11`, which double as `I2C2` SCL/SDA.
+*   **USART3 Link to Arduino (future):** A dedicated **USART3** connection will eventually bridge the STM32 to a secondary **Arduino Nano** (already in stock), running on its native 5V logic domain — kept separate from the sensor `I2C3` bus. A pair of **2N7000** MOSFETs will handle bidirectional 3.3V↔5V level shifting on the TX/RX lines between the STM32's 3.3V USART3 pins and the Arduino's 5V UART pins. The Arduino Nano will drive a future visualization stage — an LED array or 7-segment display — for per-sensor status indication, receiving status bytes over this serial link. The safety-latch buzzer stays wired directly to the STM32 (see Safety Core & Fail-Safes) so it keeps working even if the Arduino is unreachable or dead.
 
 ---
 
@@ -58,22 +59,23 @@ graph TD
 
 ## 🛠️ Hardware Peripheral Mapping
 
-| Subsystem Component | Peripheral Identifier | Physical Hardware Pin | Hardware Mode & Execution Profile |
-| :--- |:----------------------|:----------------------| :--- |
-| **SPS30 + BME680** | I2C3                  | PA8 (SCL), PC9 (SDA) | Standard Open-Drain. |
-| **MQ-131 Output** | ADC1_IN0              | PA0                   | Single-Ended Analog Input (Requires External Divider). |
-| **MiCS-4514 (CO)** | ADC1_IN1              | PA1                   | Single-Ended Analog Input ($V_{OUT1}$). |
-| **MiCS-4514 ($NO_2$)** | ADC1_IN7              | PA7                   | Single-Ended Analog Input ($V_{OUT2}$). |
-| **MiCS-4514 (Preheat)** | GPIO Output           | PC8                   | Push-Pull digital output, driven HIGH during heater warm-up (not PWM). |
-| **RobotDyn ZC Input** | EXTI16                | PC6                   | Digital Input, configured for falling-edge interrupts. |
-| **RobotDyn Gate Out** | GPIO Output           | PC7                   | Push-Pull, High-Speed Output driven by Timer ISR. |
-| **Phase-Delay Tracking** | TIM3                  | Internal              | One-Pulse Hardware Mode (Triggered by ZC Interrupt). |
-| **OS Kernel Clock** | SysTick               | Internal              | Dedicated exclusively to FreeRTOS Scheduler operations. |
-| **HAL Timebase** | TIM6                  | Internal              | Dedicated strictly to standard HAL delay and timeout loops. |
-| **Debug & Telemetry** | USART2                | PA2 (TX), PA3 (RX)    | Asynchronous communication mapped to ST-LINK VCP. |
-| **Status Indicator** | GPIO Output           | PA5                   | Mapped to onboard status LED. |
-| **I2C Level Shifter (planned)** | I2C3 (Bridged)        | PA8 (SCL), PC9 (SDA)  | Bidirectional 3.3V↔5V translator bridging `I2C3` to the Arduino Micro's 5V I2C bus. |
-| **Visualization Controller (planned)** | Arduino Micro (I2C Slave) | External 5V Domain | Planned status/alert output stage using an existing Arduino Micro already in stock — driving an LED array or 7-segment display, plus a buzzer, for per-sensor nominal/fault indication. Offloads this from the STM32; would receive status/command bytes over the level-shifted `I2C3` bus. |
+| Subsystem Component | Peripheral Identifier             | Physical Hardware Pin           | Hardware Mode & Execution Profile |
+| :--- |:----------------------------------|:--------------------------------| :--- |
+| **SPS30 + BME680** | I2C3                              | PA8 (SCL), PC9 (SDA)            | Standard Open-Drain. |
+| **MQ-131 Output** | ADC1_IN0                          | PA0                             | Single-Ended Analog Input (Requires External Divider). |
+| **MiCS-4514 (CO)** | ADC2_IN1                          | PA1                             | Single-Ended Analog Input ($V_{OUT1}$). |
+| **MiCS-4514 ($NO_2$)** | ADC2_IN7                          | PA7                             | Single-Ended Analog Input ($V_{OUT2}$). |
+| **MiCS-4514 (Preheat)** | GPIO Output                       | PC8                             | Push-Pull digital output, driven HIGH during heater warm-up (not PWM). |
+| **RobotDyn ZC Input** | EXTI16                            | PC6                             | Digital Input, configured for falling-edge interrupts. |
+| **RobotDyn Gate Out** | GPIO Output                       | PC7                             | Push-Pull, High-Speed Output driven by Timer ISR. |
+| **Phase-Delay Tracking** | TIM3                              | Internal                        | One-Pulse Hardware Mode (Triggered by ZC Interrupt). |
+| **OS Kernel Clock** | SysTick                           | Internal                        | Dedicated exclusively to FreeRTOS Scheduler operations. |
+| **HAL Timebase** | TIM6                              | Internal                        | Dedicated strictly to standard HAL delay and timeout loops. |
+| **Debug & Telemetry** | USART2                            | PA2 (TX), PA3 (RX)              | Asynchronous communication mapped to ST-LINK VCP. |
+| **Status Indicator** | GPIO Output                       | PA5                             | Mapped to onboard status LED. |
+| **Arduino Visualization Controller (future)** | USART3 (via 2N7000 level shifter) | PC10 (TX), PC11 (RX)            | Future status output stage: an Arduino Nano (5V logic, already in stock) drives an LED array or 7-segment display for per-sensor nominal/fault indication, receiving status bytes over `USART3`; a pair of 2N7000 MOSFETs handle bidirectional 3.3V↔5V level shifting on the TX/RX lines. Uses `PC10`/`PC11` specifically to avoid the fried `I2C2` pin footprint (`PB10`/`PB11`). The safety-latch buzzer remains directly on the STM32, independent of the Arduino. |
+| **Manual Reset (external button)** | NRST                              | NRST (exposed on morpho header) | External hardware reset button wired directly to the STM32's `NRST` pin, in parallel with the onboard Nucleo reset button. True hardware system reset; no firmware or GPIO involvement. |
+| **Cold/Warm Boot Select (external button)** | GPIO Input                        | PC12                            | External momentary button wired to the already-allocated `PC13` (the Nucleo `B1 USER` button position). Pressing it writes the selected cold/warm mode to NVS/flash immediately; firmware reads the stored value at boot, not the button state itself. |
 
 ---
 
@@ -96,7 +98,7 @@ graph TD
         LDO_33[3.3V LDO]
         StepUp_12[5V-to-12V Step-Up]
         Buzzer_12[12V BUZZER]
-        Trans_2N2222[NPN 2N2222 Transistor]
+        Trans_2N2222[NPN 2N2222A Transistor]
         GND[System GND]
         
         %% Microcontroller Internal Modules
@@ -117,6 +119,18 @@ graph TD
         TRIAC_Dim[Isolated TRIAC Dimmer]
     end
 
+    %% Manual Controls
+    Reset_Btn[External Reset Button]
+    BootSel_Btn[External Boot-Select Button]
+
+    %% Future Visualization Stage
+    subgraph VIZ [ARDUINO VISUALIZATION - FUTURE]
+        Level_Shift[2N7000 Level Shifter]
+        Arduino_Nano[Arduino Nano]
+        LED_Array[LED Array / 7-Seg Display]
+        BootMode_LEDs[2x Boot Mode LEDs]
+    end
+
     %% Power Routing Connections
     AC_Mains -->|Mains Feed| ZC_Circ
     AC_Mains -->|Mains Feed| TRIAC_Dim
@@ -134,6 +148,14 @@ graph TD
     T5 -->|GPIO Output| Trans_2N2222
     Buzzer_12 -->|Collector| Trans_2N2222
     Trans_2N2222 -->|Emitter| GND
+
+    T5 -->|USART3 TX/RX, future| Level_Shift
+    Level_Shift -->|3.3V<->5V| Arduino_Nano
+    Arduino_Nano -->|Drives| LED_Array
+    Arduino_Nano -->|Drives, boot mode sent over USART3| BootMode_LEDs
+
+    Reset_Btn -->|NRST| STM32
+    BootSel_Btn -->|PC13 EXTI, writes mode to NVS on press| STM32
 ```
 ### Central Safety Loop State Machine
 ```mermaid
@@ -174,6 +196,8 @@ stateDiagram-v2
 
 ```
 ### Execution Strategy
+*   **Boot Mode Selection:** The `PC13` boot-select button does not need to be held at boot. Pressing it (via `EXTI13`) writes the selected mode to a dedicated NVS/flash sector immediately, at any time. Before any sensor `configure()` call runs, firmware reads that stored value: by default (no boot mode ever set, or last set to warm) it performs a fast warm boot — skipping slow calibration/stabilization and reusing the saved BSEC2 state (see Non-Volatile Baseline Recovery); if the stored mode is cold, a full cold-boot init sequence runs instead. The selected mode is then sent to the Arduino Nano over the (future) `USART3` link, which lights one of two indicator LEDs to reflect the choice — the LEDs are driven by the Arduino, not directly by the STM32.
+*   **Aggregate Update Cadence:** Individual sensor tasks post to the queue at their own native rate (`SPS30` every 1.0s, `BME680` every 3.0s, `MQ131`/`MiCS-4514` every 20ms), but the system as a whole pushes an updated aggregate `CollectedAirData` snapshot roughly every ~5 seconds for downstream consumers (telemetry, and the future Arduino visualization stage).
 *   **Low-Overhead Data Capture:** `ADC1` runs continuously in multi-channel Scan Mode handled via DMA. It updates a local 3-element array in RAM with fresh voltages from the `MQ131` and `MiCS-4514` sensors without generating any CPU overhead.
 *   **AC Phase Control Loop:**
     1. The AC power wave crosses its zero-voltage baseline, instantly pulling the RobotDyn Zero-Cross input pin (`PA10`) low.
@@ -204,7 +228,8 @@ graph TD
     subgraph Decision [PROCESSING & DECISION ENGINE]
         T5[Task 5: Central Controller — evaluates each reading on arrival]
         FanSpeed[Global Fan Speed Variable 0-100%]
-        BuzzerPin[GPIO Pin Latch to 2N2222 Base]
+        BuzzerPin[GPIO Pin Latch to 2N2222A Base]
+        USART3_Out[USART3 TX to Arduino Nano, future]
     end
 
     %% Hardware Real-Time Layer
@@ -225,6 +250,7 @@ graph TD
     Queue -->|Receives Each Reading| T5
     T5 -->|Updates| FanSpeed
     T5 -->|Drives High on Stall| BuzzerPin
+    T5 -->|Sends status bytes, future| USART3_Out
 
     %% Precise Timing Hardware Loop
     ZC_Pulse --> EXTI_ISR

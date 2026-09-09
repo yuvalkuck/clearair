@@ -28,9 +28,10 @@ class MethodTracer {
 
     void fatal(int line, const char* str) { logmsg_("Fatal", line, str); }
     void error(int line, const char* str) { logmsg_("Error", line, str); }
-    void debug(int line, const char* str) { logmsg_("Debugr", line, str); }
+    void debug(int line, const char* str) { logmsg_("Debug", line, str); }
     void trace(int line, const char* str) { logmsg_("Trace", line, str); }
     void warn(int line, const char* str) { logmsg_("Warning", line, str); }
+    void info(int line, const char* str) { logmsg_("Info", line, str); }
 };
 
 #include "fmt/base.h"
@@ -38,11 +39,13 @@ class MethodTracer {
 #define METHODLOG(lvl, str) __methodTracer.lvl(__LINE__, str);
 #define METHODLOGF(lvl, fmt_str, ...) { char traceBuffer[128]={0}; fmt::format_to_n(traceBuffer, sizeof(traceBuffer)-1,fmt_str,##__VA_ARGS__); __methodTracer.lvl(__LINE__, traceBuffer);}
 #define METHODLOGS(lvl, fmt_str, ...) { char traceBuffer[128]={0}; snprintf(traceBuffer, sizeof(traceBuffer)-1, fmt_str, ##__VA_ARGS__); __methodTracer.lvl(__LINE__, traceBuffer);}
+#define MESSAGELOG(str, ...) printf(str, ##__VA_ARGS__);
 #else
+#define METHODTRACE
 #define METHODLOG(lvl, str)
 #define METHODLOGF(lvl, fmt_str, ...)
 #define METHODLOGS(lvl, fmt_str, ...)
-#define METHODTRACE
+#define MESSAGELOG(str, ...)
 #endif
 #define LOGMSG printf(">>>:%s\r\n",__PRETTY_FUNCTION__);
 #endif //CLEARAIR_LOGGER_H

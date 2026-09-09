@@ -163,8 +163,7 @@ void SensorBme68x::taskLoop() {
             readAndSendToQueue(bme_settings, timestamp_ns);
         }
 
-        int64_t next_call_ns = bme_settings.next_call - timestamp_ns;
-        uint32_t delay_ms = (next_call_ns > 0) ? (uint32_t)(next_call_ns / 1000000) : 1;
-        vTaskDelay(pdMS_TO_TICKS(delay_ms));
+        int64_t next_call_ns = bme_settings.next_call - getTimestampNs();
+        boundedDelay((next_call_ns > 0) ? (uint32_t)(next_call_ns / 1000000) : 1);
     }
 }
