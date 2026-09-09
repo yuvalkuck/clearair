@@ -33,7 +33,6 @@ void SensorCO1NO2::configure() {
         auto rc = HAL_ADC_PollForConversion(&hadc2, 50);
         if (rc == HAL_OK) {
             auto adc_value = HAL_ADC_GetValue(&hadc2);
-            HAL_ADC_Stop(&hadc2);
             if (adc_value) {
                 // NOX
                 voltage = (3.3 * adc_value) / 4096;
@@ -48,11 +47,15 @@ void SensorCO1NO2::configure() {
                 //calculate gas concentration
                 // send message
                 msg.timestamp_ms = getTimestampMs();
-                xQueueSend(msgQueue_, &msg, pdMS_TO_TICKS(5));
+                auto qrc = xQueueSend(msgQueue_, &msg, pdMS_TO_TICKS(10));
+                if ( qrc != pdPASS ) {
+                    METHODLOG(error, "failed to send message to queue");
+                }
             }
         } else {
             METHODLOG(warn, "ADC2 timeout");
         }
+        HAL_ADC_Stop(&hadc2);
         vTaskDelay(30000);
     }
 }
