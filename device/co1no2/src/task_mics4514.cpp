@@ -16,7 +16,7 @@
 
 extern ADC_HandleTypeDef hadc2;
 static CommonMessage msg{};
-
+// reference taken from: https://github.com/paulopereira98/mics4514-stm32-driver
 [[noreturn]] void SensorCO1NO2::taskLoop() const {
     METHODTRACE
     msg.id = MICS4514CO1NO2;
