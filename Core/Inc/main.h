@@ -82,7 +82,7 @@ void Error_Handler(void);
 #define TCK_GPIO_Port GPIOA
 
 /* USER CODE BEGIN Private defines */
-
+#define DETECTION_SLEEP_LOOP_LIMIT 50000 // 5sec of sleep
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

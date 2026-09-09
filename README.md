@@ -197,6 +197,7 @@ stateDiagram-v2
 ```
 ### Execution Strategy
 *   **Boot Mode Selection:** The `PC13` boot-select button does not need to be held at boot. Pressing it (via `EXTI13`) writes the selected mode to a dedicated NVS/flash sector immediately, at any time. Before any sensor `configure()` call runs, firmware reads that stored value: by default (no boot mode ever set, or last set to warm) it performs a fast warm boot — skipping slow calibration/stabilization and reusing the saved BSEC2 state (see Non-Volatile Baseline Recovery); if the stored mode is cold, a full cold-boot init sequence runs instead. The selected mode is then sent to the Arduino Nano over the (future) `USART3` link, which lights one of two indicator LEDs to reflect the choice — the LEDs are driven by the Arduino, not directly by the STM32.
+*   **Aggregate Update Cadence:** Individual sensor tasks post to the queue at their own native rate (`SPS30` every 1.0s, `BME680` every 3.0s, `MQ131`/`MiCS-4514` every 20ms), but the system as a whole pushes an updated aggregate `CollectedAirData` snapshot roughly every ~5 seconds for downstream consumers (telemetry, and the future Arduino visualization stage).
 *   **Low-Overhead Data Capture:** `ADC1` runs continuously in multi-channel Scan Mode handled via DMA. It updates a local 3-element array in RAM with fresh voltages from the `MQ131` and `MiCS-4514` sensors without generating any CPU overhead.
 *   **AC Phase Control Loop:**
     1. The AC power wave crosses its zero-voltage baseline, instantly pulling the RobotDyn Zero-Cross input pin (`PA10`) low.
