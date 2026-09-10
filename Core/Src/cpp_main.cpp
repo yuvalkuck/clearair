@@ -35,6 +35,7 @@ constexpr auto LED_INDICATE_ERROR = 100;
 constexpr auto LED_INDICATE_OK = 1000;
 
 extern "C" [[noreturn]] void appStartDefaultTask(void* argument) {
+    bool isColdBoot = HAL_GPIO_ReadPin(BOOT_TY_SELECT_GPIO_Port, BOOT_TY_SELECT_Pin) == GPIO_PIN_RESET;
     taskBme68x.setup(bmeTaskHandle, SensorEventsHandle);
     taskSensorO3.setup(o3TaskHandle, SensorEventsHandle);
     taskParticle.setup(particleTaskHandle, SensorEventsHandle);
@@ -58,8 +59,8 @@ extern "C" [[noreturn]] void appStartDefaultTask(void* argument) {
     }
     rc = taskFanMotor.configure();
     if (!rc) {
-        leep = LED_INDICATE_ERROR;
-        // METHODLOG(error, "taskFanMotor configure failed")
+        // leep = LED_INDICATE_ERROR;
+        //METHODLOG(error, "taskFanMotor configure failed")
     } else {
         elementReady |= ElementReady::Fan;
     }
@@ -76,13 +77,12 @@ extern "C" [[noreturn]] void appStartDefaultTask(void* argument) {
     //////////////////
     MESSAGELOG( "Resume available tasks");
     if ( elementReady & ElementReady::BME) {taskBme68x.resume();}
-    vTaskDelay(pdMS_TO_TICKS(10));
+    vTaskDelay(pdMS_TO_TICKS(100));
     if ( elementReady & ElementReady::O3) {taskSensorO3.resume();}
-    vTaskDelay(pdMS_TO_TICKS(10));
+    vTaskDelay(pdMS_TO_TICKS(100));
     if ( elementReady & ElementReady::CO) {taskCO1NO2.resume();}
-    vTaskDelay(pdMS_TO_TICKS(10));
+    vTaskDelay(pdMS_TO_TICKS(100));
     if ( elementReady & ElementReady::Particle) {taskParticle.resume();}
-    vTaskDelay(pdMS_TO_TICKS(10));
     MESSAGELOG("End startup");
     for (;;) {
         BSP_LED_Toggle(LED2);
