@@ -35,7 +35,6 @@ constexpr auto LED_INDICATE_ERROR = 100;
 constexpr auto LED_INDICATE_OK = 1000;
 
 extern "C" [[noreturn]] void appStartDefaultTask(void* argument) {
-    METHODTRACE
     taskBme68x.setup(bmeTaskHandle, SensorEventsHandle);
     taskSensorO3.setup(o3TaskHandle, SensorEventsHandle);
     taskParticle.setup(particleTaskHandle, SensorEventsHandle);
@@ -46,21 +45,21 @@ extern "C" [[noreturn]] void appStartDefaultTask(void* argument) {
     auto rc = taskBme68x.configure(&hi2c3);
     if (!rc) {
         leep = LED_INDICATE_ERROR;
-        METHODLOG(error, "taskBme68x configure failed")
+        // METHODLOG(error, "taskBme68x configure failed")
     } else {
         elementReady |= ElementReady::BME;
     }
     rc = taskSensorO3.configure();
     if (!rc) {
         leep = LED_INDICATE_ERROR;
-        METHODLOG(error, "taskSensorO3 configure failed")
+        // METHODLOG(error, "taskSensorO3 configure failed")
     } else {
         elementReady |= ElementReady::O3;
     }
     rc = taskFanMotor.configure();
     if (!rc) {
         leep = LED_INDICATE_ERROR;
-        METHODLOG(error, "taskFanMotor configure failed")
+        // METHODLOG(error, "taskFanMotor configure failed")
     } else {
         elementReady |= ElementReady::Fan;
     }
@@ -70,12 +69,12 @@ extern "C" [[noreturn]] void appStartDefaultTask(void* argument) {
     rc = taskParticle.configure(&hi2c3);
     if (!rc) {
         leep = LED_INDICATE_ERROR;
-        METHODLOG(error, "taskParticle configure failed")
+        // METHODLOG(error, "taskParticle configure failed")
     } else {
         elementReady |= ElementReady::Particle;
     }
     //////////////////
-    METHODLOG(info, "Resume available tasks");
+    MESSAGELOG( "Resume available tasks");
     if ( elementReady & ElementReady::BME) {taskBme68x.resume();}
     vTaskDelay(pdMS_TO_TICKS(10));
     if ( elementReady & ElementReady::O3) {taskSensorO3.resume();}
@@ -84,39 +83,39 @@ extern "C" [[noreturn]] void appStartDefaultTask(void* argument) {
     vTaskDelay(pdMS_TO_TICKS(10));
     if ( elementReady & ElementReady::Particle) {taskParticle.resume();}
     vTaskDelay(pdMS_TO_TICKS(10));
-    METHODLOG(info, "End startup");
+    MESSAGELOG("End startup");
     for (;;) {
         BSP_LED_Toggle(LED2);
         vTaskDelay(pdMS_TO_TICKS(leep));
     }
 }
 
+CommonMessage msg{};
 extern "C" [[noreturn]] void mainSensorsMsgLoop(void* argument) {
     METHODTRACE
-    CommonMessage msg{};
     auto xQueue = (QueueHandle_t)SensorEventsHandle;
     for (;;) {
         if (xQueueReceive(xQueue, &msg, portMAX_DELAY) == pdTRUE) {
             switch (msg.id) {
                 case BME680: {
                     auto payload = msg.payload.bme680;
-                    METHODLOGF(debug, "bme680: Temp:{}, Humid:{}, AirQ:{}", payload.temperature, payload.humidity, payload.indoorAirQualityIndex);
+                    METHODLOGS(debug, "bme680: Temp:%d, Humid:%u, AirQ:%u", payload.temperature, (unsigned)payload.humidity, (unsigned)payload.indoorAirQualityIndex);
                 }
                 break;
                 case MQ131CO3: {
                     auto payload = msg.payload.uiValue;
-                    METHODLOGF(debug, "MQ131: CO3:{}", payload.value);
+                    METHODLOGS(debug, "MQ131: CO3:%lu", (unsigned long)payload.value);
                 }
 
                 break;
                 case SPS30Particle: {
                     auto payload = msg.payload.particle;
-                    METHODLOGF(debug, "SPS30: 2p5:{}, 10p0:{}, tipical:{}", payload.mc_2p5,payload.mc_10p0, payload.tps);
+                    METHODLOGS(debug, "SPS30: 2p5:%f, 10p0:%f, tipical:%f", (double)payload.mc_2p5, (double)payload.mc_10p0, (double)payload.tps);
                 }
                 break;
                 case MICS4514CO1NO2: {
                     auto payload = msg.payload.co1_no2;
-                    METHODLOGF(debug, "MiCS: co1:{} no2:{}", payload.co1,payload.no2);
+                    METHODLOGS(debug, "MiCS: co1:%f no2:%f", payload.co1, payload.no2);
                 }
                 break;
                 default:
