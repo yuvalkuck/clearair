@@ -76,13 +76,13 @@ extern "C" [[noreturn]] void appStartDefaultTask(void* argument) {
     }
     //////////////////
     MESSAGELOG( "Resume available tasks");
+    if ( elementReady & ElementReady::Particle) {taskParticle.resume();}
+    vTaskDelay(pdMS_TO_TICKS(100));
     if ( elementReady & ElementReady::BME) {taskBme68x.resume();}
     vTaskDelay(pdMS_TO_TICKS(100));
     if ( elementReady & ElementReady::O3) {taskSensorO3.resume();}
     vTaskDelay(pdMS_TO_TICKS(100));
     if ( elementReady & ElementReady::CO) {taskCO1NO2.resume();}
-    vTaskDelay(pdMS_TO_TICKS(100));
-    if ( elementReady & ElementReady::Particle) {taskParticle.resume();}
     MESSAGELOG("End startup");
     for (;;) {
         BSP_LED_Toggle(LED2);
