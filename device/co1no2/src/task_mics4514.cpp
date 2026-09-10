@@ -10,21 +10,37 @@
 #include <cmath>
 
 #include "logger.h"
-#define MICS4514_NOX_PREHEAT 1	//seconds for preheating the NO2 sensing element
 #define MICS4514_NOX_R0 1022	//Reference resistance for the NO2 sensing element
 #define MICS4514_RED_R0 1000000	//Reference resistance for the RED sensing element
 
+namespace {
+// SGX AN2: boosted-power preheat pulse to bring the OX/NO2 element up to
+// temperature quickly, applied on every boot regardless of cold/warm.
+constexpr uint32_t MICS4514_BOOST_PREHEAT_MS = 30UL * 1000UL;
+// Standard settle time before trusting readings, applied on every boot.
+constexpr uint32_t MICS4514_WARMUP_SETTLE_MS = 3UL * 60UL * 1000UL;
+// Cold-boot-only continuous soak to reestablish the R0 baseline after the
+// sensor has been unpowered for an extended period.
+constexpr uint32_t MICS4514_COLD_SOAK_MS = 24UL * 3600UL * 1000UL;
+}
+
 extern ADC_HandleTypeDef hadc2;
 static CommonMessage msg{};
-// reference taken from: https://github.com/paulopereira98/mics4514-stm32-driver
-void SensorCO1NO2::configure() {
+void SensorCO1NO2::configure(bool isColdBoot) {
+    isColdBoot_ = isColdBoot;
     METHODTRACE
-    HAL_GPIO_WritePin(MICS4514_PREHEAT_GPIO_Port, MICS4514_PREHEAT_Pin, GPIO_PIN_SET);
-    HAL_Delay(MICS4514_NOX_PREHEAT * 1000);
-    HAL_GPIO_WritePin(MICS4514_PREHEAT_GPIO_Port, MICS4514_PREHEAT_Pin, GPIO_PIN_RESET);
 }
+// reference taken from: https://github.com/paulopereira98/mics4514-stm32-driver
 [[noreturn]] void SensorCO1NO2::taskLoop() const {
     METHODTRACE
+    HAL_GPIO_WritePin(MICS4514_PREHEAT_GPIO_Port, MICS4514_PREHEAT_Pin, GPIO_PIN_SET);
+    vTaskDelay(pdMS_TO_TICKS(MICS4514_BOOST_PREHEAT_MS));
+    HAL_GPIO_WritePin(MICS4514_PREHEAT_GPIO_Port, MICS4514_PREHEAT_Pin, GPIO_PIN_RESET);
+    if (isColdBoot_) {
+        METHODLOGS(info, "MiCS-4514 cold-boot soak: %lums", (unsigned long)MICS4514_COLD_SOAK_MS);
+        vTaskDelay(pdMS_TO_TICKS(MICS4514_COLD_SOAK_MS));
+}
+    vTaskDelay(pdMS_TO_TICKS(MICS4514_WARMUP_SETTLE_MS));
     msg.id = MICS4514CO1NO2;
     double voltage, Rs;
 

@@ -75,7 +75,7 @@ graph TD
 | **Status Indicator** | GPIO Output                       | PA5                             | Mapped to onboard status LED. |
 | **Arduino Visualization Controller (future)** | USART3 (via 2N7000 level shifter) | PC10 (TX), PC11 (RX)            | Future status output stage: an Arduino Nano (5V logic, already in stock) drives an LED array or 7-segment display for per-sensor nominal/fault indication, receiving status bytes over `USART3`; a pair of 2N7000 MOSFETs handle bidirectional 3.3V↔5V level shifting on the TX/RX lines. Uses `PC10`/`PC11` specifically to avoid the fried `I2C2` pin footprint (`PB10`/`PB11`). The safety-latch buzzer remains directly on the STM32, independent of the Arduino. |
 | **Manual Reset (external button)** | NRST                              | NRST (exposed on morpho header) | External hardware reset button wired directly to the STM32's `NRST` pin, in parallel with the onboard Nucleo reset button. True hardware system reset; no firmware or GPIO involvement. |
-| **Cold/Warm Boot Select (external button)** | GPIO Input                        | PC12                            | External momentary button wired to the already-allocated `PC13` (the Nucleo `B1 USER` button position). Pressing it writes the selected cold/warm mode to NVS/flash immediately; firmware reads the stored value at boot, not the button state itself. |
+| **Cold/Warm Boot Select (external button)** | GPIO Input                        | PC12                            | External momentary button wired to `PC12`. Firmware reads the pin once at boot: held down means a cold boot, otherwise warm. |
 
 ---
 
@@ -155,7 +155,7 @@ graph TD
     Arduino_Nano -->|Drives, boot mode sent over USART3| BootMode_LEDs
 
     Reset_Btn -->|NRST| STM32
-    BootSel_Btn -->|PC13 EXTI, writes mode to NVS on press| STM32
+    BootSel_Btn -->|PC12, read once at boot| STM32
 ```
 ### Central Safety Loop State Machine
 ```mermaid
@@ -196,7 +196,7 @@ stateDiagram-v2
 
 ```
 ### Execution Strategy
-*   **Boot Mode Selection:** The `PC13` boot-select button does not need to be held at boot. Pressing it (via `EXTI13`) writes the selected mode to a dedicated NVS/flash sector immediately, at any time. Before any sensor `configure()` call runs, firmware reads that stored value: by default (no boot mode ever set, or last set to warm) it performs a fast warm boot — skipping slow calibration/stabilization and reusing the saved BSEC2 state (see Non-Volatile Baseline Recovery); if the stored mode is cold, a full cold-boot init sequence runs instead. The selected mode is then sent to the Arduino Nano over the (future) `USART3` link, which lights one of two indicator LEDs to reflect the choice — the LEDs are driven by the Arduino, not directly by the STM32.
+*   **Boot Mode Selection:** The `PC12` boot-select button must be held down at the moment the system boots. Before any sensor `configure()` call runs, `appStartDefaultTask` reads the pin once: if held, it's a cold boot; otherwise a warm boot. On a warm boot, MQ131 and MiCS-4514 run their normal (short) warm-up before publishing readings; on a cold boot, each runs its own extended warm-up/soak in parallel (see `device/o3sensor` and `device/co1no2`) — none of this is persisted across reboots. The selected mode is then sent to the Arduino Nano over the (future) `USART3` link, which lights one of two indicator LEDs to reflect the choice — the LEDs are driven by the Arduino, not directly by the STM32.
 *   **Aggregate Update Cadence:** Individual sensor tasks post to the queue at their own native rate (`SPS30` every 1.0s, `BME680` every 3.0s, `MQ131`/`MiCS-4514` every 20ms), but the system as a whole pushes an updated aggregate `CollectedAirData` snapshot roughly every ~5 seconds for downstream consumers (telemetry, and the future Arduino visualization stage).
 *   **Low-Overhead Data Capture:** `ADC1` runs continuously in multi-channel Scan Mode handled via DMA. It updates a local 3-element array in RAM with fresh voltages from the `MQ131` and `MiCS-4514` sensors without generating any CPU overhead.
 *   **AC Phase Control Loop:**

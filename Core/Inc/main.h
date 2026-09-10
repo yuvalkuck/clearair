@@ -59,7 +59,6 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define DETECTION_SLEEP_LOOP_LIMIT 5000
 #define MQ131_READ_Pin GPIO_PIN_0
 #define MQ131_READ_GPIO_Port GPIOA
 #define MICS4514_CO_Pin GPIO_PIN_1

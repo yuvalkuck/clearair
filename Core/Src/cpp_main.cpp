@@ -35,12 +35,14 @@ constexpr auto LED_INDICATE_ERROR = 100;
 constexpr auto LED_INDICATE_OK = 1000;
 
 extern "C" [[noreturn]] void appStartDefaultTask(void* argument) {
+
     taskBme68x.setup(bmeTaskHandle, SensorEventsHandle);
     taskSensorO3.setup(o3TaskHandle, SensorEventsHandle);
     taskParticle.setup(particleTaskHandle, SensorEventsHandle);
     taskCO1NO2.setup(co1no2TaskHandle, SensorEventsHandle);
     //
     uint8_t elementReady = ElementReady::Invalid;
+    bool isColdBoot = HAL_GPIO_ReadPin(BOOT_TY_SELECT_GPIO_Port, BOOT_TY_SELECT_Pin) == GPIO_PIN_RESET;
     auto leep = LED_INDICATE_OK;
     auto rc = taskBme68x.configure(&hi2c3);
     if (!rc) {
@@ -49,7 +51,7 @@ extern "C" [[noreturn]] void appStartDefaultTask(void* argument) {
     } else {
         elementReady |= ElementReady::BME;
     }
-    rc = taskSensorO3.configure();
+    rc = taskSensorO3.configure(isColdBoot);
     if (!rc) {
         leep = LED_INDICATE_ERROR;
         // METHODLOG(error, "taskSensorO3 configure failed")
@@ -58,13 +60,13 @@ extern "C" [[noreturn]] void appStartDefaultTask(void* argument) {
     }
     rc = taskFanMotor.configure();
     if (!rc) {
-        leep = LED_INDICATE_ERROR;
-        // METHODLOG(error, "taskFanMotor configure failed")
+        // leep = LED_INDICATE_ERROR;
+        //METHODLOG(error, "taskFanMotor configure failed")
     } else {
         elementReady |= ElementReady::Fan;
     }
     elementReady |= ElementReady::CO;
-    taskCO1NO2.configure();
+    taskCO1NO2.configure(isColdBoot);
     // Particle takes some time to configure
     rc = taskParticle.configure(&hi2c3);
     if (!rc) {
@@ -75,14 +77,13 @@ extern "C" [[noreturn]] void appStartDefaultTask(void* argument) {
     }
     //////////////////
     MESSAGELOG( "Resume available tasks");
-    if ( elementReady & ElementReady::BME) {taskBme68x.resume();}
-    vTaskDelay(pdMS_TO_TICKS(10));
-    if ( elementReady & ElementReady::O3) {taskSensorO3.resume();}
-    vTaskDelay(pdMS_TO_TICKS(10));
-    if ( elementReady & ElementReady::CO) {taskCO1NO2.resume();}
-    vTaskDelay(pdMS_TO_TICKS(10));
     if ( elementReady & ElementReady::Particle) {taskParticle.resume();}
-    vTaskDelay(pdMS_TO_TICKS(10));
+    vTaskDelay(pdMS_TO_TICKS(100));
+    if ( elementReady & ElementReady::BME) {taskBme68x.resume();}
+    vTaskDelay(pdMS_TO_TICKS(100));
+    if ( elementReady & ElementReady::O3) {taskSensorO3.resume();}
+    vTaskDelay(pdMS_TO_TICKS(100));
+    if ( elementReady & ElementReady::CO) {taskCO1NO2.resume();}
     MESSAGELOG("End startup");
     for (;;) {
         BSP_LED_Toggle(LED2);
