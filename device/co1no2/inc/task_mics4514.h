@@ -8,9 +8,11 @@
 class SensorCO1NO2 : public BaseDeviceTask {
 public:
     SensorCO1NO2() = default;
-    void configure();
+    void configure(bool isColdBoot);
     [[noreturn]] void taskLoop() const;
 
+private:
+    bool isColdBoot_ = false;
 };
 
 #endif //CLEARAIR_TASK_MICS4514_H

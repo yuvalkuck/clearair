@@ -8,7 +8,15 @@
 
 extern ADC_HandleTypeDef hadc1;
 
-bool SensorO3::configure() const {
+namespace {
+// MQ131 datasheet: preheat time over 48h on a genuine cold start;
+// 3 minutes is used as the settle time on a warm restart.
+constexpr uint32_t MQ131_WARMUP_COLD_MS = 48UL * 3600UL * 1000UL;
+constexpr uint32_t MQ131_WARMUP_WARM_MS = 3UL * 60UL * 1000UL;
+}
+
+bool SensorO3::configure(bool isColdBoot) {
+    isColdBoot_ = isColdBoot;
     METHODTRACE
 
     uint32_t value = 0;
@@ -32,6 +40,9 @@ static CommonMessage msg{};
 
 [[noreturn]] void SensorO3::taskLoop() const {
     METHODTRACE
+    auto warmupMs = isColdBoot_ ? MQ131_WARMUP_COLD_MS : MQ131_WARMUP_WARM_MS;
+    METHODLOGS(info, "MQ131 warm-up: %lums (%s)", (unsigned long)warmupMs, isColdBoot_ ? "cold" : "warm");
+    vTaskDelay(pdMS_TO_TICKS(warmupMs));
     msg.id = MQ131CO3;
     for (;;) {
         auto startTM = getTimestampMs();

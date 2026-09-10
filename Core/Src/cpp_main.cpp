@@ -50,7 +50,7 @@ extern "C" [[noreturn]] void appStartDefaultTask(void* argument) {
     } else {
         elementReady |= ElementReady::BME;
     }
-    rc = taskSensorO3.configure();
+    rc = taskSensorO3.configure(isColdBoot);
     if (!rc) {
         leep = LED_INDICATE_ERROR;
         // METHODLOG(error, "taskSensorO3 configure failed")
@@ -65,7 +65,7 @@ extern "C" [[noreturn]] void appStartDefaultTask(void* argument) {
         elementReady |= ElementReady::Fan;
     }
     elementReady |= ElementReady::CO;
-    taskCO1NO2.configure();
+    taskCO1NO2.configure(isColdBoot);
     // Particle takes some time to configure
     rc = taskParticle.configure(&hi2c3);
     if (!rc) {
