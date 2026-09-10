@@ -39,7 +39,7 @@ bool ControllerFanMotor::configure() {
     const uint32_t crossingsBefore = zeroCrossCount_;
     vTaskDelay(pdMS_TO_TICKS(50));
     if (zeroCrossCount_ == crossingsBefore) {
-        METHODLOG(error, "AC dimmer module not responding - no zero-cross detected")
+        METHODLOG(warn, "AC dimmer module not responding - no zero-cross detected")
         return false;
     }
 

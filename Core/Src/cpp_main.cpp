@@ -35,13 +35,14 @@ constexpr auto LED_INDICATE_ERROR = 100;
 constexpr auto LED_INDICATE_OK = 1000;
 
 extern "C" [[noreturn]] void appStartDefaultTask(void* argument) {
-    bool isColdBoot = HAL_GPIO_ReadPin(BOOT_TY_SELECT_GPIO_Port, BOOT_TY_SELECT_Pin) == GPIO_PIN_RESET;
+
     taskBme68x.setup(bmeTaskHandle, SensorEventsHandle);
     taskSensorO3.setup(o3TaskHandle, SensorEventsHandle);
     taskParticle.setup(particleTaskHandle, SensorEventsHandle);
     taskCO1NO2.setup(co1no2TaskHandle, SensorEventsHandle);
     //
     uint8_t elementReady = ElementReady::Invalid;
+    bool isColdBoot = HAL_GPIO_ReadPin(BOOT_TY_SELECT_GPIO_Port, BOOT_TY_SELECT_Pin) == GPIO_PIN_RESET;
     auto leep = LED_INDICATE_OK;
     auto rc = taskBme68x.configure(&hi2c3);
     if (!rc) {
