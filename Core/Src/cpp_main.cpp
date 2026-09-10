@@ -90,7 +90,7 @@ extern "C" [[noreturn]] void appStartDefaultTask(void* argument) {
     }
 }
 
-CommonMessage msg{};
+static CommonMessage msg{};
 extern "C" [[noreturn]] void mainSensorsMsgLoop(void* argument) {
     METHODTRACE
     auto xQueue = (QueueHandle_t)SensorEventsHandle;

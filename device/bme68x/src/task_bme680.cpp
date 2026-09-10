@@ -20,7 +20,6 @@ static bme68x_conf conf{};
 static bme68x_heatr_conf heatr_conf{};
 
 static auto applyBsecSensorSettings(const bsec_bme_settings_t& settings) {
-    METHODTRACE
     memset(&conf, 0, sizeof(bme68x_conf));
     memset(&heatr_conf, 0, sizeof(heatr_conf));
     auto rc = bme68x_get_conf(&conf, &commBridgeCfg);
