@@ -31,8 +31,8 @@ bool SensorParticle::configure(I2C_HandleTypeDef* hi2c) {
     return (rc == 0);
 }
 
-constexpr auto PARTICAL_CYCLE_TIME_MS = 60 * 1000;
-constexpr auto PARTICAL_ONERROR_CYCLE_MS = 10 * 1000;
+constexpr auto PARTICLE_CYCLE_TIME_MS = 60 * 1000;
+constexpr auto PARTICLE_ONERROR_CYCLE_MS = 10 * 1000;
 static CommonMessage msg{};
 void SensorParticle::taskLoop() {
     METHODTRACE
@@ -52,7 +52,7 @@ void SensorParticle::taskLoop() {
         rc = sps30_read_data_ready_flag(&data_ready_flag);
         if (rc != 0) {
             printf("error executing read_data_ready_flag(): %i\n", rc);
-            vTaskDelay(pdMS_TO_TICKS(PARTICAL_ONERROR_CYCLE_MS));
+            vTaskDelay(pdMS_TO_TICKS(PARTICLE_ONERROR_CYCLE_MS));
             continue;
         }
 
@@ -62,9 +62,9 @@ void SensorParticle::taskLoop() {
                                                  &unusedRead[4], &unusedRead[5],
                                                  &unusedRead[6],&payload.tps);
         if (rc != 0) {
-            printf("rc executing read_measurement_values_uint16(): %i\n",
+            printf("error executing read_measurement_values_float(): %i\n",
                    rc);
-            vTaskDelay(pdMS_TO_TICKS(PARTICAL_ONERROR_CYCLE_MS));
+            vTaskDelay(pdMS_TO_TICKS(PARTICLE_ONERROR_CYCLE_MS));
             continue;
         }
         msg.timestamp_ms = getTimestampMs();

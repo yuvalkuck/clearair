@@ -111,7 +111,7 @@ extern "C" [[noreturn]] void mainSensorsMsgLoop(void* argument) {
                 break;
                 case SPS30Particle: {
                     auto payload = msg.payload.particle;
-                    METHODLOGS(debug, "SPS30: 2p5:%f, 10p0:%f, tipical:%f", (double)payload.mc_2p5, (double)payload.mc_10p0, (double)payload.tps);
+                    METHODLOGS(debug, "SPS30: 2p5:%f, 10p0:%f, typical:%f", (double)payload.mc_2p5, (double)payload.mc_10p0, (double)payload.tps);
                 }
                 break;
                 case MICS4514CO1NO2: {
@@ -120,7 +120,7 @@ extern "C" [[noreturn]] void mainSensorsMsgLoop(void* argument) {
                 }
                 break;
                 default:
-                    METHODLOG(warn, "unrecognize message type");
+                    METHODLOG(warn, "unrecognized message type");
                     break;
             }
         }
@@ -128,22 +128,22 @@ extern "C" [[noreturn]] void mainSensorsMsgLoop(void* argument) {
 }
 
 extern "C" [[noreturn]] void bmeTaskHandler(void* argument) {
-    osThreadSuspend(osThreadGetId()); // suspend - will be release elsewhere
+    osThreadSuspend(osThreadGetId()); // suspend - will be resumed elsewhere
     taskBme68x.taskLoop();
 }
 
 extern "C" [[noreturn]] void particleTaskHandler(void* argument) {
-    osThreadSuspend(osThreadGetId()); // suspend - will be release elsewhere
+    osThreadSuspend(osThreadGetId()); // suspend - will be resumed elsewhere
     taskParticle.taskLoop();
 }
 
 extern "C" [[noreturn]] void co1no2TaskHandler(void* argument) {
-    osThreadSuspend(osThreadGetId()); // suspend - will be release elsewhere
+    osThreadSuspend(osThreadGetId()); // suspend - will be resumed elsewhere
     taskCO1NO2.taskLoop();
 }
 
 extern "C" [[noreturn]] void o3TaskHandler(void* argument) {
-    osThreadSuspend(osThreadGetId()); // suspend - will be release elsewhere
+    osThreadSuspend(osThreadGetId()); // suspend - will be resumed elsewhere
     taskSensorO3.taskLoop();
 }
 
