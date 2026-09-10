@@ -42,7 +42,7 @@ extern "C" [[noreturn]] void appStartDefaultTask(void* argument) {
     taskCO1NO2.setup(co1no2TaskHandle, SensorEventsHandle);
     //
     uint8_t elementReady = ElementReady::Invalid;
-    bool isColdBoot = HAL_GPIO_ReadPin(BOOT_TY_SELECT_GPIO_Port, BOOT_TY_SELECT_Pin) == GPIO_PIN_RESET;
+    bool isColdBoot = HAL_GPIO_ReadPin(BOOT_TY_SELECT_GPIO_Port, BOOT_TY_SELECT_Pin) == GPIO_PIN_SET;
     auto leep = LED_INDICATE_OK;
     auto rc = taskBme68x.configure(&hi2c3);
     if (!rc) {
