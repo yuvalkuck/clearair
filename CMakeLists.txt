@@ -47,7 +47,7 @@ IF (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     )
 ENDIF (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
 
-
+target_link_options(${CMAKE_PROJECT_NAME} PRIVATE -u _printf_float)
 # Add STM32CubeMX generated sources
 add_subdirectory(cmake/stm32cubemx)
 add_subdirectory(cmake/stm32bsec2bme)

@@ -60,7 +60,7 @@ UART_HandleTypeDef huart3;
 osThreadId_t defaultTaskHandle;
 const osThreadAttr_t defaultTask_attributes = {
   .name = "defaultTask",
-  .stack_size = 1024 * 4,
+  .stack_size = 256 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for bmeTask */
@@ -81,7 +81,7 @@ const osThreadAttr_t msgLoopTask_attributes = {
 osThreadId_t co1no2TaskHandle;
 const osThreadAttr_t co1no2Task_attributes = {
   .name = "co1no2Task",
-  .stack_size = 512 * 4,
+  .stack_size = 256 * 4,
   .priority = (osPriority_t) osPriorityNormal1,
 };
 /* Definitions for particleTask */

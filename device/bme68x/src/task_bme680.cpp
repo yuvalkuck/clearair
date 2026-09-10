@@ -14,14 +14,15 @@
 #include "logger.h"
 static uint8_t work_buffer[BSEC_MAX_WORKBUFFER_SIZE];
 static bme68x_dev commBridgeCfg = {0};
-static constexpr uint32_t BSEC_TASK_MAX_WAIT_MS     = 2000; // BME68x max heater dur
+static constexpr uint32_t BSEC_TASK_MAX_WAIT_MS = 2000; // BME68x max heater dur
 #define BSEC_REQUESTED_OUTPUTS 3
+static bme68x_conf conf{};
+static bme68x_heatr_conf heatr_conf{};
 
 static auto applyBsecSensorSettings(const bsec_bme_settings_t& settings) {
     METHODTRACE
-    bme68x_conf conf{};
-    bme68x_heatr_conf heatr_conf{};
-
+    memset(&conf, 0, sizeof(bme68x_conf));
+    memset(&heatr_conf, 0, sizeof(heatr_conf));
     auto rc = bme68x_get_conf(&conf, &commBridgeCfg);
     if (rc != BME68X_OK) { return rc; }
 
@@ -45,19 +46,19 @@ bool SensorBme68x::configure(I2C_HandleTypeDef* hi2c) {
     METHODTRACE
     auto rc = initBridgeBME68x(hi2c, commBridgeCfg, BME68X_I2C_ADDR_HIGH);
     if (rc != BME68X_OK) {
-        METHODLOGF(error, "initBridgeBME68x != BME68X_OK: {}",rc)
+        METHODLOGS(error, "initBridgeBME68x != BME68X_OK: %i", rc)
         return false;
     }
     rc = bsec_init();
     if (rc != BSEC_OK) {
-        METHODLOGF(error,"bsec_init != BME68X_OK: {}",rc)
+        METHODLOGS(error, "bsec_init != BME68X_OK: %i", rc)
         return false;
     }
 
     rc = bsec_set_configuration(bsec_config_iaq, sizeof(bsec_config_iaq),
                                 work_buffer, sizeof(work_buffer));
     if (rc != BSEC_OK) {
-        METHODLOGF(error,"bsec_set_configuration != BME68X_OK: {}",rc)
+        METHODLOGS(error, "bsec_set_configuration != BSEC_OK: %i", rc)
         return false;
     }
 
@@ -65,8 +66,8 @@ bool SensorBme68x::configure(I2C_HandleTypeDef* hi2c) {
     uint8_t nRequested = 0;
 
     requestedOutputs[nRequested++] = {BSEC_SAMPLE_RATE_LP, BSEC_OUTPUT_BREATH_VOC_EQUIVALENT};
-    requestedOutputs[nRequested++] = {BSEC_SAMPLE_RATE_LP, BSEC_OUTPUT_RAW_TEMPERATURE};
-    requestedOutputs[nRequested++] = {BSEC_SAMPLE_RATE_LP, BSEC_OUTPUT_RAW_HUMIDITY};
+    requestedOutputs[nRequested++] = {BSEC_SAMPLE_RATE_LP, BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_TEMPERATURE};
+    requestedOutputs[nRequested++] = {BSEC_SAMPLE_RATE_LP, BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_HUMIDITY};
 
     bsec_sensor_configuration_t requiredSensorSettings[BSEC_MAX_PHYSICAL_SENSOR];
     uint8_t nRequired = BSEC_MAX_PHYSICAL_SENSOR;
@@ -78,14 +79,14 @@ bool SensorBme68x::configure(I2C_HandleTypeDef* hi2c) {
 }
 
 static CommonMessage msg{};
-void SensorBme68x::readAndSendToQueue(const bsec_bme_settings_t& s, int64_t timestamp_ns) {
-    METHODTRACE
-    bme68x_data data;
-    uint8_t n_data = 0;
-    if (bme68x_get_data(BME68X_FORCED_MODE, &data, &n_data, &commBridgeCfg) != BME68X_OK || n_data == 0)
-        return;
+static bsec_input_t inputs[BSEC_MAX_PHYSICAL_SENSOR];
+static bme68x_data data;
+static bsec_output_t outputs[BSEC_NUMBER_OUTPUTS];
 
-    bsec_input_t inputs[BSEC_MAX_PHYSICAL_SENSOR];
+void SensorBme68x::readAndSendToQueue(const bsec_bme_settings_t& s, int64_t timestamp_ns) {
+    uint8_t n_data = 0;
+    if (bme68x_get_data(BME68X_FORCED_MODE, &data, &n_data, &commBridgeCfg) != BME68X_OK || n_data == 0) return;
+
     uint8_t n_inputs = 0;
 
     if (s.process_data & BSEC_PROCESS_TEMPERATURE) {
@@ -100,12 +101,6 @@ void SensorBme68x::readAndSendToQueue(const bsec_bme_settings_t& s, int64_t time
         inputs[n_inputs].time_stamp = timestamp_ns;
         n_inputs++;
     }
-    if (s.process_data & BSEC_PROCESS_PRESSURE) {
-        inputs[n_inputs].sensor_id = BSEC_INPUT_PRESSURE;
-        inputs[n_inputs].signal = data.pressure;
-        inputs[n_inputs].time_stamp = timestamp_ns;
-        n_inputs++;
-    }
     if (s.process_data & BSEC_PROCESS_GAS) {
         inputs[n_inputs].sensor_id = BSEC_INPUT_GASRESISTOR;
         inputs[n_inputs].signal = data.gas_resistance;
@@ -113,7 +108,6 @@ void SensorBme68x::readAndSendToQueue(const bsec_bme_settings_t& s, int64_t time
         n_inputs++;
     }
 
-    bsec_output_t outputs[BSEC_NUMBER_OUTPUTS];
     uint8_t n_outputs = BSEC_NUMBER_OUTPUTS;
     if (n_inputs == 0) return;
     if (bsec_do_steps(inputs, n_inputs, outputs, &n_outputs) != BSEC_OK) return;
@@ -123,30 +117,29 @@ void SensorBme68x::readAndSendToQueue(const bsec_bme_settings_t& s, int64_t time
     auto& payload = msg.payload.bme680;
     std::memset(&payload, 0, sizeof(msg.payload.bme680));
     for (uint8_t i = 0; i < n_outputs; i++) {
-        switch (outputs[i].sensor_id) {
+        auto &output = outputs[i];
+        switch (output.sensor_id) {
             case BSEC_OUTPUT_BREATH_VOC_EQUIVALENT:
-                payload.indoorAirQualityIndex = static_cast<uint16_t>(outputs[i].signal);
+                payload.indoorAirQualityIndex = static_cast<uint16_t>(output.signal);
                 break;
             case BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_TEMPERATURE:
-                payload.temperature = static_cast<int8_t>(outputs[i].signal);
+                payload.temperature = static_cast<int8_t>(output.signal);
                 break;
             case BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_HUMIDITY:
-                payload.humidity = static_cast<uint8_t>(outputs[i].signal);
+                payload.humidity = static_cast<uint8_t>(output.signal);
                 break;
             default:
                 break;
         }
     }
-    METHODLOGF(debug, "air:{},tmp:{},hum:{}", payload.indoorAirQualityIndex,payload.temperature,payload.humidity)
     xQueueSend(msgQueue_, &msg, pdMS_TO_TICKS(5));
 }
 
+static bsec_bme_settings_t bme_settings;
+
 void SensorBme68x::taskLoop() {
-    METHODTRACE
     for (;;) {
         int64_t timestamp_ns = getTimestampNs();
-
-        bsec_bme_settings_t bme_settings;
         bsec_sensor_control(timestamp_ns, &bme_settings);
 
         if (bme_settings.trigger_measurement) {
@@ -155,7 +148,7 @@ void SensorBme68x::taskLoop() {
             uint32_t wait_ms = 10;
             if (bme_settings.run_gas && bme_settings.heater_duration > 0) {
                 wait_ms = (uint32_t)bme_settings.heater_duration + 10;
-                if (wait_ms > BSEC_TASK_MAX_WAIT_MS)   // critical fix #2: hard cap
+                if (wait_ms > BSEC_TASK_MAX_WAIT_MS) // critical fix #2: hard cap
                     wait_ms = BSEC_TASK_MAX_WAIT_MS;
             }
             vTaskDelay(pdMS_TO_TICKS(wait_ms));

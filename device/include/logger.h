@@ -9,7 +9,7 @@
 #include <cstring>
 #include <cstdio>
 class MethodTracer {
-    char name_[128]{};
+    char name_[64]{};
 
     protected:
     void logmsg_(const char* lvl, int line, const char* str) {
@@ -37,8 +37,8 @@ class MethodTracer {
 #include "fmt/base.h"
 #define METHODTRACE MethodTracer __methodTracer(__PRETTY_FUNCTION__,sizeof(__PRETTY_FUNCTION__)-1);
 #define METHODLOG(lvl, str) __methodTracer.lvl(__LINE__, str);
-#define METHODLOGF(lvl, fmt_str, ...) { char traceBuffer[128]={0}; fmt::format_to_n(traceBuffer, sizeof(traceBuffer)-1,fmt_str,##__VA_ARGS__); __methodTracer.lvl(__LINE__, traceBuffer);}
-#define METHODLOGS(lvl, fmt_str, ...) { char traceBuffer[128]={0}; snprintf(traceBuffer, sizeof(traceBuffer)-1, fmt_str, ##__VA_ARGS__); __methodTracer.lvl(__LINE__, traceBuffer);}
+#define METHODLOGF(lvl, fmt_str, ...) { char traceBuffer[64]={0}; fmt::format_to_n(traceBuffer, sizeof(traceBuffer)-1,fmt_str,##__VA_ARGS__); __methodTracer.lvl(__LINE__, traceBuffer);}
+#define METHODLOGS(lvl, fmt_str, ...) { char traceBuffer[64]={0}; snprintf(traceBuffer, sizeof(traceBuffer)-1, fmt_str, ##__VA_ARGS__); __methodTracer.lvl(__LINE__, traceBuffer);}
 #define MESSAGELOG(str, ...) printf(str, ##__VA_ARGS__);
 #else
 #define METHODTRACE

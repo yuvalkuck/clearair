@@ -62,7 +62,7 @@ void vApplicationStackOverflowHook(xTaskHandle xTask, signed char *pcTaskName)
     (void) pcTaskName;
 
     /* CRITICAL: Place a breakpoint on the line below in CLion */
-    // __asm("bkpt #0");
+    __asm("bkpt #0");
 
    /* Run time stack overflow checking is performed if
    configCHECK_FOR_STACK_OVERFLOW is defined to 1 or 2. This hook function is
