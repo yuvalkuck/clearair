@@ -315,10 +315,10 @@ graph TD
 
 ## 🗺️ Roadmap
 
-1. [x] **KiCad schematic.** "Create" is a big word here: Claude generated it on request (`hardware/Nuclio-F466RE/clearair.kicad_sch`).
-2. [ ] **Move to a WeAct G4 Long** (STM32G474CEU6 Long + STLINK-V3MINIE).
-3. [ ] **Fan and alarm thresholds:** implement the thresholds that turn the fan on and set its speed, plus the trigger for the evacuation alarm.
-4. [ ] **Sensor cylinder:** design and 3D print a cylinder that holds all the sensitive sensors, downstream of a fan with a 3M 2091 particulate filter.
-5. [ ] **Minimal field test,** with buttons that inject the fan and alarm events.
-6. [ ] **Power + MCU enclosure:** design and build it (220V AC to 12V and 5V DC).
-7. [ ] **Full field test** with the welder.
+- [x] 1. **KiCad schematic.** ✅ **Done.** "Create" is a big word here: Claude generated it on request (`hardware/Nuclio-F466RE/clearair.kicad_sch`).
+- [ ] 2. **Move to a WeAct G4 Long** (STM32G474CEU6 Long + STLINK-V3MINIE).
+- [ ] 3. **Fan and alarm thresholds:** implement the thresholds that turn the fan on and set its speed, plus the trigger for the evacuation alarm.
+- [ ] 4. **Sensor cylinder:** design and 3D print a cylinder that holds all the sensitive sensors, downstream of a fan with a 3M 2091 particulate filter.
+- [ ] 5. **Minimal field test,** with buttons that inject the fan and alarm events.
+- [ ] 6. **Power + MCU enclosure:** design and build it (220V AC to 12V and 5V DC).
+- [ ] 7. **Full field test** with the welder.
