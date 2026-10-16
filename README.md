@@ -6,6 +6,24 @@ An industrial-grade, real-time environmental control and safety monitoring syste
 
 ---
 
+## 📑 Table of Contents
+
+- [System Architecture Overview](#-system-architecture-overview)
+- [Power & Logic Integration](#-power--logic-integration)
+  - [Power Budget (estimate)](#power-budget-estimate)
+- [Target Gases & Environmental Indices](#-target-gases--environmental-indices)
+  - [Implemented Control Indices](#implemented-control-indices)
+- [Hardware Peripheral Mapping](#️-hardware-peripheral-mapping)
+- [Software Architecture](#-software-architecture)
+  - [Central Safety Loop State Machine](#central-safety-loop-state-machine)
+  - [Execution Strategy](#execution-strategy)
+  - [Message-queue asynchronous flow](#message-queue-asynchronous-flow)
+- [Compensation & Normalization Models](#-compensation--normalization-models)
+- [Safety Core & Fail-Safes](#-safety-core--fail-safes)
+- [Roadmap](#️-roadmap)
+
+---
+
 ## 🚀 System Architecture Overview
 
 To protect sensitive metal-oxide gas sensors from destructive metallic dust and electrode debris while keeping ambient tracking responsive, ClearAir uses a **dual-zone sampling topology**:
