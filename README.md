@@ -33,7 +33,7 @@ graph TD
 
 ## ⚡ Power & Logic Integration
 
-*   **Mains Split & Supply Rails:** The 220VAC mains feed splits two ways: one branch goes to the RobotDyn TRIAC dimmer (fan phase control), the other to an AC-DC power supply that outputs **12V** (safety buzzer) and **5V** (STM32 Nucleo board via `E5V`, plus all sensors, the RobotDyn logic side, and the Arduino Nano). The **3.3V** rail comes from the Nucleo board's on-board regulator.
+*   **Mains Split & Supply Rails:** The 220VAC mains feed splits two ways: one branch goes to the RobotDyn TRIAC dimmer (fan phase control), the other to an AC-DC power supply that outputs **12V** (safety buzzer) and **5V** (STM32 Nucleo board via `E5V`, plus all sensors, the RobotDyn logic side, and the Arduino Nano). The **3.3V** rail comes from the Nucleo board's on-board regulator. The 40 mm sampling-chamber intake fan runs all the time straight from the PSU; jumper `JP1` selects its supply (1-2 = 5V, 2-3 = 12V) until the fan's rated voltage is confirmed.
 *   **Electrical Noise Isolation:** The internal 5V heating elements of the gas sensors are powered directly from the external 5V supply rail rather than drawing from the MCU. This layout keeps heavy electrical switching current ripples completely away from the sensitive STM32 analog circuitry.
 *   **Logic Interfacing:** The `I2C3` bus uses 4.7 kΩ pull-up resistors tied strictly to the STM32's 3.3V rail. The 5V-powered modules (MQ131, MiCS-4514, RobotDyn dimmer) send their outputs (MQ131 `AO`, MiCS-4514 `RED`/`NOX`, RobotDyn `Z-C`) through passive 1.8 kΩ (series) / 3.3 kΩ (to GND) voltage dividers, which drop a 5V signal to ~3.24V, under the 3.3V GPIO/ADC limit.
 *   **Board Damage Note:** On this specific STM32F446RE board, the `I2C1` and `I2C2` peripherals are physically damaged ("fried") and unusable. `I2C3` (PA8/PC9) remains the only viable I2C peripheral. `clearair.ioc` is the source of truth for pin allocation; the USART3 link below uses `PB10` (TX) / `PC5` (RX) as allocated there.
@@ -59,7 +59,7 @@ graph TD
 
 ## 🛠️ Hardware Peripheral Mapping
 
-The full wiring schematic (every NUCLEO-F446RE morpho pin connection) is in [`hardware/clearair.kicad_sch`](hardware/clearair.kicad_sch) (KiCad 10).
+The full wiring schematic (every NUCLEO-F446RE morpho pin connection) is in [`hardware/Nuclio-F466RE/clearair.kicad_sch`](hardware/Nuclio-F466RE/clearair.kicad_sch) (KiCad 10).
 
 | Subsystem Component | Peripheral Identifier             | Physical Hardware Pin           | Hardware Mode & Execution Profile |
 | :--- |:----------------------------------|:--------------------------------| :--- |
