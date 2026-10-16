@@ -39,6 +39,38 @@ graph TD
 *   **Board Damage Note:** On this specific STM32F446RE board, the `I2C1` and `I2C2` peripherals are physically damaged ("fried") and unusable. `I2C3` (PA8/PC9) remains the only viable I2C peripheral. `clearair.ioc` is the source of truth for pin allocation; the USART3 link below uses `PB10` (TX) / `PC5` (RX) as allocated there.
 *   **USART3 Link to Arduino (future):** A dedicated **USART3** connection will eventually bridge the STM32 to a secondary **Arduino Nano** (already in stock), running on its native 5V logic domain — kept separate from the sensor `I2C3` bus. A pair of **2N7000** MOSFETs will handle bidirectional 3.3V↔5V level shifting on the TX/RX lines between the STM32's 3.3V USART3 pins and the Arduino's 5V UART pins. The Arduino Nano will drive a future visualization stage — an LED array or 7-segment display — for per-sensor status indication, receiving status bytes over this serial link. The safety-latch buzzer stays wired directly to the STM32 (see Safety Core & Fail-Safes) so it keeps working even if the Arduino is unreachable or dead.
 
+### Power Budget (estimate)
+
+Typical datasheet values, not measurements (±20%). STM32 at 180 MHz (`clearair.ioc`). The future LED array / 7-segment display is **not** included; budget another 100–300 mA on 5V for it.
+
+**5V rail**
+
+| Load | Typical | Peak / max |
+| :--- | :--- | :--- |
+| NUCLEO-F446RE (MCU @ 180 MHz + ST-LINK + LEDs) | ~100 mA | 150 mA |
+| 3V3 loads via Nucleo regulator (BME680 incl. gas-heater pulses, I2C pull-ups, 2N7000 pull-ups) | ~5 mA | 15 mA |
+| SPS30 (measuring) | 60 mA | 80 mA |
+| MQ131 heater + module | ~170 mA | 185 mA |
+| MiCS-4514 (RED + OX heaters + module) | ~60 mA | 75 mA (preheat) |
+| RobotDyn logic side (Z-C opto + PSM) | ~5 mA | 15 mA |
+| 1.8k/3.3k dividers (×4) + 5V pull-ups R11/R13 | ~5 mA | 5 mA |
+| Arduino Nano (board only) | ~25 mA | 40 mA |
+| **Total, fan on 12V** | **~430 mA ≈ 2.2 W** | **~570 mA ≈ 2.9 W** |
+| 40 mm fan, if 5V type | +100 mA | +200 mA |
+| **Total, fan on 5V** | **~530 mA ≈ 2.7 W** | **~770 mA ≈ 3.9 W** |
+
+**12V rail**
+
+| Load | Typical | Peak / max |
+| :--- | :--- | :--- |
+| 12V buzzer (active type, only when latched on) | 30 mA | ~100 mA (loud siren type) |
+| R16 gate pull-up (buzzer off, Q3 conducting) | 1.2 mA | 1.2 mA |
+| **Total, fan on 5V** | **~1 mA idle / ~30 mA alarm** | **~100 mA ≈ 1.2 W** |
+| 40 mm fan, if 12V type | +60 mA | +100 mA |
+| **Total, fan on 12V** | **~90 mA alarm ≈ 1.1 W** | **~200 mA ≈ 2.4 W** |
+
+**PSU sizing:** 5V ≥ 1 A (≈ 1.5 A with the future display), 12V ≥ 0.3 A, so a ~10 W dual-output module (e.g. 5V/1.5A + 12V/0.5A) is enough. The extra 5V headroom covers cold-heater inrush on the MQ131 and MiCS-4514. The gas-sensor heaters are ~60% of the 5V load. Replace the buzzer and fan rows with the real label currents once known.
+
 ---
 
 ## 📊 Target Gases & Environmental Indices
