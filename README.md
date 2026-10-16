@@ -33,10 +33,10 @@ graph TD
 
 ## ⚡ Power & Logic Integration
 
-*   **External 5V Rail:** The STM32 board and all high-draw sensor sub-components are powered by a dedicated, regulated external 5V supply line.
+*   **Mains Split & Supply Rails:** The 220VAC mains feed splits two ways: one branch goes to the RobotDyn TRIAC dimmer (fan phase control), the other to an AC-DC power supply that outputs **12V** (safety buzzer) and **5V** (STM32 Nucleo board via `E5V`, plus all sensors, the RobotDyn logic side, and the Arduino Nano). The **3.3V** rail comes from the Nucleo board's on-board regulator.
 *   **Electrical Noise Isolation:** The internal 5V heating elements of the gas sensors are powered directly from the external 5V supply rail rather than drawing from the MCU. This layout keeps heavy electrical switching current ripples completely away from the sensitive STM32 analog circuitry.
-*   **Logic Interfacing:** The `I2C3` bus uses 4.7 kΩ pull-up resistors tied strictly to the STM32's 3.3V rail. High-voltage analog sensor outputs are routed through passive hardware voltage dividers to safely drop raw 5V signals under the 3.3V ADC limit.
-*   **Board Damage Note:** On this specific STM32F446RE board, the `I2C1` and `I2C2` peripherals and their associated GPIO pins are physically damaged ("fried") and unusable. `I2C3` (PA8/PC9) remains the only viable I2C peripheral, and any new pin assignment (e.g. the USART3 link below) must avoid the `I2C1`/`I2C2` pin footprints — including `PB10`/`PB11`, which double as `I2C2` SCL/SDA.
+*   **Logic Interfacing:** The `I2C3` bus uses 4.7 kΩ pull-up resistors tied strictly to the STM32's 3.3V rail. The 5V-powered modules (MQ131, MiCS-4514, RobotDyn dimmer) send their outputs (MQ131 `AO`, MiCS-4514 `RED`/`NOX`, RobotDyn `Z-C`) through passive 1.8 kΩ (series) / 3.3 kΩ (to GND) voltage dividers, which drop a 5V signal to ~3.24V, under the 3.3V GPIO/ADC limit.
+*   **Board Damage Note:** On this specific STM32F446RE board, the `I2C1` and `I2C2` peripherals are physically damaged ("fried") and unusable. `I2C3` (PA8/PC9) remains the only viable I2C peripheral. `clearair.ioc` is the source of truth for pin allocation; the USART3 link below uses `PB10` (TX) / `PC5` (RX) as allocated there.
 *   **USART3 Link to Arduino (future):** A dedicated **USART3** connection will eventually bridge the STM32 to a secondary **Arduino Nano** (already in stock), running on its native 5V logic domain — kept separate from the sensor `I2C3` bus. A pair of **2N7000** MOSFETs will handle bidirectional 3.3V↔5V level shifting on the TX/RX lines between the STM32's 3.3V USART3 pins and the Arduino's 5V UART pins. The Arduino Nano will drive a future visualization stage — an LED array or 7-segment display — for per-sensor status indication, receiving status bytes over this serial link. The safety-latch buzzer stays wired directly to the STM32 (see Safety Core & Fail-Safes) so it keeps working even if the Arduino is unreachable or dead.
 
 ---
@@ -59,6 +59,8 @@ graph TD
 
 ## 🛠️ Hardware Peripheral Mapping
 
+The full wiring schematic (every NUCLEO-F446RE morpho pin connection) is in [`hardware/clearair.kicad_sch`](hardware/clearair.kicad_sch) (KiCad 10).
+
 | Subsystem Component | Peripheral Identifier             | Physical Hardware Pin           | Hardware Mode & Execution Profile |
 | :--- |:----------------------------------|:--------------------------------| :--- |
 | **SPS30 + BME680** | I2C3                              | PA8 (SCL), PC9 (SDA)            | Standard Open-Drain. |
@@ -66,14 +68,14 @@ graph TD
 | **MiCS-4514 (CO)** | ADC2_IN1                          | PA1                             | Single-Ended Analog Input ($V_{OUT1}$). |
 | **MiCS-4514 ($NO_2$)** | ADC2_IN7                          | PA7                             | Single-Ended Analog Input ($V_{OUT2}$). |
 | **MiCS-4514 (Preheat)** | GPIO Output                       | PC8                             | Push-Pull digital output, driven HIGH during heater warm-up (not PWM). |
-| **RobotDyn ZC Input** | EXTI16                            | PC6                             | Digital Input, configured for falling-edge interrupts. |
+| **RobotDyn ZC Input** | EXTI16                            | PC6                             | Digital Input, configured for falling-edge interrupts. The module runs on 5V, so `Z-C` reaches PC6 through a 1.8 kΩ / 3.3 kΩ divider. |
 | **RobotDyn Gate Out** | GPIO Output                       | PC7                             | Push-Pull, High-Speed Output driven by Timer ISR. |
 | **Phase-Delay Tracking** | TIM3                              | Internal                        | One-Pulse Hardware Mode (Triggered by ZC Interrupt). |
 | **OS Kernel Clock** | SysTick                           | Internal                        | Dedicated exclusively to FreeRTOS Scheduler operations. |
 | **HAL Timebase** | TIM6                              | Internal                        | Dedicated strictly to standard HAL delay and timeout loops. |
 | **Debug & Telemetry** | USART2                            | PA2 (TX), PA3 (RX)              | Asynchronous communication mapped to ST-LINK VCP. |
 | **Status Indicator** | GPIO Output                       | PA5                             | Mapped to onboard status LED. |
-| **Arduino Visualization Controller (future)** | USART3 (via 2N7000 level shifter) | PC10 (TX), PC11 (RX)            | Future status output stage: an Arduino Nano (5V logic, already in stock) drives an LED array or 7-segment display for per-sensor nominal/fault indication, receiving status bytes over `USART3`; a pair of 2N7000 MOSFETs handle bidirectional 3.3V↔5V level shifting on the TX/RX lines. Uses `PC10`/`PC11` specifically to avoid the fried `I2C2` pin footprint (`PB10`/`PB11`). The safety-latch buzzer remains directly on the STM32, independent of the Arduino. |
+| **Arduino Visualization Controller (future)** | USART3 (via 2N7000 level shifter) | PB10 (TX), PC5 (RX)             | Future status output stage: an Arduino Nano (5V logic, already in stock) drives an LED array or 7-segment display for per-sensor nominal/fault indication, receiving status bytes over `USART3`; a pair of 2N7000 MOSFETs handle bidirectional 3.3V↔5V level shifting on the TX/RX lines. The safety-latch buzzer remains directly on the STM32, independent of the Arduino. |
 | **Manual Reset (external button)** | NRST                              | NRST (exposed on morpho header) | External hardware reset button wired directly to the STM32's `NRST` pin, in parallel with the onboard Nucleo reset button. True hardware system reset; no firmware or GPIO involvement. |
 | **Cold/Warm Boot Select (external button)** | GPIO Input                        | PC12                            | External momentary button wired to `PC12`. Firmware reads the pin once at boot: held down means a cold boot, otherwise warm. |
 
@@ -94,11 +96,13 @@ graph TD
     %% Low-Voltage Side
     subgraph LV [LOW-VOLTAGE CONTROL SIDE - 5V / 3.3V / 12V]
         %% Power Domain
-        Power_5V[5V Power Rails]
-        LDO_33[3.3V LDO]
-        StepUp_12[5V-to-12V Step-Up]
+        PSU[AC-DC PSU 12V / 5V]
+        Power_5V[5V Power Rail]
+        Power_12V[12V Power Rail]
+        LDO_33[Nucleo On-Board 3.3V Regulator]
         Buzzer_12[12V BUZZER]
         Trans_2N2222[NPN 2N2222A Transistor]
+        MOSFET_Z44[IRFZ44N N-MOSFET]
         GND[System GND]
         
         %% Microcontroller Internal Modules
@@ -134,10 +138,12 @@ graph TD
     %% Power Routing Connections
     AC_Mains -->|Mains Feed| ZC_Circ
     AC_Mains -->|Mains Feed| TRIAC_Dim
-    Power_5V --> LDO_33
-    Power_5V --> StepUp_12
+    AC_Mains -->|Mains Feed| PSU
+    PSU --> Power_5V
+    PSU --> Power_12V
+    Power_5V -->|E5V| LDO_33
     LDO_33 -->|3.3V Core VCC| STM32
-    StepUp_12 -->|12V VCC| Buzzer_12
+    Power_12V -->|12V VCC| Buzzer_12
 
     %% Signal and Control Connections
     ZC_Circ -->|Opto-Isolated Pulse| EXTI
@@ -146,7 +152,9 @@ graph TD
     TRIAC_Dim -->|Phase-Cut Output| AC_Fan
     
     T5 -->|GPIO Output| Trans_2N2222
-    Buzzer_12 -->|Collector| Trans_2N2222
+    Trans_2N2222 -->|Collector drives Gate| MOSFET_Z44
+    Buzzer_12 -->|Drain| MOSFET_Z44
+    MOSFET_Z44 -->|Source| GND
     Trans_2N2222 -->|Emitter| GND
 
     T5 -->|USART3 TX/RX, future| Level_Shift
