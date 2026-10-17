@@ -340,3 +340,57 @@ graph TD
 - [ ] 5. **Minimal field test,** with buttons that inject the fan and alarm events.
 - [ ] 6. **Power + MCU enclosure:** design and build it (220V AC to 12V and 5V DC).
 - [ ] 7. **Full field test** with the welder.
+
+---
+
+## 📌 STM32G474CEU6 Pin Plan (WeAct G4 Long)
+
+Planned pin map for roadmap step 2: **STM32G474CEU6** (UFQFPN48) on the WeAct G4 Long board, debugged with an STLINK-V3MINIE. The new board has no damaged peripherals, so the I2C3-only limit from the F446RE board does not apply. The sensor bus moves to `I2C1`. This plan is not yet in `clear-air.ioc`. Apply it there first, then regenerate. Pin functions come from the CubeMX DB (`STM32G474C(B-C-E)Ux.xml`).
+
+**Kept from the F446RE design:** CubeMX labels (`ZC_INPUT`, `DIMMER_LEVEL`, `MICS4514_PREHEAT`, `BOOT_TY_SELECT`), so the C++ code under `device/*` builds without edits. Peripheral instances `ADC1`/`ADC2`, `USART2`, `USART3`, `TIM3`, `TIM6` also stay the same. The I2C handle changes from `hi2c3` to `hi2c1` (`Core/Src/cpp_main.cpp`). The analog pins stay `PA0`/`PA1`/`PA7`, but the G4 channel numbers change.
+
+### Service → Pin Assignments
+
+| Service | Peripheral | G474 Pin (UFQFPN48 pin #) | F446RE Pin (old) | Notes |
+| :--- | :--- | :--- | :--- | :--- |
+| **SPS30 + BME680** | I2C1 | PA15 SCL (38), PB7 SDA (45) | PA8, PC9 (I2C3) | 4.7 kΩ pull-ups to 3.3V. `PA15` is free because debug uses SWD only (no `JTDI`). |
+| **MQ-131 Output** | ADC1_IN1 | PA0 (8) | PA0 (ADC1_IN0) | Through the 1.8 kΩ / 3.3 kΩ divider. |
+| **MiCS-4514 (CO)** | ADC2_IN2 | PA1 (9) | PA1 (ADC2_IN1) | `PA1` is shared by ADC1/ADC2 IN2. Select ADC2 in CubeMX. |
+| **MiCS-4514 ($NO_2$)** | ADC2_IN4 | PA7 (15) | PA7 (ADC2_IN7) | Through the divider. |
+| **RobotDyn ZC Input** | GPIO EXTI0 | PB0 (17) | PC6 (EXTI6) | Falling edge, pull-up, through the divider. Uses the dedicated `EXTI0_IRQn` vector (priority 5, as the old `EXTI9_5_IRQn`). |
+| **RobotDyn Gate Out** | GPIO Output | PB1 (18) | PC7 | Push-pull, high speed, driven from the `TIM3` ISR. |
+| **MiCS-4514 (Preheat)** | GPIO Output | PB12 (25) | PC8 | Push-pull, initial state LOW. |
+| **Cold/Warm Boot Select** | GPIO Input | PB14 (27) | PC12 | Pull-up, read once at boot. |
+| **Safety Buzzer Latch** | GPIO Output | PB15 (28) | — (not allocated) | New. Drives the 2N2222A base for the 12V buzzer. Initial state LOW. |
+| **Status Indicator** | GPIO Output | PC6 (29) | PA5 | On-board WeAct user LED. |
+| **Debug & Telemetry** | USART2 | PA2 TX (10), PA3 RX (11) | PA2, PA3 | The board has no on-board ST-LINK, and the 4-pin SWD header has no VCP lines. Wire `PA2`/`PA3` to the STLINK-V3MINIE 14-pin connector (`T_VCP_RX`/`T_VCP_TX`) or to a USB-serial adapter. |
+| **Arduino Visualization Controller (future)** | USART3 (via 2N7000 level shifter) | PB10 TX (22), PB11 RX (24) | PB10, PC5 | |
+| **Phase-Delay Tracking** | TIM3 | Internal | Internal | At 170 MHz SYSCLK with APB1 = HCLK, set prescaler `169` for a 1 µs tick (was `89` at 90 MHz). |
+| **HAL Timebase** | TIM6 | Internal | Internal | `TIM6_DAC_IRQn`. |
+| **OS Kernel Clock** | SysTick | Internal | Internal | FreeRTOS only. |
+| **Manual Reset (external button)** | NRST | PG10-NRST (7) | NRST | In parallel with the on-board reset key. |
+
+### Reserved Pins (board / debugger — do not assign)
+
+| Pin | Used by |
+| :--- | :--- |
+| PA13, PA14 | SWD (`SWDIO`, `SWCLK`). The STLINK-V3MINIE connects to the board's dedicated 4-pin SWD header (3V3, SWDIO, SWCLK, GND) next to the two keys. That header has no `SWO` or `JTDI`, so `PB3` and `PA15` are free. |
+| PA11, PA12 | On-board USB-C (`USB_DM`, `USB_DP`) |
+| PB8-BOOT0 | BOOT0, wired to the on-board BOOT key |
+| PG10-NRST | NRST, wired to the on-board reset key and the external reset button |
+| PF0, PF1 | 8 MHz HSE crystal |
+| PC14, PC15 | 32.768 kHz LSE crystal |
+| PC6 | On-board user LED (used as the status indicator above) |
+| PC13 | On-board user key |
+| PB4, PB6 | UCPD1 dead-battery pull-downs (`CC2`/`CC1`). Avoided, so they stay free of side effects. |
+
+### Conflict Check
+
+*   Each pin above has one function.
+*   The only EXTI line in use is EXTI0 (`PB0`). `PA0` (also line 0) is analog, so it does not claim EXTI0.
+*   No alternate function overlaps another selected peripheral. The other I2C1 pin options are not used: `PA13`/`PA14` are SWD and `PB8` is BOOT0. `PB9` (I2C1_SDA alt) stays unused. The I2C1 SMBA pin (`PB5`) stays unused.
+*   `VREF+` (pin 20) must connect to `VDDA` on the board for the ADCs to read against 3.3V.
+
+**Spare pins after this plan:** PA4, PA5, PA6, PA8, PA9, PA10, PB2, PB3, PB5, PB9, PB13, PC4, PC10, PC11. PA4/PA5/PA6/PB2/PC4 also have ADC2 inputs, so they suit extra analog sensors.
+
+The schematic and the power budget above still describe the NUCLEO-F446RE. Update them when this plan goes into `clear-air.ioc`.
