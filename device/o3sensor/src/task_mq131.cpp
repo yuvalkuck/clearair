@@ -2,7 +2,7 @@
 
 #include "event_message.h"
 #include "logger.h"
-#include "stm32f4xx.h"
+#include "stm32g4xx.h"
 #include "timestamp.h"
 #include "main.h"
 

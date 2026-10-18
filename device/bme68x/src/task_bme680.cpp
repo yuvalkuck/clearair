@@ -2,7 +2,7 @@
 // Created by uv on 22/07/2026.
 //
 
-#include "stm32f4xx.h"
+#include "stm32g4xx.h"
 #include "bridge_bme680.h"
 #include "task_bme680.h"
 #include "bme68x.h"

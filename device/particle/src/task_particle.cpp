@@ -2,7 +2,7 @@
 // // Created by uv on 22/07/2026.
 // //
 //
-#include "stm32f4xx.h"
+#include "stm32g4xx.h"
 #include "task_particle.h"
 #include "sensirion_common.h"
 #include "bridge_particle.h"

@@ -27,9 +27,7 @@ extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f4xx_hal.h"
-
-#include "stm32f4xx_nucleo.h"
+#include "stm32g4xx_hal.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -59,29 +57,29 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define MQ131_READ_Pin GPIO_PIN_0
-#define MQ131_READ_GPIO_Port GPIOA
-#define MICS4514_CO_Pin GPIO_PIN_1
-#define MICS4514_CO_GPIO_Port GPIOA
-#define USART_TX_Pin GPIO_PIN_2
-#define USART_TX_GPIO_Port GPIOA
-#define USART_RX_Pin GPIO_PIN_3
-#define USART_RX_GPIO_Port GPIOA
-#define MICS4514_NO2_Pin GPIO_PIN_7
-#define MICS4514_NO2_GPIO_Port GPIOA
-#define ZC_INPUT_Pin GPIO_PIN_6
-#define ZC_INPUT_GPIO_Port GPIOC
-#define ZC_INPUT_EXTI_IRQn EXTI9_5_IRQn
-#define DIMMER_LEVEL_Pin GPIO_PIN_7
-#define DIMMER_LEVEL_GPIO_Port GPIOC
-#define MICS4514_PREHEAT_Pin GPIO_PIN_8
-#define MICS4514_PREHEAT_GPIO_Port GPIOC
-#define TMS_Pin GPIO_PIN_13
-#define TMS_GPIO_Port GPIOA
-#define TCK_Pin GPIO_PIN_14
-#define TCK_GPIO_Port GPIOA
-#define BOOT_TY_SELECT_Pin GPIO_PIN_12
-#define BOOT_TY_SELECT_GPIO_Port GPIOC
+#define MQ131_ADC_Pin GPIO_PIN_0
+#define MQ131_ADC_GPIO_Port GPIOA
+#define MICS_CO1_Pin GPIO_PIN_1
+#define MICS_CO1_GPIO_Port GPIOA
+#define MICS_NO2_Pin GPIO_PIN_7
+#define MICS_NO2_GPIO_Port GPIOA
+#define ZC_INPUT_Pin GPIO_PIN_0
+#define ZC_INPUT_GPIO_Port GPIOB
+#define ZC_INPUT_EXTI_IRQn EXTI0_IRQn
+#define TRIAC_DIMMER_Pin GPIO_PIN_1
+#define TRIAC_DIMMER_GPIO_Port GPIOB
+#define MICS_PREHEAT_Pin GPIO_PIN_12
+#define MICS_PREHEAT_GPIO_Port GPIOB
+#define BOOT_MODE_Pin GPIO_PIN_14
+#define BOOT_MODE_GPIO_Port GPIOB
+#define BUZZER_IN_Pin GPIO_PIN_15
+#define BUZZER_IN_GPIO_Port GPIOB
+#define LED_BOARD_Pin GPIO_PIN_6
+#define LED_BOARD_GPIO_Port GPIOC
+#define I2C_SCL_Pin GPIO_PIN_15
+#define I2C_SCL_GPIO_Port GPIOA
+#define I2C_SDA_Pin GPIO_PIN_7
+#define I2C_SDA_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 #define DETECTION_SLEEP_LOOP_LIMIT 50000 // 5sec of sleep

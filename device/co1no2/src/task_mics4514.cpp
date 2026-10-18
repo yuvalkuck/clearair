@@ -1,7 +1,7 @@
 //
 // Created by uv on 11/08/2026.
 //
-#include "stm32f4xx.h"
+#include "stm32g4xx.h"
 #include "timestamp.h"
 #include "main.h"
 #include "event_message.h"
@@ -33,9 +33,9 @@ void SensorCO1NO2::configure(bool isColdBoot) {
 // reference taken from: https://github.com/paulopereira98/mics4514-stm32-driver
 [[noreturn]] void SensorCO1NO2::taskLoop() const {
     METHODTRACE
-    HAL_GPIO_WritePin(MICS4514_PREHEAT_GPIO_Port, MICS4514_PREHEAT_Pin, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(MICS_PREHEAT_GPIO_Port, MICS_PREHEAT_Pin, GPIO_PIN_SET);
     vTaskDelay(pdMS_TO_TICKS(MICS4514_BOOST_PREHEAT_MS));
-    HAL_GPIO_WritePin(MICS4514_PREHEAT_GPIO_Port, MICS4514_PREHEAT_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(MICS_PREHEAT_GPIO_Port, MICS_PREHEAT_Pin, GPIO_PIN_RESET);
     if (isColdBoot_) {
         METHODLOGS(info, "MiCS-4514 cold-boot soak: %lums", (unsigned long)MICS4514_COLD_SOAK_MS);
         vTaskDelay(pdMS_TO_TICKS(MICS4514_COLD_SOAK_MS));

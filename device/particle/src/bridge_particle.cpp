@@ -1,7 +1,7 @@
 //
 // Created by uv on 21/07/2026
 //
-#include "stm32f4xx_hal.h"
+#include "stm32g4xx_hal.h"
 #include "bridge_particle.h"
 #include "cmsis_os.h"
 #include "sensirion_config.h"

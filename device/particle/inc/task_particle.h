@@ -5,7 +5,7 @@
 #ifndef CLEARAIR_TASK_PARTICLE_H
 #define CLEARAIR_TASK_PARTICLE_H
 
-#include "stm32f4xx_hal_i2c.h"
+#include "stm32g4xx_hal_i2c.h"
 #include "base_device_task.h"
 
 

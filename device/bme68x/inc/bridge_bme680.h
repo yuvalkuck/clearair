@@ -4,7 +4,7 @@
 
 #ifndef CLEARAIR_TELEMETRY_BME680_H
 #define CLEARAIR_TELEMETRY_BME680_H
-#include "stm32f4xx_hal_i2c.h"
+#include "stm32g4xx_hal_i2c.h"
 #include "bme68x_defs.h"
 
 

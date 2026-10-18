@@ -33,6 +33,7 @@ enable_language(C CXX ASM)
 
 # Create an executable object type
 add_executable(${CMAKE_PROJECT_NAME})
+# Support of FMT lib - using std::format is heavy and not recommended for embedded
 IF (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     ADD_COMPILE_DEFINITIONS(FMT_HEADER_ONLY FMT_USE_EXCEPTION=0 FMT_USE_RTTI=0 FMT_USE_LOCALE=0)
     include(FetchContent)

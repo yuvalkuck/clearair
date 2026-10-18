@@ -10,7 +10,7 @@
 #include "cmsis_os.h"
 #include "logger.h"
 
-extern I2C_HandleTypeDef hi2c3;
+extern I2C_HandleTypeDef hi2c1;
 extern osMessageQueueId_t SensorEventsHandle;
 extern osThreadId_t bmeTaskHandle;
 extern osThreadId_t co1no2TaskHandle;
@@ -42,9 +42,9 @@ extern "C" [[noreturn]] void appStartDefaultTask(void* argument) {
     taskCO1NO2.setup(co1no2TaskHandle, SensorEventsHandle);
     //
     uint8_t elementReady = ElementReady::Invalid;
-    bool isColdBoot = HAL_GPIO_ReadPin(BOOT_TY_SELECT_GPIO_Port, BOOT_TY_SELECT_Pin) == GPIO_PIN_SET;
+    bool isColdBoot = HAL_GPIO_ReadPin(BOOT_MODE_GPIO_Port, BOOT_MODE_Pin) == GPIO_PIN_SET;
     auto leep = LED_INDICATE_OK;
-    auto rc = taskBme68x.configure(&hi2c3);
+    auto rc = taskBme68x.configure(&hi2c1);
     if (!rc) {
         leep = LED_INDICATE_ERROR;
         // METHODLOG(error, "taskBme68x configure failed")
@@ -68,7 +68,7 @@ extern "C" [[noreturn]] void appStartDefaultTask(void* argument) {
     elementReady |= ElementReady::CO;
     taskCO1NO2.configure(isColdBoot);
     // Particle takes some time to configure
-    rc = taskParticle.configure(&hi2c3);
+    rc = taskParticle.configure(&hi2c1);
     if (!rc) {
         leep = LED_INDICATE_ERROR;
         // METHODLOG(error, "taskParticle configure failed")
@@ -86,7 +86,7 @@ extern "C" [[noreturn]] void appStartDefaultTask(void* argument) {
     if ( elementReady & ElementReady::CO) {taskCO1NO2.resume();}
     MESSAGELOG("End startup");
     for (;;) {
-        BSP_LED_Toggle(LED2);
+        HAL_GPIO_TogglePin(LED_BOARD_GPIO_Port,LED_BOARD_Pin);
         vTaskDelay(pdMS_TO_TICKS(leep));
     }
 }

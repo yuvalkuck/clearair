@@ -54,7 +54,7 @@ void ControllerFanMotor::speedPercent(uint8_t percent) {
     }
     speedPercent_ = percent;
     if (percent == 0) {
-        HAL_GPIO_WritePin(DIMMER_LEVEL_GPIO_Port, DIMMER_LEVEL_Pin, GPIO_PIN_RESET);
+        HAL_GPIO_WritePin(TRIAC_DIMMER_GPIO_Port, TRIAC_DIMMER_Pin, GPIO_PIN_RESET);
         return;
     }
     constexpr uint32_t span = TRIAC_MIN_POWER_DELAY_US - TRIAC_MAX_POWER_DELAY_US;
@@ -67,14 +67,14 @@ void ControllerFanMotor::onZeroCross() {
     if (speedPercent_ == 0) {
         return; // gate stays low - TRIAC never fires
     }
-    HAL_GPIO_WritePin(DIMMER_LEVEL_GPIO_Port, DIMMER_LEVEL_Pin, GPIO_PIN_RESET); // gate off between cycles
+    HAL_GPIO_WritePin(TRIAC_DIMMER_GPIO_Port, TRIAC_DIMMER_Pin, GPIO_PIN_RESET); // gate off between cycles
     htim3.Instance->CNT = 0;                    // Reset timer clock
     htim3.Instance->ARR = speedDelayUs_;  // Bind current delay
     HAL_TIM_Base_Start_IT(&htim3);        // Arm the update interrupt
 }
 
 void ControllerFanMotor::onGateCompareMatch() {
-    HAL_GPIO_WritePin(DIMMER_LEVEL_GPIO_Port, DIMMER_LEVEL_Pin, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(TRIAC_DIMMER_GPIO_Port, TRIAC_DIMMER_Pin, GPIO_PIN_SET);
 
     // Hold the gate pulse for a fixed, brief duration. TIM3's counter is
     // free-running at 1 MHz, so this is a plain microsecond busy-wait;
@@ -83,7 +83,7 @@ void ControllerFanMotor::onGateCompareMatch() {
     while (static_cast<uint16_t>(htim3.Instance->CNT - fireTick) < GATE_PULSE_WIDTH_US) {
     }
 
-    HAL_GPIO_WritePin(DIMMER_LEVEL_GPIO_Port, DIMMER_LEVEL_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(TRIAC_DIMMER_GPIO_Port, TRIAC_DIMMER_Pin, GPIO_PIN_RESET);
     HAL_TIM_Base_Stop_IT(&htim3);
 }
 
@@ -95,7 +95,7 @@ extern "C" void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 
 // HAL_TIM_PeriodElapsedCallback is already defined in main.c for TIM6 (the
 // HAL timebase tick), so it can't be redefined here for TIM3. Hooked instead
-// from TIM3_IRQHandler's own USER CODE marker in stm32f4xx_it.c.
+// from TIM3_IRQHandler's own USER CODE marker in stm32g4xx_it.c.
 extern "C" void FanMotorOnTimerFired(void) {
     if (gActiveFanMotor != nullptr) {
         gActiveFanMotor->onGateCompareMatch();
