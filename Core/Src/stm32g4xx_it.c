@@ -1,7 +1,7 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * @file    stm32f4xx_it.c
+  * @file    stm32g4xx_it.c
   * @brief   Interrupt Service Routines.
   ******************************************************************************
   * @attention
@@ -19,7 +19,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "stm32f4xx_it.h"
+#include "stm32g4xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 /* USER CODE END Includes */
@@ -46,7 +46,7 @@
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN PFP */
-extern void FanMotorOnTimerFired(void);
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -112,7 +112,7 @@ void MemManage_Handler(void)
 }
 
 /**
-  * @brief This function handles Pre-fetch fault, memory access fault.
+  * @brief This function handles Prefetch fault, memory access fault.
   */
 void BusFault_Handler(void)
 {
@@ -155,24 +155,24 @@ void DebugMon_Handler(void)
 }
 
 /******************************************************************************/
-/* STM32F4xx Peripheral Interrupt Handlers                                    */
+/* STM32G4xx Peripheral Interrupt Handlers                                    */
 /* Add here the Interrupt Handlers for the used peripherals.                  */
 /* For the available peripheral interrupt handler names,                      */
-/* please refer to the startup file (startup_stm32f4xx.s).                    */
+/* please refer to the startup file (startup_stm32g4xx.s).                    */
 /******************************************************************************/
 
 /**
-  * @brief This function handles EXTI line[9:5] interrupts.
+  * @brief This function handles EXTI line0 interrupt.
   */
-void EXTI9_5_IRQHandler(void)
+void EXTI0_IRQHandler(void)
 {
-  /* USER CODE BEGIN EXTI9_5_IRQn 0 */
+  /* USER CODE BEGIN EXTI0_IRQn 0 */
 
-  /* USER CODE END EXTI9_5_IRQn 0 */
+  /* USER CODE END EXTI0_IRQn 0 */
   HAL_GPIO_EXTI_IRQHandler(ZC_INPUT_Pin);
-  /* USER CODE BEGIN EXTI9_5_IRQn 1 */
+  /* USER CODE BEGIN EXTI0_IRQn 1 */
 
-  /* USER CODE END EXTI9_5_IRQn 1 */
+  /* USER CODE END EXTI0_IRQn 1 */
 }
 
 /**
@@ -185,12 +185,12 @@ void TIM3_IRQHandler(void)
   /* USER CODE END TIM3_IRQn 0 */
   HAL_TIM_IRQHandler(&htim3);
   /* USER CODE BEGIN TIM3_IRQn 1 */
-  FanMotorOnTimerFired();
+
   /* USER CODE END TIM3_IRQn 1 */
 }
 
 /**
-  * @brief This function handles USART2 global interrupt.
+  * @brief This function handles USART2 global interrupt / USART2 wake-up interrupt through EXTI line 26.
   */
 void USART2_IRQHandler(void)
 {
@@ -204,21 +204,7 @@ void USART2_IRQHandler(void)
 }
 
 /**
-  * @brief This function handles EXTI line[15:10] interrupts.
-  */
-void EXTI15_10_IRQHandler(void)
-{
-  /* USER CODE BEGIN EXTI15_10_IRQn 0 */
-
-  /* USER CODE END EXTI15_10_IRQn 0 */
-  HAL_GPIO_EXTI_IRQHandler(USER_BUTTON_PIN);
-  /* USER CODE BEGIN EXTI15_10_IRQn 1 */
-
-  /* USER CODE END EXTI15_10_IRQn 1 */
-}
-
-/**
-  * @brief This function handles TIM6 global interrupt and DAC1, DAC2 underrun error interrupts.
+  * @brief This function handles TIM6 global interrupt, DAC1 and DAC3 channel underrun error interrupts.
   */
 void TIM6_DAC_IRQHandler(void)
 {

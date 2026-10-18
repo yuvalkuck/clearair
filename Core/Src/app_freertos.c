@@ -1,7 +1,7 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * File Name          : freertos.c
+  * File Name          : app_freertos.c
   * Description        : Code for freertos applications
   ******************************************************************************
   * @attention
@@ -58,12 +58,6 @@ void vApplicationStackOverflowHook(xTaskHandle xTask, signed char *pcTaskName);
 /* USER CODE BEGIN 4 */
 void vApplicationStackOverflowHook(xTaskHandle xTask, signed char *pcTaskName)
 {
-    (void) xTask;
-    (void) pcTaskName;
-
-    /* CRITICAL: Place a breakpoint on the line below in CLion */
-    __asm("bkpt #0");
-
    /* Run time stack overflow checking is performed if
    configCHECK_FOR_STACK_OVERFLOW is defined to 1 or 2. This hook function is
    called if a stack overflow is detected. */

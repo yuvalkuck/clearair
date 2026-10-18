@@ -1,7 +1,7 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * @file    stm32f4xx_it.h
+  * @file    stm32g4xx_it.h
   * @brief   This file contains the headers of the interrupt handlers.
   ******************************************************************************
   * @attention
@@ -18,8 +18,8 @@
 /* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32F4xx_IT_H
-#define __STM32F4xx_IT_H
+#ifndef __STM32G4xx_IT_H
+#define __STM32G4xx_IT_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -52,10 +52,9 @@ void MemManage_Handler(void);
 void BusFault_Handler(void);
 void UsageFault_Handler(void);
 void DebugMon_Handler(void);
-void EXTI9_5_IRQHandler(void);
+void EXTI0_IRQHandler(void);
 void TIM3_IRQHandler(void);
 void USART2_IRQHandler(void);
-void EXTI15_10_IRQHandler(void);
 void TIM6_DAC_IRQHandler(void);
 /* USER CODE BEGIN EFP */
 
@@ -65,4 +64,4 @@ void TIM6_DAC_IRQHandler(void);
 }
 #endif
 
-#endif /* __STM32F4xx_IT_H */
+#endif /* __STM32G4xx_IT_H */
