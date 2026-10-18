@@ -1,0 +1,4 @@
+(fp_lib_table
+	(version 7)
+	(lib (name "libraries") (type "KiCad") (uri "${HOME}/kicad/libraries/libraries.pretty") (options "") (descr "Global personal modules (footprints for FullModules symbols)"))
+)

@@ -1,0 +1,16 @@
+{
+  "meta": {
+    "filename": "clearair.kicad_pro",
+    "version": 3
+  },
+  "schematic": {
+    "legacy_lib_dir": "",
+    "legacy_lib_list": []
+  },
+  "sheets": [
+    [
+      "953560a5-36cf-5251-8f8d-509802d70a69",
+      "Root"
+    ]
+  ]
+}
