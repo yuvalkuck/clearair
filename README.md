@@ -12,12 +12,13 @@ An industrial-grade, real-time environmental control and safety monitoring syste
 - [Power & Logic Integration](#-power--logic-integration)
   - [Power Budget (estimate)](#power-budget-estimate)
 - [Target Gases & Environmental Indices](#-target-gases--environmental-indices)
-  - [Implemented Control Indices](#implemented-control-indices)
+  - [Planned Control Indices](#planned-control-indices)
 - [Hardware Peripheral Mapping](#️-hardware-peripheral-mapping)
 - [Software Architecture](#-software-architecture)
-  - [Central Safety Loop State Machine](#central-safety-loop-state-machine)
+  - [Planned Safety Latch State Machine](#planned-safety-latch-state-machine)
   - [Execution Strategy](#execution-strategy)
   - [Message-queue asynchronous flow](#message-queue-asynchronous-flow)
+  - [Sensor-Level Fan Control](#sensor-level-fan-control)
 - [Compensation & Normalization Models](#-compensation--normalization-models)
 - [Safety Core & Fail-Safes](#-safety-core--fail-safes)
 - [Roadmap](#️-roadmap)
@@ -100,7 +101,10 @@ Typical datasheet values, not measurements (±20%). STM32 at 180 MHz (`clearair.
 | **MiCS-4514** | Carbon Monoxide ($CO$) & Nitrogen Dioxide ($NO_2$) | Measures toxic shielding gas breakdown products, incomplete combustion ($CO$), and high-temperature thermal fixation byproducts ($NO_2$). |
 | **BME680** | VOCs, Sulfur Compounds, $H_2$ Gas | Utilizes the **Bosch BSEC2 library** to track complex vapor emissions coming from cutting fluids, dielectric oils, and insulating resins. |
 
-### Implemented Control Indices
+### Planned Control Indices
+
+Not implemented yet. Fan control today uses per-metric thresholds with no blended index (see [Sensor-Level Fan Control](#sensor-level-fan-control)).
+
 *   **Chamber Air Quality Index (AQI):** A multi-variable matrix blending $CO$, $NO_2$, and BSEC2 $VOC$ data into a single risk metric to determine basic ventilation speeds.
 *   **Oxidizing Gas Index (OGI):** A high-priority index tracking the sum of $O_3$ and $NO_2$ gas streams, mirroring extreme electrode ionization states.
 *   **Filter Loading Index (FLI):** Calculated from the delta ratio between raw outdoor $SPS30$ values and internal $BME680$ barometric pressure drops, triggering a warning when the physical filter element is clogged.
@@ -215,7 +219,10 @@ graph TD
     Reset_Btn -->|NRST| STM32
     BootSel_Btn -->|PC12, read once at boot| STM32
 ```
-### Central Safety Loop State Machine
+### Planned Safety Latch State Machine
+
+This is the intended design, **not what the firmware does today**. The implemented behavior is in [Sensor-Level Fan Control](#sensor-level-fan-control): there is no 30 s countdown, no latch, and the buzzer turns off again when the air improves. The latch and the manual-reset requirement are still to do.
+
 ```mermaid
 stateDiagram-v2
     [*] --> STATE_NORMAL
@@ -257,11 +264,12 @@ stateDiagram-v2
 *   **Boot Mode Selection:** The `PC12` boot-select button must be held down at the moment the system boots. Before any sensor `configure()` call runs, `appStartDefaultTask` reads the pin once: if held, it's a cold boot; otherwise a warm boot. On a warm boot, MQ131 and MiCS-4514 run their normal (short) warm-up before publishing readings; on a cold boot, each runs its own extended warm-up/soak in parallel (see `device/o3sensor` and `device/co1no2`) — none of this is persisted across reboots. The selected mode is then sent to the Arduino Nano over the (future) `USART3` link, which lights one of two indicator LEDs to reflect the choice — the LEDs are driven by the Arduino, not directly by the STM32.
 *   **Aggregate Update Cadence:** Individual sensor tasks post to the queue at their own native rate (`SPS30` every 1.0s, `BME680` every 3.0s, `MQ131`/`MiCS-4514` every 20ms), but the system as a whole pushes an updated aggregate `CollectedAirData` snapshot roughly every ~5 seconds for downstream consumers (telemetry, and the future Arduino visualization stage).
 *   **Low-Overhead Data Capture:** `ADC1` runs continuously in multi-channel Scan Mode handled via DMA. It updates a local 3-element array in RAM with fresh voltages from the `MQ131` and `MiCS-4514` sensors without generating any CPU overhead.
-*   **AC Phase Control Loop:**
-    1. The AC power wave crosses its zero-voltage baseline, instantly pulling the RobotDyn Zero-Cross input pin (`PA10`) low.
-    2. An external interrupt (`EXTI10`) triggers on the falling edge, preempting running tasks.
-    3. The EXTI hardware interrupt handler kicks off `TIM2` operating in One-Pulse Mode, configured with the current fan target phase delay value.
-    4. Upon timer expiration, a hardware interrupt toggles the TRIAC firing gate pin (`PA6`) high for a brief, fixed duration to pulse the fan.
+*   **AC Phase Control Loop:** (implemented in `device/fanmotor`, it bypasses the RTOS)
+    1. The AC power wave crosses zero volts and the RobotDyn zero-cross output pulls the `ZC_INPUT` pin low.
+    2. The falling-edge external interrupt runs `HAL_GPIO_EXTI_Callback`, which calls `onZeroCross()`. If the fan speed is 0 it returns and the gate stays low.
+    3. Otherwise it resets the `TIM3` counter, loads the current phase delay into `TIM3->ARR` and starts the `TIM3` update interrupt.
+    4. When `TIM3` expires, its interrupt calls `onGateCompareMatch()`, which pulses the TRIAC gate pin (`TRIAC_DIMMER`) high for about 100 µs.
+    5. `speedPercent()` (called from the control loop) sets the delay: 50% maps to a long delay (low power) and 100% to a short one, see [Sensor-Level Fan Control](#sensor-level-fan-control).
 
 ---
 
@@ -307,7 +315,7 @@ graph TD
     %% Central Decision flow
     Queue -->|Receives Each Reading| T5
     T5 -->|Updates| FanSpeed
-    T5 -->|Drives High on Stall| BuzzerPin
+    T5 -->|Drives HIGH at Evacuate level| BuzzerPin
     T5 -->|Sends status bytes, future| USART3_Out
 
     %% Precise Timing Hardware Loop
@@ -316,6 +324,67 @@ graph TD
     FanSpeed -.->|Read microsecond duration| Timer_ISR
     Timer_ISR -->|Delays Phase-Cut| TRIAC_Gate
 ```
+
+### Sensor-Level Fan Control
+
+The control loop (`mainSensorsMsgLoop` in `Core/Src/control_center.cpp`) turns every sensor reading into a danger level and a requested fan speed. The fan follows the worst metric.
+
+**Per metric.** Each metric (BME680 IAQ, MQ131 ozone, SPS30 PM2.5, SPS30 PM10, MiCS-4514 CO, MiCS-4514 NO2) has four thresholds, in the metric's own unit:
+
+| Threshold | Meaning |
+| :--- | :--- |
+| `fanOff` | A running fan keeps running until the reading drops below this value. It sits slightly below `fanOn`, so the fan does not switch on and off when a reading hovers around the turn-on point. |
+| `fanOn` | A stopped fan turns on, at the minimum speed (50%), when the reading reaches this value. |
+| `fanMax` | The fan reaches 100% at this value. Between `fanOn` and `fanMax` the speed rises linearly from 50% to 100%. |
+| `evacuate` | At or above this value the buzzer turns on. It is at or above `fanMax`, so the fan is already at full speed when the alarm sounds. |
+
+These give each metric one of three danger levels:
+
+| Level | Condition | Fan | Buzzer |
+| :--- | :--- | :--- | :--- |
+| `Off` | Below `fanOn` (or below `fanOff` if the fan is already running) | Off | Off |
+| `Ventilate` | From `fanOn` up to `evacuate` | 50% to 100%, proportional to the reading | Off |
+| `Evacuate` | At or above `evacuate` | 100% | On |
+
+**Across metrics.** Every reading that arrives updates only its own metrics in a shared structure that holds the latest level and requested fan speed of each metric. When the loop finishes handling a message, it evaluates the whole structure: the fan speed is the highest requested by any metric, and the buzzer is on if any metric is at `Evacuate`. The fan and buzzer are only written when the result changes.
+
+**Kick-start.** A stopped motor cannot start at 50% speed. When the fan turns on from off, it first runs at 100% for a fixed spin-up time (`FAN_KICKSTART_MS`), then drops to the requested speed. The fan has no tachometer, so this is a timer, not a measured speed. If the air becomes clean during the spin-up, the fan stops straight away. The loop waits on the queue with a timeout while a spin-up runs, so the fan drops to its target on time even if no sensor message arrives.
+
+**Fan speed to power.** The fan speed percentage maps linearly to the TRIAC firing delay in `device/fanmotor` (50% = `TRIAC_MIN_POWER_DELAY_US`, 100% = `TRIAC_MAX_POWER_DELAY_US`). It is not a power percentage. The 8" fan is an 80 W, 220 V capacitor-run AC motor, which stalls or hums at low voltage, so the minimum delay is set to give roughly 60% of mains RMS voltage at the 50% setting. That value is an estimate from the firing-angle curve and must be confirmed on the bench.
+
+```mermaid
+flowchart TD
+    Msg[Sensor reading arrives on the queue] --> Update[Update only that sensor's metrics:<br/>level + requested fan %]
+    Timeout[Spin-up timer expires<br/>queue wait timeout] --> Eval
+    Update --> Eval[Evaluate all metrics]
+    Eval --> Worst[Worst level and highest requested fan %]
+
+    Worst --> Lvl{Worst level}
+    Lvl -->|Evacuate| BuzOn[Buzzer ON]
+    Lvl -->|Off or Ventilate| BuzOff[Buzzer OFF]
+
+    Worst --> Fan{Requested fan %}
+    Fan -->|0 and fan stopped| Stay[Fan stays off]
+    Fan -->|0 and fan running| Stop[Stop fan, cancel any spin-up]
+    Fan -->|more than 0, fan stopped| Kick[Kick-start: set 100%<br/>for FAN_KICKSTART_MS]
+    Fan -->|more than 0, fan running| Set[Set requested speed]
+    Kick -->|spin-up done| Set
+    Set --> Motor[ControllerFanMotor.speedPercent]
+    Kick --> Motor
+    Stop --> Motor
+```
+
+```mermaid
+flowchart LR
+    R[Sensor reading] --> A{Reading vs thresholds}
+    A -->|below fanOn, fan stopped<br/>or below fanOff, fan running| O[Off: fan 0%]
+    A -->|fanOn up to fanMax| V1[Ventilate: fan 50% to 100%, linear]
+    A -->|fanMax up to evacuate| V2[Ventilate: fan 100%]
+    A -->|evacuate or above| E[Evacuate: fan 100% + buzzer ON]
+```
+
+**Current limits.** The buzzer is not latched: it turns off when every metric drops below `evacuate`, unlike the latched `STATE_EVACUATE_LATCHED` in the [planned state machine](#planned-safety-latch-state-machine) above. A metric that has not reported yet counts as `Off`, and there is no stale-data or loss-of-signal handling yet. The MQ131 thresholds are placeholders on raw ADC counts and need calibration, and the other thresholds come from public exposure limits (see the comments next to them in `control_center.cpp`).
+
 ## 📉 Compensation & Normalization Models
 
 *   **Pneumatic Lag Tracking:** Air taking a 3-meter path through a dense P100 filter introduces a noticeable physical delay. The control software channels open-air $SPS30$ data packets into an internal software ring buffer. This matches delayed chamber sensor gas metrics with historical particulate conditions.
@@ -324,6 +393,8 @@ graph TD
 ---
 
 ## 🚨 Safety Core & Fail-Safes
+
+**Status:** none of the fail-safes below is implemented yet. The implemented safety behavior is the threshold-based fan ramp and buzzer in [Sensor-Level Fan Control](#sensor-level-fan-control).
 
 *   **Loss of Signal Safeguard:** If the `I2C3` communication lines stall, or if the `ADC1` DMA buffer fails to cycle for 5 consecutive periods, the firmware shifts into an Emergency Override state, locking the TRIAC delay to 0% to force the exhaust fan to run continuously at 100% capacity.
 *   **Electrical Fault Monitoring:** If any analog channel detects an out-of-bounds voltage (0V matching a short circuit, or 3.3V matching a ruptured line), the event is reported over telemetry and the ventilation loop steps up to full speed.
@@ -334,8 +405,8 @@ graph TD
 ## 🗺️ Roadmap
 
 - [x] 1. **KiCad schematic.** ✅ **Done.** "Create" is a big word here: Claude generated it on request (`hardware/Nuclio-F466RE/clearair.kicad_sch`).
-- [ ] 2. **Move to a WeAct G4 Long** (STM32G474CEU6 Long + STLINK-V3MINIE).
-- [ ] 3. **Fan and alarm thresholds:** implement the thresholds that turn the fan on and set its speed, plus the trigger for the evacuation alarm.
+- [x] 2. **Move to a WeAct G4 Long** (STM32G474CEU6 Long + STLINK-V3MINIE).
+- [x] 3. **Fan and alarm thresholds:** thresholds, fan ramp, kick-start and the evacuation buzzer trigger are implemented (see Sensor-Level Fan Control). Still to do: calibrate the MQ131 thresholds, measure the real minimum fan speed and spin-up time on the bench, latch the alarm, and add stale-data / loss-of-signal handling.
 - [ ] 4. **Sensor cylinder:** design and 3D print a cylinder that holds all the sensitive sensors, downstream of a fan with a 3M 2091 particulate filter.
 - [ ] 5. **Minimal field test,** with buttons that inject the fan and alarm events.
 - [ ] 6. **Power + MCU enclosure:** design and build it (220V AC to 12V and 5V DC).
