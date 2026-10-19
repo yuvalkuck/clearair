@@ -56,9 +56,6 @@ add_subdirectory(cmake/stm32sps30)
 
 # Link directories setup
 target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
-    # Add user defined library search paths
-        Drivers/BSEC2/cortex-m4/1.10.2610
-
 )
 
 # Add sources to executable
