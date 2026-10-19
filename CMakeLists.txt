@@ -66,6 +66,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user sources here
         Core/Src/cpp_main.cpp
         Core/Src/base_device_task.cpp
+        Core/Src/crateria_map.cpp
 )
 
 # Add include paths
