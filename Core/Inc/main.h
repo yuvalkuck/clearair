@@ -49,6 +49,8 @@ extern "C" {
 
 /* USER CODE END EM */
 
+void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
+
 /* Exported functions prototypes ---------------------------------------------*/
 void Error_Handler(void);
 
@@ -61,6 +63,8 @@ void Error_Handler(void);
 #define MQ131_ADC_GPIO_Port GPIOA
 #define MICS_CO1_Pin GPIO_PIN_1
 #define MICS_CO1_GPIO_Port GPIOA
+#define FAN_FRONT_TACH_Pin GPIO_PIN_5
+#define FAN_FRONT_TACH_GPIO_Port GPIOA
 #define MICS_NO2_Pin GPIO_PIN_7
 #define MICS_NO2_GPIO_Port GPIOA
 #define ZC_INPUT_Pin GPIO_PIN_0
@@ -76,8 +80,14 @@ void Error_Handler(void);
 #define BUZZER_IN_GPIO_Port GPIOB
 #define LED_BOARD_Pin GPIO_PIN_6
 #define LED_BOARD_GPIO_Port GPIOC
+#define FAN_FRONT_PWM_Pin GPIO_PIN_8
+#define FAN_FRONT_PWM_GPIO_Port GPIOA
+#define FAN_REAR_PWM_Pin GPIO_PIN_9
+#define FAN_REAR_PWM_GPIO_Port GPIOA
 #define I2C_SCL_Pin GPIO_PIN_15
 #define I2C_SCL_GPIO_Port GPIOA
+#define FAN_REAR_TACH_Pin GPIO_PIN_3
+#define FAN_REAR_TACH_GPIO_Port GPIOB
 #define I2C_SDA_Pin GPIO_PIN_7
 #define I2C_SDA_GPIO_Port GPIOB
 
