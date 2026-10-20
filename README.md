@@ -33,8 +33,8 @@ To protect sensitive metal-oxide gas sensors from destructive metallic dust and 
 graph TD
     Ambient[Ambient Air] -->|Direct Ambient Draw| SPS30[Open Air Zone: SPS30 Sensor Element]
     Ambient -->|3-Meter Physical Pipeline| Filter[3M 2091 P100 Particulate Filter]
-    Filter -->|Flow Restriction| Fan[Dedicated Intake Fan]
-    Fan -->|Pneumatic Delay Delivery| Chamber[Shielded Gas Chamber]
+    Filter -->|Flow Restriction| FanF[Front Fan: 80 mm, 4-pin PWM]
+    FanF -->|Pneumatic Delay Delivery| Chamber[Shielded Gas Chamber]
     
     subgraph Isolated Chamber
         Chamber --> MQ131[MQ131 Ozone Sensor]
@@ -42,17 +42,20 @@ graph TD
         Chamber --> BME680[BME680 Environmental Sensor]
     end
 
+    Chamber -->|Exhaust| FanR[Rear Fan: 80 mm, 4-pin PWM, low-rpm standby]
+
     style Isolated Chamber fill:#f9f9f9,stroke:#333,stroke-width:2px
 ```
 
 *   **Ambient Air Zone:** The `SPS30` particulate matter sensor rests directly in unshielded ambient air to capture raw particulate mass values before any extraction or filtration happens.
-*   **Shielded Gas Chamber:** The `MQ131`, `MiCS-4514`, and `BME680` sensors are isolated inside an analytical testing container. An intake fan pulls air through a 3-meter tube and draws it across a **3M 2091 P100 filter**. This removes 99.97% of airborne dust and metallic shards, delivering clean target gases to the metal-oxide sensor elements.
+*   **Shielded Gas Chamber:** The `MQ131`, `MiCS-4514`, and `BME680` sensors are isolated inside an analytical testing container. A front fan pulls air through a 3-meter tube and draws it across a **3M 2091 P100 filter**. This removes 99.97% of airborne dust and metallic shards, delivering clean target gases to the metal-oxide sensor elements.
+*   **Fans:** Two identical 80 mm (8025), 12 V, 4-pin PWM fans (Cooler Master `FA08025M12LPA` class, about 5800 rpm at full speed, about 0.66 A each). Both run all the time: the front fan sets the sampling flow, at a speed well below its 5800 rpm maximum. The rear fan, at the exhaust end of the chamber, runs at a low speed and keeps the chamber near ambient pressure. If the front fan's tach signal shows a failure, the rear fan speeds up so air still passes through the filter and the sensors are not exposed to unfiltered air. This failover is planned and not implemented in firmware yet. Each fan has its own PWM output and tach input (see the pin plan below).
 
 ---
 
 ## ⚡ Power & Logic Integration
 
-*   **Mains Split & Supply Rails:** The 220VAC mains feed splits two ways: one branch goes to the RobotDyn TRIAC dimmer (fan phase control), the other to an AC-DC power supply that outputs **12V** (safety buzzer) and **5V** (STM32 Nucleo board via `E5V`, plus all sensors, the RobotDyn logic side, and the Arduino Nano). The **3.3V** rail comes from the Nucleo board's on-board regulator. The 40 mm sampling-chamber intake fan runs all the time straight from the PSU; jumper `JP1` selects its supply (1-2 = 5V, 2-3 = 12V) until the fan's rated voltage is confirmed.
+*   **Mains Split & Supply Rails:** The 220VAC mains feed splits two ways: one branch goes to the RobotDyn TRIAC dimmer (fan phase control), the other to two AC-DC power supply modules, each 2 A and 36.4 x 70 x 23 mm: one outputs **12V** (safety buzzer and both 80 mm fans) and one outputs **5V** (STM32 Nucleo board via `E5V`, plus all sensors, the RobotDyn logic side, and the Arduino Nano). The **3.3V** rail comes from the Nucleo board's on-board regulator. Both 80 mm fans run all the time from the 12V rail. Each fan's PWM and tach wires go to the STM32 (see the pin plan); the fan GND is common with the STM32 GND.
 *   **Electrical Noise Isolation:** The internal 5V heating elements of the gas sensors are powered directly from the external 5V supply rail rather than drawing from the MCU. This layout keeps heavy electrical switching current ripples completely away from the sensitive STM32 analog circuitry.
 *   **Logic Interfacing:** The `I2C3` bus uses 4.7 kΩ pull-up resistors tied strictly to the STM32's 3.3V rail. The 5V-powered modules (MQ131, MiCS-4514, RobotDyn dimmer) send their outputs (MQ131 `AO`, MiCS-4514 `RED`/`NOX`, RobotDyn `Z-C`) through passive 1.8 kΩ (series) / 3.3 kΩ (to GND) voltage dividers, which drop a 5V signal to ~3.24V, under the 3.3V GPIO/ADC limit.
 *   **Board Damage Note:** On this specific STM32F446RE board, the `I2C1` and `I2C2` peripherals are physically damaged ("fried") and unusable. `I2C3` (PA8/PC9) remains the only viable I2C peripheral. `clearair.ioc` is the source of truth for pin allocation; the USART3 link below uses `PB10` (TX) / `PC5` (RX) as allocated there.
@@ -74,9 +77,9 @@ Typical datasheet values, not measurements (±20%). STM32 at 180 MHz (`clearair.
 | RobotDyn logic side (Z-C opto + PSM) | ~5 mA | 15 mA |
 | 1.8k/3.3k dividers (×4) + 5V pull-ups R11/R13 | ~5 mA | 5 mA |
 | Arduino Nano (board only) | ~25 mA | 40 mA |
-| **Total, fan on 12V** | **~430 mA ≈ 2.2 W** | **~570 mA ≈ 2.9 W** |
-| 40 mm fan, if 5V type | +100 mA | +200 mA |
-| **Total, fan on 5V** | **~530 mA ≈ 2.7 W** | **~770 mA ≈ 3.9 W** |
+| **Total** | **~430 mA ≈ 2.2 W** | **~570 mA ≈ 2.9 W** |
+
+The 5V total has no fan, because both fans run from the 12V rail.
 
 **12V rail**
 
@@ -84,11 +87,11 @@ Typical datasheet values, not measurements (±20%). STM32 at 180 MHz (`clearair.
 | :--- | :--- | :--- |
 | 12V buzzer (active type, only when latched on) | 30 mA | ~100 mA (loud siren type) |
 | R16 gate pull-up (buzzer off, Q3 conducting) | 1.2 mA | 1.2 mA |
-| **Total, fan on 5V** | **~1 mA idle / ~30 mA alarm** | **~100 mA ≈ 1.2 W** |
-| 40 mm fan, if 12V type | +60 mA | +100 mA |
-| **Total, fan on 12V** | **~90 mA alarm ≈ 1.1 W** | **~200 mA ≈ 2.4 W** |
+| Front 80 mm fan (4-pin PWM) | not measured, below the label current at reduced speed | ~660 mA (label) |
+| Rear 80 mm fan (4-pin PWM) | not measured, below the label current at low speed | ~660 mA (label) |
+| **Total** | **not measured** | **~1.42 A ≈ 17 W** |
 
-**PSU sizing:** 5V ≥ 1 A (≈ 1.5 A with the future display), 12V ≥ 0.3 A, so a ~10 W dual-output module (e.g. 5V/1.5A + 12V/0.5A) is enough. The extra 5V headroom covers cold-heater inrush on the MQ131 and MiCS-4514. The gas-sensor heaters are ~60% of the 5V load. Replace the buzzer and fan rows with the real label currents once known.
+**PSU sizing:** 5V ≥ 1 A (≈ 1.5 A with the future display), 12V ≥ 1.5 A. The two 2 A modules cover both rails: the 5V module has about 3.5 times margin over the 0.57 A peak, and the 12V module has about 30% margin over the 1.42 A peak, so measure the real fan current and the startup surge on the bench. The extra 5V headroom covers cold-heater inrush on the MQ131 and MiCS-4514. The gas-sensor heaters are ~60% of the 5V load. The fan rows use the label current quoted in the listing; replace them with measured values.
 
 ---
 
@@ -115,8 +118,9 @@ Not implemented yet. Fan control today uses per-metric thresholds with no blende
 
 The full wiring schematic (every NUCLEO-F446RE morpho pin connection) is in [`hardware/Nuclio-F466RE/clearair.kicad_sch`](hardware/Nuclio-F466RE/clearair.kicad_sch) (KiCad 10).
 
-| Subsystem Component | Peripheral Identifier             | Physical Hardware Pin           | Hardware Mode & Execution Profile |
-| :--- |:----------------------------------|:--------------------------------| :--- |
+The pin assignments (STM32G474) are in [Service → Pin Assignments](#service--pin-assignments).
+
+--- |:----------------------------------|:--------------------------------| :--- |
 | **SPS30 + BME680** | I2C3                              | PA8 (SCL), PC9 (SDA)            | Standard Open-Drain. |
 | **MQ-131 Output** | ADC1_IN0                          | PA0                             | Single-Ended Analog Input (Requires External Divider). |
 | **MiCS-4514 (CO)** | ADC2_IN1                          | PA1                             | Single-Ended Analog Input ($V_{OUT1}$). |
@@ -155,6 +159,8 @@ graph TD
         Power_12V[12V Power Rail]
         LDO_33[Nucleo On-Board 3.3V Regulator]
         Buzzer_12[12V BUZZER]
+        Fan_Front[Front Fan: 80 mm 4-pin PWM]
+        Fan_Rear[Rear Fan: 80 mm 4-pin PWM]
         Trans_2N2222[NPN 2N2222A Transistor]
         MOSFET_Z44[IRFZ44N N-MOSFET]
         GND[System GND]
@@ -163,6 +169,8 @@ graph TD
         subgraph STM32 [STM32F4 MCU]
             EXTI[EXTI Line]
             Timer_B[Timer B Phase-Cut]
+            PWM_T[TIM1 PWM 25 kHz: CH1 PA8, CH2 PA9]
+            Tach_T[TIM2 input capture: CH1 PA5, CH2 PB3]
             subgraph RTOS [FreeRTOS Tasks]
                 T1[Task 1: SPS30]
                 T2[Task 2: BME680]
@@ -198,6 +206,14 @@ graph TD
     Power_5V -->|E5V| LDO_33
     LDO_33 -->|3.3V Core VCC| STM32
     Power_12V -->|12V VCC| Buzzer_12
+    Power_12V -->|12V + GND| Fan_Front
+    Power_12V -->|12V + GND| Fan_Rear
+
+    %% Fan Speed Control and Tach Feedback (firmware not implemented yet)
+    PWM_T -->|PWM, PA8| Fan_Front
+    PWM_T -->|PWM, PA9| Fan_Rear
+    Fan_Front -->|Tach, PA5, 10k pull-up to 3.3V| Tach_T
+    Fan_Rear -->|Tach, PB3, 10k pull-up to 3.3V| Tach_T
 
     %% Signal and Control Connections
     ZC_Circ -->|Opto-Isolated Pulse| EXTI
@@ -416,30 +432,34 @@ flowchart LR
 
 ## 📌 STM32G474CEU6 Pin Plan (WeAct G4 Long)
 
-Planned pin map for roadmap step 2: **STM32G474CEU6** (UFQFPN48) on the WeAct G4 Long board, debugged with an STLINK-V3MINIE. The new board has no damaged peripherals, so the I2C3-only limit from the F446RE board does not apply. The sensor bus moves to `I2C1`. This plan is not yet in `clear-air.ioc`. Apply it there first, then regenerate. Pin functions come from the CubeMX DB (`STM32G474C(B-C-E)Ux.xml`).
+Pin map for the **STM32G474CEU6** (UFQFPN48) on the WeAct G4 Long board, debugged with an STLINK-V3MINIE. It is applied in `clear-air.ioc` except for the front and rear fan PWM and tach rows (`TIM1`, `TIM2`), which are still planned. Pin functions come from the CubeMX DB (`STM32G474C(B-C-E)Ux.xml`).
 
-**Kept from the F446RE design:** CubeMX labels (`ZC_INPUT`, `DIMMER_LEVEL`, `MICS4514_PREHEAT`, `BOOT_TY_SELECT`), so the C++ code under `device/*` builds without edits. Peripheral instances `ADC1`/`ADC2`, `USART2`, `USART3`, `TIM3`, `TIM6` also stay the same. The I2C handle changes from `hi2c3` to `hi2c1` (`Core/Src/cpp_main.cpp`). The analog pins stay `PA0`/`PA1`/`PA7`, but the G4 channel numbers change.
+**CubeMX labels used by `device/*`:** `MQ131_ADC`, `MICS_CO1`, `MICS_NO2`, `ZC_INPUT`, `TRIAC_DIMMER`, `MICS_PREHEAT`, `BOOT_MODE`, `BUZZER_IN`, `LED_BOARD`, `I2C_SCL`, `I2C_SDA`. The sensor bus handle is `hi2c1` (`Core/Src/cpp_main.cpp`).
 
 ### Service → Pin Assignments
 
-| Service | Peripheral | G474 Pin (UFQFPN48 pin #) | F446RE Pin (old) | Notes |
-| :--- | :--- | :--- | :--- | :--- |
-| **SPS30 + BME680** | I2C1 | PA15 SCL (38), PB7 SDA (45) | PA8, PC9 (I2C3) | 4.7 kΩ pull-ups to 3.3V. `PA15` is free because debug uses SWD only (no `JTDI`). |
-| **MQ-131 Output** | ADC1_IN1 | PA0 (8) | PA0 (ADC1_IN0) | Through the 1.8 kΩ / 3.3 kΩ divider. |
-| **MiCS-4514 (CO)** | ADC2_IN2 | PA1 (9) | PA1 (ADC2_IN1) | `PA1` is shared by ADC1/ADC2 IN2. Select ADC2 in CubeMX. |
-| **MiCS-4514 ($NO_2$)** | ADC2_IN4 | PA7 (15) | PA7 (ADC2_IN7) | Through the divider. |
-| **RobotDyn ZC Input** | GPIO EXTI0 | PB0 (17) | PC6 (EXTI6) | Falling edge, pull-up, through the divider. Uses the dedicated `EXTI0_IRQn` vector (priority 5, as the old `EXTI9_5_IRQn`). |
-| **RobotDyn Gate Out** | GPIO Output | PB1 (18) | PC7 | Push-pull, high speed, driven from the `TIM3` ISR. |
-| **MiCS-4514 (Preheat)** | GPIO Output | PB12 (25) | PC8 | Push-pull, initial state LOW. |
-| **Cold/Warm Boot Select** | GPIO Input | PB14 (27) | PC12 | Pull-up, read once at boot. |
-| **Safety Buzzer Latch** | GPIO Output | PB15 (28) | — (not allocated) | New. Drives the 2N2222A base for the 12V buzzer. Initial state LOW. |
-| **Status Indicator** | GPIO Output | PC6 (29) | PA5 | On-board WeAct user LED. |
-| **Debug & Telemetry** | USART2 | PA2 TX (10), PA3 RX (11) | PA2, PA3 | The board has no on-board ST-LINK, and the 4-pin SWD header has no VCP lines. Wire `PA2`/`PA3` to the STLINK-V3MINIE 14-pin connector (`T_VCP_RX`/`T_VCP_TX`) or to a USB-serial adapter. |
-| **Arduino Visualization Controller (future)** | USART3 (via 2N7000 level shifter) | PB10 TX (22), PB11 RX (24) | PB10, PC5 | |
-| **Phase-Delay Tracking** | TIM3 | Internal | Internal | At 170 MHz SYSCLK with APB1 = HCLK, set prescaler `169` for a 1 µs tick (was `89` at 90 MHz). |
-| **HAL Timebase** | TIM6 | Internal | Internal | `TIM6_DAC_IRQn`. |
-| **OS Kernel Clock** | SysTick | Internal | Internal | FreeRTOS only. |
-| **Manual Reset (external button)** | NRST | PG10-NRST (7) | NRST | In parallel with the on-board reset key. |
+| Service | Peripheral | G474 Pin (UFQFPN48 pin #) | Notes |
+| :--- | :--- | :--- | :--- |
+| **SPS30 + BME680** | I2C1 | PA15 SCL (38), PB7 SDA (45) | 4.7 kΩ pull-ups to 3.3V. `PA15` is free because debug uses SWD only (no `JTDI`). |
+| **MQ-131 Output** | ADC1_IN1 | PA0 (8) | Through the 1.8 kΩ / 3.3 kΩ divider. |
+| **MiCS-4514 (CO)** | ADC2_IN2 | PA1 (9) | `PA1` is shared by ADC1/ADC2 IN2. Select ADC2 in CubeMX. |
+| **MiCS-4514 ($NO_2$)** | ADC2_IN4 | PA7 (15) | Through the divider. |
+| **RobotDyn ZC Input** | GPIO EXTI0 | PB0 (17) | Falling edge, pull-up, through the divider. Uses the dedicated `EXTI0_IRQn` vector (priority 5). |
+| **RobotDyn Gate Out** | GPIO Output | PB1 (18) | Push-pull, high speed, driven from the `TIM3` ISR. |
+| **MiCS-4514 (Preheat)** | GPIO Output | PB12 (25) | Push-pull, initial state LOW. |
+| **Cold/Warm Boot Select** | GPIO Input | PB14 (27) | Pull-up, read once at boot. |
+| **Safety Buzzer Latch** | GPIO Output | PB15 (28) | Drives the 2N2222A base for the 12V buzzer. Initial state LOW. |
+| **Front Fan PWM (80 mm)** | TIM1_CH1 | PA8 (30) | 25 kHz PWM to the fan's PWM wire. 1 kΩ in series. Prescaler `0`, period `6799` at 170 MHz. Fan 12V and GND come from the 12V rail, GND common with the STM32. |
+| **Rear Fan PWM (80 mm)** | TIM1_CH2 | PA9 (31) | Same timer as the front fan, so the same 25 kHz. 1 kΩ in series. |
+| **Front Fan Tach** | TIM2_CH1 | PA5 (13) | Input capture, 10 kΩ pull-up to 3.3V. The tach is an open-collector output; confirm on the bench that the fan does not pull it up to 12V. |
+| **Rear Fan Tach** | TIM2_CH2 | PB3 (41) | Input capture, 10 kΩ pull-up to 3.3V. `TIM2` is 32-bit, so a stalled fan does not overflow the period count. |
+| **Status Indicator** | GPIO Output | PC6 (29) | On-board WeAct user LED. |
+| **Debug & Telemetry** | USART2 | PA2 TX (10), PA3 RX (11) | The board has no on-board ST-LINK, and the 4-pin SWD header has no VCP lines. Wire `PA2`/`PA3` to the STLINK-V3MINIE 14-pin connector (`T_VCP_RX`/`T_VCP_TX`) or to a USB-serial adapter. |
+| **Arduino Visualization Controller (future)** | USART3 (via 2N7000 level shifter) | PB10 TX (22), PB11 RX (24) |  |
+| **Phase-Delay Tracking** | TIM3 | Internal | At 170 MHz SYSCLK with APB1 = HCLK, set prescaler `169` for a 1 µs tick. |
+| **HAL Timebase** | TIM6 | Internal | `TIM6_DAC_IRQn`. |
+| **OS Kernel Clock** | SysTick | Internal | FreeRTOS only. |
+| **Manual Reset (external button)** | NRST | PG10-NRST (7) | In parallel with the on-board reset key. |
 
 ### Reserved Pins (board / debugger — do not assign)
 
@@ -460,8 +480,9 @@ Planned pin map for roadmap step 2: **STM32G474CEU6** (UFQFPN48) on the WeAct G4
 *   Each pin above has one function.
 *   The only EXTI line in use is EXTI0 (`PB0`). `PA0` (also line 0) is analog, so it does not claim EXTI0.
 *   No alternate function overlaps another selected peripheral. The other I2C1 pin options are not used: `PA13`/`PA14` are SWD and `PB8` is BOOT0. `PB9` (I2C1_SDA alt) stays unused. The I2C1 SMBA pin (`PB5`) stays unused.
+*   `PA8`/`PA9` (`TIM1_CH1`/`TIM1_CH2`) and `PA5`/`PB3` (`TIM2_CH1`/`TIM2_CH2`) were spare. `TIM1` and `TIM2` are not used by anything else in this plan. The CubeMX DB lists these functions for the G474 UFQFPN48.
 *   `VREF+` (pin 20) must connect to `VDDA` on the board for the ADCs to read against 3.3V.
 
-**Spare pins after this plan:** PA4, PA5, PA6, PA8, PA9, PA10, PB2, PB3, PB5, PB9, PB13, PC4, PC10, PC11. PA4/PA5/PA6/PB2/PC4 also have ADC2 inputs, so they suit extra analog sensors.
+**Spare pins after this plan:** PA4, PA6, PA10, PB2, PB5, PB9, PB13, PC4, PC10, PC11. PA4/PA6/PB2/PC4 also have ADC2 inputs, so they suit extra analog sensors.
 
-The schematic and the power budget above still describe the NUCLEO-F446RE. Update them when this plan goes into `clear-air.ioc`.
+The schematic and the power budget above still describe the NUCLEO-F446RE. Update them to match this pin map.

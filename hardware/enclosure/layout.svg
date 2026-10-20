@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 620" font-family="sans-serif" font-size="12">
+  <!-- scale: 3 px = 1 mm. Filter and port sizes measured by the user; module, fan, tube and adapter sizes are assumptions. -->
+  <text x="300" y="18" font-weight="bold">Side view, airflow left to right (1 mm = 3 px)</text>
+  <line x1="20" y1="210" x2="600" y2="210" stroke="#999" stroke-dasharray="8 4"/>
+  <!-- SPS30 41x41x12 with its own fan: beside the filter in ambient air, outside the fan suction path -->
+  <rect x="60" y="6" width="123" height="36" fill="#cfc" stroke="#333"/>
+  <text x="70" y="28">SPS30 (own fan, ambient)</text>
+  <!-- 3M 2091 filter: 107 mm dia, 15 mm thick without the bayonet. Open face on the left. -->
+  <rect x="40" y="50" width="45" height="321" fill="#fdc" stroke="#333"/>
+  <text x="30" y="388">3M 2091 107 dia x 15</text>
+  <!-- mask bayonet port copy: 22 mm OD, 19 mm ID, 3 radial teeth 3 mm high x 7 mm wide (span about 28 mm, assumed radial). Filter mounts on it; it reduces to the fan. -->
+  <polygon points="85,177 160,90 160,330 85,243" fill="#f4f4f4" stroke="#333"/>
+  <!-- o-ring groove around the port base, seals against the filter socket (size TBD) -->
+  <rect x="85" y="168" width="6" height="7" fill="#333"/>
+  <rect x="85" y="245" width="6" height="7" fill="#333"/>
+  <text x="92" y="162">o-ring groove (TBD)</text>
+  <text x="92" y="214">adapter</text>
+  <text x="92" y="228">22 to 80</text>
+  <!-- single fan, 8025 (80x80x25), pulls air through the filter and pushes it into the sensor tube -->
+  <rect x="160" y="90" width="75" height="240" fill="#cde" stroke="#333"/>
+  <text x="168" y="345">fan 80x80x25</text>
+  <!-- sealed sensor tube: 85 mm inner dia, closed to the environment, open exhaust end -->
+  <rect x="235" y="83" width="265" height="255" fill="none" stroke="#333" stroke-width="3"/>
+  <text x="240" y="76">sensor tube: 85 mm dia (assumed), sealed</text>
+  <!-- BME680 and MiCS-4514 side by side across the tube (stacked here only because this is a side view), boards edge-on to flow.
+       MQ131 downstream: hot heater last so it does not bias BME680 temp/RH -->
+  <rect x="270" y="160" width="58" height="9" fill="#eee" stroke="#333"/>
+  <text x="270" y="154">BME680 19 x 15.5 x 3</text>
+  <rect x="270" y="245" width="69" height="9" fill="#eee" stroke="#333"/>
+  <text x="270" y="282">MiCS-4514 23 x 15 x 3</text>
+  <!-- MQ131 board 32 x 20.5 mm (20.5 across the tube). Sensor side 22 mm high (up), other side 5 mm high (down), board plane on the axis. -->
+  <rect x="390" y="144" width="96" height="81" fill="#eee" stroke="#333"/>
+  <line x1="390" y1="210" x2="486" y2="210" stroke="#333"/>
+  <text x="380" y="242">MQ131 32 x 20.5, 22 + 5 tall</text>
+  <!-- flow: single fan 1 pushes air through the sensor tube, tube stays slightly above ambient -->
+  <line x1="250" y1="365" x2="520" y2="365" stroke="#c00" stroke-width="2"/>
+  <polygon points="520,359 532,365 520,371" fill="#c00"/>
+  <text x="260" y="357" fill="#c00">air flow (exhaust)</text>
+  <!-- WeAct STM32G474 core board, outside the tube -->
+  <rect x="30" y="450" width="184" height="55" fill="#eee" stroke="#333"/>
+  <text x="40" y="482">WeAct G474 61.4x18.2</text>
+  <!-- mains supply modules, outside the tube. 36.4 x 70 x 23 mm each, drawn from the side (70 long, 23 high). Same size assumed for both. -->
+  <rect x="230" y="450" width="210" height="69" fill="#fcc" stroke="#333"/>
+  <text x="240" y="490">220VAC to 5VDC 70x23 (36.4 wide)</text>
+  <rect x="230" y="530" width="210" height="69" fill="#fcc" stroke="#333"/>
+  <text x="240" y="570">220VAC to 12VDC 70x23 (36.4 wide)</text>
+</svg>
