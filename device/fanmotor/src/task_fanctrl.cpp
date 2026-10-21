@@ -11,7 +11,10 @@ extern TIM_HandleTypeDef htim3;
 // TIM3 is clocked at 1 MHz (90 MHz timer clock / (89+1) prescaler),
 // so ARR counts double as a microsecond delay from the zero-cross.
 static constexpr uint32_t TRIAC_MAX_POWER_DELAY_US = 500;   // fire early in the half-cycle -> 100% speed
-static constexpr uint32_t TRIAC_MIN_POWER_DELAY_US = 10000; // fire late in the half-cycle -> 50% speed
+// Lowest "on" setting (MIN_ON_SPEED_PERCENT). The 80W capacitor-run fan stalls or hums well below
+// ~60% of mains RMS voltage, which is about a 5.7 ms firing delay at 50 Hz (10 ms = half-cycle =
+// ~0 V). ESTIMATE from the firing-angle curve: raise the delay in steps on the bench to find the lowest stable speed.
+static constexpr uint32_t TRIAC_MIN_POWER_DELAY_US = 5700;
 static constexpr uint32_t GATE_PULSE_WIDTH_US = 100;        // opto-TRIAC gate trigger pulse width
 static constexpr uint8_t MIN_ON_SPEED_PERCENT = 50;
 

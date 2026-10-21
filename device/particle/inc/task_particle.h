@@ -16,7 +16,7 @@ public:
     bool configure(
         I2C_HandleTypeDef* hi2c);
 
-    void taskLoop();
+    [[noreturn]] void taskLoop();
 };
 
 #endif //CLEARAIR_TASK_PARTICLE_H

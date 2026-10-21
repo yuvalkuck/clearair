@@ -56,9 +56,6 @@ add_subdirectory(cmake/stm32sps30)
 
 # Link directories setup
 target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
-    # Add user defined library search paths
-        Drivers/BSEC2/cortex-m4/1.10.2610
-
 )
 
 # Add sources to executable
@@ -66,7 +63,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user sources here
         Core/Src/cpp_main.cpp
         Core/Src/base_device_task.cpp
-        Core/Src/crateria_map.cpp
+        Core/Src/control_center.cpp
 )
 
 # Add include paths

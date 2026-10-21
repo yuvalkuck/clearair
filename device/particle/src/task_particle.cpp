@@ -42,7 +42,9 @@ void SensorParticle::taskLoop() {
     auto rc = sps30_start_measurement(SPS30_OUTPUT_FORMAT_OUTPUT_FORMAT_FLOAT);
     if (rc != NO_ERROR) {
         METHODLOG(fatal, "sps30_start_measurement failed")
-        return;
+        for (;;) {
+            vTaskDelay(portMAX_DELAY); // a task must never return: park it
+        }
     }
     sensirion_i2c_hal_sleep_usec(10000);
     uint16_t data_ready_flag = 0;
