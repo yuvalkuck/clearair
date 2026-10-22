@@ -180,12 +180,13 @@ def cut(name, base, tool):
 
 
 def fan_holes(prefix, x):
-    """Four axial fan screw holes through a mount plate at x."""
-    holes = []
-    for i, (sy, sz) in enumerate([(1, 1), (1, -1), (-1, 1), (-1, -1)]):
-        holes.append(cylinder("%s_%d" % (prefix, i), "Params.fan_hole_d / 2", "Params.plate_t + 2 mm",
-                              x + " - 1 mm", "%d * Params.fan_hole_sp / 2" % sy, "%d * Params.fan_hole_sp / 2" % sz))
-    return holes
+    """Four axial fan screw holes through a mount plate at x: one hole, polar array of 4 around the X axis."""
+    hole = cylinder(prefix, "Params.fan_hole_d / 2", "Params.plate_t + 2 mm", x + " - 1 mm",
+                    "Params.fan_hole_sp / 2", "Params.fan_hole_sp / 2")
+    holes = Draft.make_polar_array(hole, number=4, angle=360, center=V(0, 0, 0), use_link=False)
+    holes.Axis = V(1, 0, 0)
+    holes.Fuse = True
+    return [holes]
 
 
 def plate(name, x):
