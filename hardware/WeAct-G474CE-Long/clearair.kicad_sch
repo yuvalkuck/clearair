@@ -6643,6 +6643,153 @@
 				(fill
 					(type none))))
 		(embedded_fonts no))
+	(symbol "FullModules:PCF8563_HW689"
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(property "Reference" "A"
+			(at -8.89 8.89 0)
+			(effects (font (size 1.27 1.27)) (justify left))
+		)
+		(property "Value" "PCF8563_HW689"
+			(at -8.89 -8.08 0)
+			(effects (font (size 1.27 1.27)) (justify left))
+		)
+		(property "Footprint" "libraries:PCF8563_HW689"
+			(at 0 0 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "Datasheet" "https://www.nxp.com/docs/en/data-sheet/PCF8563.pdf"
+			(at 0 0 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "Description" "PCF8563 real-time clock module, board marking HW-689 (43 x 17 mm), I2C address 0x51, 1.0-5.5 V. 6-pin header VCC/GND/SDA/SCL/COT/INT in the order printed on the board. COT is the programmable clock output, INT is the open-drain alarm/timer interrupt (needs a pull-up if used). CR1220 backup cell holder on board (12.5 mm cell, 3.5 mm deep). The photographed board seems to have no I2C pull-ups: add 4.7k to 3V3 on the bus."
+			(at 0 0 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "ki_keywords" "PCF8563 HW-689 RTC real time clock I2C module CR1220"
+			(at 0 0 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(symbol "PCF8563_HW689_0_1"
+			(rectangle
+				(start -8.89 7.62)
+				(end 8.89 -2.54)
+				(stroke (width 0.254) (type default))
+				(fill (type background))
+			)
+		)
+		(symbol "PCF8563_HW689_1_1"
+			(pin power_in line
+				(at -6.35 -5.08 90)
+				(length 2.54)
+				(name "VCC"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "1"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin power_in line
+				(at -3.81 -5.08 90)
+				(length 2.54)
+				(name "GND"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "2"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin bidirectional line
+				(at -1.27 -5.08 90)
+				(length 2.54)
+				(name "SDA"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "3"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin input line
+				(at 1.27 -5.08 90)
+				(length 2.54)
+				(name "SCL"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "4"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin output line
+				(at 3.81 -5.08 90)
+				(length 2.54)
+				(name "COT"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "5"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin open_collector line
+				(at 6.35 -5.08 90)
+				(length 2.54)
+				(name "INT"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "6"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+		)
+	)
 	)
 	(symbol (lib_id "FullModules:WeAct_STM32G474CoreBoard_Long") (at 299.72 200.66 0) (unit 1)
 		(exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
@@ -7736,12 +7883,38 @@
 	(no_connect (at 492.76 218.44) (uuid "f99d441d-3a56-56fe-a5a0-d138491b5cc2"))
 	(no_connect (at 477.52 208.28) (uuid "213e6555-f41c-5d75-aa8f-913d66b43a24"))
 	(text "WeAct STM32G474CEU6 Long (A1): 5V from PS1 into P3 VDD5V (pins 43/44). 3V3 from the on-board LDO (P4 pins 47/48, P5 pin 52).\nPin map: clear-air.ioc + README \"STM32G474CEU6 Pin Plan\". On-board only: PC6 user LED (LED_BOARD), PC13 user key, PB8 BOOT0 key,\nPA11/PA12 USB-C, PF0/PF1 8 MHz HSE, PC14/PC15 LSE. VREF+ (pin 37) tied to 3V3 so the ADCs read against 3.3V." (exclude_from_sim no) (at 25.4 335.28 0) (effects (font (size 1.27 1.27)) (justify left top)) (uuid "502a1d97-eb91-5cca-997b-f23c61f72e02"))
-	(text "I2C1: PA15 SCL / PB7 SDA. SPS30 SEL=GND (I2C, 0x69); BME680 SDO=3V3 (0x77), CS=3V3. 4k7 pull-ups to 3V3." (exclude_from_sim no) (at 25.4 345.44 0) (effects (font (size 1.27 1.27)) (justify left top)) (uuid "243732f3-38f8-5e55-bd93-822687aa6b09"))
+	(text "I2C1: PA15 SCL / PB7 SDA. SPS30 SEL=GND (I2C, 0x69); BME680 SDO=3V3 (0x77), CS=3V3; PCF8563 RTC HW-689 (0x51, CR1220, COT and INT unused). 4k7 pull-ups to 3V3." (exclude_from_sim no) (at 25.4 345.44 0) (effects (font (size 1.27 1.27)) (justify left top)) (uuid "243732f3-38f8-5e55-bd93-822687aa6b09"))
 	(text "5V outputs -> 1k8 (series) / 3k3 (to GND) divider -> 3.24V max at MCU pin:\nMQ131 AO -> PA0 (ADC1_IN1), MiCS RED -> PA1 (ADC2_IN2), MiCS NOX -> PA7 (ADC2_IN4), RobotDyn Z-C -> PB0 (EXTI0)." (exclude_from_sim no) (at 25.4 350.52 0) (effects (font (size 1.27 1.27)) (justify left top)) (uuid "3871ab3e-4ce4-5f49-8861-3354221e38b4"))
 	(text "Buzzer: PB15 (BUZZER_IN) -> R9 -> Q3. Q3 inverts: PB15 HIGH -> buzzer OFF; LOW -> R16 pulls IRFZ44N gate to 12V -> buzzer ON.\nMiCS-4514 PRE <- PB12 (MICS_PREHEAT). Cold/warm boot button SW2 -> PB14 (BOOT_MODE, pull-up). Gate PB1 (TRIAC_DIMMER) -> RobotDyn PSM." (exclude_from_sim no) (at 25.4 358.14 0) (effects (font (size 1.27 1.27)) (justify left top)) (uuid "271c2dbd-78bc-55da-a774-def13076086d"))
 	(text "J2 = STLINK-V3MINIE STDC14: 3 T_VCC, 4 SWDIO, 5/7/11 GND, 6 SWCLK, 12 T_NRST, 13 T_VCP_RX, 14 T_VCP_TX; 1/2/8/9/10 unused.\nSWD goes to the board P5 header (SWCLK/SWDIO/3V3/GND). USART2 VCP: PA2 TX -> T_VCP_TX, PA3 RX <- T_VCP_RX.\nUSART3 (future Arduino link): PB10 TX / PB11 RX through 2N7000 level shifters Q1/Q2." (exclude_from_sim no) (at 25.4 365.76 0) (effects (font (size 1.27 1.27)) (justify left top)) (uuid "ea359ce6-a477-5ddc-86e8-6134661f9193"))
 	(text "220VAC mains split: J1 -> RobotDyn TRIAC (fan) and PS1 AC-DC (12V buzzer, 5V board + peripherals).\nPS1 pins: 1 L, 2 N, 3 +12V, 4 +5V, 5 GND. M2 40mm fan runs all the time. JP1: bridge 1-2 for a 5V fan, 2-3 for a 12V fan." (exclude_from_sim no) (at 25.4 375.92 0) (effects (font (size 1.27 1.27)) (justify left top)) (uuid "9c7a92c2-2f06-54d7-b8d7-bf4eabe74f93"))
 	(text "HIGH VOLTAGE: J1, PS1 pins 1-2, RobotDyn IN/N/OUT, M1 carry 220VAC." (exclude_from_sim no) (at 420 25.4 0) (effects (font (size 1.27 1.27)) (justify left top)) (uuid "b9d78abb-c294-51c2-9de3-52d4b88838d1"))
+	(symbol (lib_id "FullModules:PCF8563_HW689") (at 238.76 199.39 270) (unit 1)
+		(exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
+		(uuid "4ffd69e1-36eb-4cd0-bb83-0f71b0cc98a9")
+		(property "Reference" "U6" (at 241.3 187.96 90) (effects (font (size 1.27 1.27))))
+		(property "Value" "PCF8563 RTC" (at 241.3 211.0 90) (effects (font (size 1.27 1.27))))
+		(property "Footprint" "libraries:PCF8563_HW689" (at 238.76 199.39 90) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Datasheet" "https://www.nxp.com/docs/en/data-sheet/PCF8563.pdf" (at 238.76 199.39 90) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Description" "PCF8563 real-time clock module, board marking HW-689 (43 x 17 mm), I2C address 0x51, 1.0-5.5 V. 6-pin header VCC/GND/SDA/SCL/COT/INT in the order printed on the board. COT is the programmable clock output, INT is the open-drain alarm/timer interrupt (needs a pull-up if used). CR1220 backup cell holder on board (12.5 mm cell, 3.5 mm deep). The photographed board seems to have no I2C pull-ups: add 4.7k to 3V3 on the bus." (at 238.76 199.39 90) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "ki_keywords" "PCF8563 HW-689 RTC real time clock I2C module CR1220" (at 238.76 199.39 90) (effects (font (size 1.27 1.27)) (hide yes)))
+		(pin "1" (uuid "9042fb01-05f7-4f5c-a76e-6cdb22afafaf"))
+		(pin "2" (uuid "a16c0c12-4bf8-4c77-9e72-bfb51b2922fd"))
+		(pin "3" (uuid "bb2095f9-3733-44ed-9452-338bf046fd16"))
+		(pin "4" (uuid "683934d8-52f3-4b52-8ad0-fa0c09c0f190"))
+		(pin "5" (uuid "de5dbc4b-5982-4bba-9963-9b36995f7a00"))
+		(pin "6" (uuid "a02a9e9b-a398-4398-80c6-136c43705c17"))
+		(instances (project "clearair" (path "/953560a5-36cf-5251-8f8d-509802d70a69" (reference "U6") (unit 1)))))
+	(wire (pts (xy 233.68 193.04) (xy 220.98 193.04)) (stroke (width 0) (type default)) (uuid "7cf3327c-b642-458f-824b-ab20f21408b8"))
+	(junction (at 220.98 193.04) (diameter 0) (color 0 0 0 0) (uuid "08938dbe-2772-4186-94a7-b2c5d82713e5"))
+	(wire (pts (xy 233.68 195.58) (xy 231.14 195.58)) (stroke (width 0) (type default)) (uuid "d9ebccac-962e-49ab-9e83-087f49127ee3"))
+	(junction (at 231.14 195.58) (diameter 0) (color 0 0 0 0) (uuid "d26f2bdb-223f-4b84-ab74-66ebfaa7969e"))
+	(wire (pts (xy 233.68 198.12) (xy 226.06 198.12)) (stroke (width 0) (type default)) (uuid "08017653-afa9-4c7f-ae6f-d3eae79fb772"))
+	(junction (at 226.06 198.12) (diameter 0) (color 0 0 0 0) (uuid "9d062511-cdc4-4072-83b4-68e3dbd2e982"))
+	(wire (pts (xy 233.68 200.66) (xy 223.52 200.66)) (stroke (width 0) (type default)) (uuid "4da4bd29-94fa-4c19-acdc-065f631e18ba"))
+	(junction (at 223.52 200.66) (diameter 0) (color 0 0 0 0) (uuid "b6d35629-fa35-45ee-9407-6083534545bf"))
+	(no_connect (at 233.68 203.2) (uuid "b652d888-7f7a-4076-849e-bfb9702be59b"))
+	(no_connect (at 233.68 205.74) (uuid "e1ca5a5f-925d-4882-a0dd-f22b784a5a1c"))
 	(sheet_instances (path "/" (page "1")))
 	(embedded_fonts no)
 )
