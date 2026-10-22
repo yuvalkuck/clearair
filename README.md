@@ -60,6 +60,8 @@ graph TD
 *   **Logic Interfacing:** The `I2C3` bus uses 4.7 kΩ pull-up resistors tied strictly to the STM32's 3.3V rail. The 5V-powered modules (MQ131, MiCS-4514, RobotDyn dimmer) send their outputs (MQ131 `AO`, MiCS-4514 `RED`/`NOX`, RobotDyn `Z-C`) through passive 1.8 kΩ (series) / 3.3 kΩ (to GND) voltage dividers, which drop a 5V signal to ~3.24V, under the 3.3V GPIO/ADC limit.
 *   **Board Damage Note:** On this specific STM32F446RE board, the `I2C1` and `I2C2` peripherals are physically damaged ("fried") and unusable. `I2C3` (PA8/PC9) remains the only viable I2C peripheral. `clearair.ioc` is the source of truth for pin allocation; the USART3 link below uses `PB10` (TX) / `PC5` (RX) as allocated there.
 *   **USART3 Link to Arduino (future):** A dedicated **USART3** connection will eventually bridge the STM32 to a secondary **Arduino Nano** (already in stock), running on its native 5V logic domain — kept separate from the sensor `I2C3` bus. A pair of **2N7000** MOSFETs will handle bidirectional 3.3V↔5V level shifting on the TX/RX lines between the STM32's 3.3V USART3 pins and the Arduino's 5V UART pins. The Arduino Nano will drive a future visualization stage — an LED array or 7-segment display — for per-sensor status indication, receiving status bytes over this serial link. The safety-latch buzzer stays wired directly to the STM32 (see Safety Core & Fail-Safes) so it keeps working even if the Arduino is unreachable or dead.
+*   **Real-Time Clock (RTC):** A PCF8563 on a HW-689 module (I2C address 0x51, 1.0 to 5.5 V) shares the `I2C` bus with the SPS30 and BME680, with no extra pull-ups; its `COT` and `INT` pins stay unconnected. A CR1220 cell on the module keeps the clock running during a power loss. Before fitting a non-rechargeable cell, power the module with no cell and check that the cell's + contact reads about 0 V: some RTC modules charge the cell, which would damage a CR1220. The driver (`device/rtc`) is not written yet. The planned use: after a power loss the system starts in Standby and reads the RTC to find how long it was off. Under 1 hour offline means the 3 minute MQ131 warm-up, and 1 hour or more means the 48 hour preheat. This will replace the cold-boot flag that `PB14` gives today. A momentary button on that pin would then switch between Active and Standby.
+*   **Gas Sensor Heaters:** The MQ131 module's GND goes through Q5, an AO3400A N-MOSFET (logic-level gate), so `PB12` (`MQ131_PREHEAT`) switches the heater: HIGH = on. The datasheet asks for a constant 5 V heater and a 48 h preheat, so the firmware turns it on at boot and keeps it on, in Standby too. The MOSFET drop shifts the `AO` reading by a few mV (about 8 mV at 160 mA for a 50 mΩ part); calibrate with Q5 in place. The MiCS-4514 heaters run on constant power from VCC through the module's own resistors (82 Ω RED, 51 + 82 Ω OX). Its `PRE` pin is tied to GND, so the boost (which shorts the 51 Ω and runs the OX heater near 75 mW, above the 50 mW maximum) is never used. Tie `PRE` to GND only after checking it has the 100 kΩ pull-down to GND (unpowered, `PRE` to GND about 100 kΩ).
 
 ### Power Budget (estimate)
 
@@ -70,14 +72,14 @@ Typical datasheet values, not measurements (±20%). STM32 at 180 MHz (`clearair.
 | Load | Typical | Peak / max |
 | :--- | :--- | :--- |
 | NUCLEO-F446RE (MCU @ 180 MHz + ST-LINK + LEDs) | ~100 mA | 150 mA |
-| 3V3 loads via Nucleo regulator (BME680 incl. gas-heater pulses, I2C pull-ups, 2N7000 pull-ups) | ~5 mA | 15 mA |
+| 3V3 loads via Nucleo regulator (BME680 incl. gas-heater pulses, I2C pull-ups, 2N7000 pull-ups, PCF8563 RTC) | ~5 mA | 15 mA |
 | SPS30 (measuring) | 60 mA | 80 mA |
-| MQ131 heater + module | ~170 mA | 185 mA |
-| MiCS-4514 (RED + OX heaters + module) | ~60 mA | 75 mA (preheat) |
+| MQ131 heater + module (switched by Q5 from `PB12`) | ~170 mA | 185 mA |
+| MiCS-4514 (RED + OX heaters + module, `PRE` tied to GND, no boost) | ~60 mA | 65 mA |
 | RobotDyn logic side (Z-C opto + PSM) | ~5 mA | 15 mA |
 | 1.8k/3.3k dividers (×4) + 5V pull-ups R11/R13 | ~5 mA | 5 mA |
 | Arduino Nano (board only) | ~25 mA | 40 mA |
-| **Total** | **~430 mA ≈ 2.2 W** | **~570 mA ≈ 2.9 W** |
+| **Total** | **~430 mA ≈ 2.2 W** | **~560 mA ≈ 2.8 W** |
 
 The 5V total has no fan, because both fans run from the 12V rail.
 
@@ -91,7 +93,7 @@ The 5V total has no fan, because both fans run from the 12V rail.
 | Rear 80 mm fan (4-pin PWM) | not measured, below the label current at low speed | ~660 mA (label) |
 | **Total** | **not measured** | **~1.42 A ≈ 17 W** |
 
-**PSU sizing:** 5V ≥ 1 A (≈ 1.5 A with the future display), 12V ≥ 1.5 A. The two 2 A modules cover both rails: the 5V module has about 3.5 times margin over the 0.57 A peak, and the 12V module has about 30% margin over the 1.42 A peak, so measure the real fan current and the startup surge on the bench. The extra 5V headroom covers cold-heater inrush on the MQ131 and MiCS-4514. The gas-sensor heaters are ~60% of the 5V load. The fan rows use the label current quoted in the listing; replace them with measured values.
+**PSU sizing:** 5V ≥ 1 A (≈ 1.5 A with the future display), 12V ≥ 1.5 A. The two 2 A modules cover both rails: the 5V module has about 3.5 times margin over the 0.56 A peak, and the 12V module has about 30% margin over the 1.42 A peak, so measure the real fan current and the startup surge on the bench. The extra 5V headroom covers cold-heater inrush on the MQ131 and MiCS-4514. The gas-sensor heaters are ~60% of the 5V load. The fan rows use the label current quoted in the listing; replace them with measured values.
 
 ---
 
@@ -434,19 +436,20 @@ flowchart LR
 
 Pin map for the **STM32G474CEU6** (UFQFPN48) on the WeAct G4 Long board, debugged with an STLINK-V3MINIE. It is applied in `clear-air.ioc` except for the front and rear fan PWM and tach rows (`TIM1`, `TIM2`), which are still planned. Pin functions come from the CubeMX DB (`STM32G474C(B-C-E)Ux.xml`).
 
-**CubeMX labels used by `device/*`:** `MQ131_ADC`, `MICS_CO1`, `MICS_NO2`, `ZC_INPUT`, `TRIAC_DIMMER`, `MICS_PREHEAT`, `BOOT_MODE`, `BUZZER_IN`, `LED_BOARD`, `I2C_SCL`, `I2C_SDA`. The sensor bus handle is `hi2c1` (`Core/Src/cpp_main.cpp`).
+**CubeMX labels used by `device/*`:** `MQ131_ADC`, `MICS_CO1`, `MICS_NO2`, `ZC_INPUT`, `TRIAC_DIMMER`, `MQ131_PREHEAT`, `BOOT_MODE`, `BUZZER_IN`, `LED_BOARD`, `I2C_SCL`, `I2C_SDA`. The sensor bus handle is `hi2c1` (`Core/Src/cpp_main.cpp`).
 
 ### Service → Pin Assignments
 
 | Service | Peripheral | G474 Pin (UFQFPN48 pin #) | Notes |
 | :--- | :--- | :--- | :--- |
 | **SPS30 + BME680** | I2C1 | PA15 SCL (38), PB7 SDA (45) | 4.7 kΩ pull-ups to 3.3V. `PA15` is free because debug uses SWD only (no `JTDI`). |
+| **PCF8563 RTC (HW-689)** | I2C1 (shared) | PA15 SCL (38), PB7 SDA (45) | Address 0x51, same bus and 4.7 kΩ pull-ups as the SPS30 and BME680. `COT` and `INT` are not connected. CR1220 backup cell on the module. |
 | **MQ-131 Output** | ADC1_IN1 | PA0 (8) | Through the 1.8 kΩ / 3.3 kΩ divider. |
 | **MiCS-4514 (CO)** | ADC2_IN2 | PA1 (9) | `PA1` is shared by ADC1/ADC2 IN2. Select ADC2 in CubeMX. |
 | **MiCS-4514 ($NO_2$)** | ADC2_IN4 | PA7 (15) | Through the divider. |
 | **RobotDyn ZC Input** | GPIO EXTI0 | PB0 (17) | Falling edge, pull-up, through the divider. Uses the dedicated `EXTI0_IRQn` vector (priority 5). |
 | **RobotDyn Gate Out** | GPIO Output | PB1 (18) | Push-pull, high speed, driven from the `TIM3` ISR. |
-| **MiCS-4514 (Preheat)** | GPIO Output | PB12 (25) | Push-pull, initial state LOW. |
+| **MQ131 Heater Enable** | GPIO Output | PB12 (25) | `MQ131_PREHEAT`. Push-pull, initial state LOW. Drives Q5 (AO3400A) through R17 100 Ω, with R18 100 kΩ gate pull-down: a low-side switch in the MQ131 module GND. HIGH powers the heater and the module. `task_mq131` sets it HIGH in `configure()` and keeps it on. |
 | **Cold/Warm Boot Select** | GPIO Input | PB14 (27) | Pull-up, read once at boot. |
 | **Safety Buzzer Latch** | GPIO Output | PB15 (28) | Drives the 2N2222A base for the 12V buzzer. Initial state LOW. |
 | **Front Fan PWM (80 mm)** | TIM1_CH1 | PA8 (30) | 25 kHz PWM to the fan's PWM wire. 1 kΩ in series. Prescaler `0`, period `6799` at 170 MHz. Fan 12V and GND come from the 12V rail, GND common with the STM32. |

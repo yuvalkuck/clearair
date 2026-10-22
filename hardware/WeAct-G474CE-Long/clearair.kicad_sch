@@ -5784,6 +5784,241 @@
 						(font
 							(size 1.27 1.27))))))
 		(embedded_fonts no))
+		(symbol "Transistor_FET:AO3400A"
+		(pin_names
+			(hide yes))
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(duplicate_pin_numbers_are_jumpers no)
+		(property "Reference" "Q"
+			(at 5.08 1.905 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(justify left)))
+		(property "Value" "AO3400A"
+			(at 5.08 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(justify left)))
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+			(at 5.08 -1.905 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+					(italic yes))
+				(justify left)))
+		(property "Datasheet" "http://www.aosmd.com/pdfs/datasheet/AO3400A.pdf"
+			(at 5.08 -3.81 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(justify left)))
+		(property "Description" "30V Vds, 5.7A Id, N-Channel MOSFET, SOT-23"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27))))
+		(property "ki_keywords" "N-Channel MOSFET Logic-Level"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27))))
+		(property "ki_fp_filters" "SOT?23*"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27))))
+		(symbol "AO3400A_0_1"
+			(polyline
+				(pts
+					(xy 0.254 1.905)
+					(xy 0.254 -1.905))
+				(stroke
+					(width 0.254)
+					(type default))
+				(fill
+					(type none)))
+			(polyline
+				(pts
+					(xy 0.254 0)
+					(xy -2.54 0))
+				(stroke
+					(width 0)
+					(type default))
+				(fill
+					(type none)))
+			(polyline
+				(pts
+					(xy 0.762 2.286)
+					(xy 0.762 1.27))
+				(stroke
+					(width 0.254)
+					(type default))
+				(fill
+					(type none)))
+			(polyline
+				(pts
+					(xy 0.762 0.508)
+					(xy 0.762 -0.508))
+				(stroke
+					(width 0.254)
+					(type default))
+				(fill
+					(type none)))
+			(polyline
+				(pts
+					(xy 0.762 -1.27)
+					(xy 0.762 -2.286))
+				(stroke
+					(width 0.254)
+					(type default))
+				(fill
+					(type none)))
+			(polyline
+				(pts
+					(xy 0.762 -1.778)
+					(xy 3.302 -1.778)
+					(xy 3.302 1.778)
+					(xy 0.762 1.778))
+				(stroke
+					(width 0)
+					(type default))
+				(fill
+					(type none)))
+			(polyline
+				(pts
+					(xy 1.016 0)
+					(xy 2.032 0.381)
+					(xy 2.032 -0.381)
+					(xy 1.016 0))
+				(stroke
+					(width 0)
+					(type default))
+				(fill
+					(type outline)))
+			(circle
+				(center 1.651 0)
+				(radius 2.794)
+				(stroke
+					(width 0.254)
+					(type default))
+				(fill
+					(type none)))
+			(polyline
+				(pts
+					(xy 2.54 2.54)
+					(xy 2.54 1.778))
+				(stroke
+					(width 0)
+					(type default))
+				(fill
+					(type none)))
+			(circle
+				(center 2.54 1.778)
+				(radius 0.254)
+				(stroke
+					(width 0)
+					(type default))
+				(fill
+					(type outline)))
+			(circle
+				(center 2.54 -1.778)
+				(radius 0.254)
+				(stroke
+					(width 0)
+					(type default))
+				(fill
+					(type outline)))
+			(polyline
+				(pts
+					(xy 2.54 -2.54)
+					(xy 2.54 0)
+					(xy 0.762 0))
+				(stroke
+					(width 0)
+					(type default))
+				(fill
+					(type none)))
+			(polyline
+				(pts
+					(xy 2.794 0.508)
+					(xy 2.921 0.381)
+					(xy 3.683 0.381)
+					(xy 3.81 0.254))
+				(stroke
+					(width 0)
+					(type default))
+				(fill
+					(type none)))
+			(polyline
+				(pts
+					(xy 3.302 0.381)
+					(xy 2.921 -0.254)
+					(xy 3.683 -0.254)
+					(xy 3.302 0.381))
+				(stroke
+					(width 0)
+					(type default))
+				(fill
+					(type none))))
+		(symbol "AO3400A_1_1"
+			(pin passive line
+				(at 2.54 -5.08 90)
+				(length 2.54)
+				(name "S"
+					(effects
+						(font
+							(size 1.27 1.27))))
+				(number "2"
+					(effects
+						(font
+							(size 1.27 1.27)))))
+			(pin input line
+				(at -5.08 0 0)
+				(length 2.54)
+				(name "G"
+					(effects
+						(font
+							(size 1.27 1.27))))
+				(number "1"
+					(effects
+						(font
+							(size 1.27 1.27)))))
+			(pin passive line
+				(at 2.54 5.08 270)
+				(length 2.54)
+				(name "D"
+					(effects
+						(font
+							(size 1.27 1.27))))
+				(number "3"
+					(effects
+						(font
+							(size 1.27 1.27))))))
+		(embedded_fonts no))
 		(symbol "Transistor_FET:IRLZ44N"
 		(pin_names
 			(hide yes))
@@ -7535,7 +7770,6 @@
 	(wire (pts (xy 165.1 224.79) (xy 276.86 224.79)) (stroke (width 0) (type default)) (uuid "02d46c69-764c-5181-94d5-43d3955fadff"))
 	(wire (pts (xy 276.86 224.79) (xy 276.86 215.9)) (stroke (width 0) (type default)) (uuid "cdf3df3d-e335-5aeb-ad98-90762a6cf2c7"))
 	(wire (pts (xy 276.86 215.9) (xy 281.94 215.9)) (stroke (width 0) (type default)) (uuid "e219d55e-7916-519c-a175-ae3524194565"))
-	(wire (pts (xy 294.64 299.72) (xy 281.94 299.72)) (stroke (width 0) (type default)) (uuid "d4af6e7b-86e8-5aad-8a81-d2d4e5f117bc"))
 	(wire (pts (xy 281.94 299.72) (xy 281.94 223.52)) (stroke (width 0) (type default)) (uuid "c2663977-c92e-5eb6-a503-1ebc53c00c67"))
 	(wire (pts (xy 177.8 76.2) (xy 173.99 76.2)) (stroke (width 0) (type default)) (uuid "98e1a18b-da82-5752-9ee5-8ea69cde81df"))
 	(wire (pts (xy 193.04 82.55) (xy 193.04 76.2)) (stroke (width 0) (type default)) (uuid "b2ec02d0-22b6-5573-bc1c-a73c04ab47ed"))
@@ -7732,8 +7966,6 @@
 	(wire (pts (xy 367.03 201.93) (xy 367.03 179.07)) (stroke (width 0) (type default)) (uuid "76f83219-be1a-5d51-828a-b4e221641803"))
 	(wire (pts (xy 367.03 179.07) (xy 367.03 160.02)) (stroke (width 0) (type default)) (uuid "c1729204-3886-5f3f-b6ce-268f17609ba7"))
 	(wire (pts (xy 367.03 160.02) (xy 345.44 160.02)) (stroke (width 0) (type default)) (uuid "a88e81f3-3576-58a9-a6f3-ade3dde258f9"))
-	(wire (pts (xy 391.16 180.34) (xy 391.16 179.07)) (stroke (width 0) (type default)) (uuid "db4dafd0-c4ad-5b0f-a75b-5fbadefaccd0"))
-	(wire (pts (xy 391.16 179.07) (xy 367.03 179.07)) (stroke (width 0) (type default)) (uuid "d3b0e6a6-1305-5347-8328-91e56967a884"))
 	(wire (pts (xy 355.6 232.41) (xy 355.6 233.68)) (stroke (width 0) (type default)) (uuid "2ea24062-8e51-50e3-94d1-89b270381190"))
 	(wire (pts (xy 355.6 233.68) (xy 363.22 233.68)) (stroke (width 0) (type default)) (uuid "5c315d3c-87b0-56fc-a38d-37ad2234931d"))
 	(wire (pts (xy 363.22 233.68) (xy 363.22 201.93)) (stroke (width 0) (type default)) (uuid "42933fb0-1933-5a24-9767-2d694281e75f"))
@@ -7820,7 +8052,6 @@
 	(junction (at 335.28 172.72) (diameter 0) (color 0 0 0 0) (uuid "46a8c2b4-c739-5597-af5e-307735ba5019"))
 	(junction (at 318.77 175.26) (diameter 0) (color 0 0 0 0) (uuid "afa490eb-b917-5533-8785-0cada779f2c3"))
 	(junction (at 363.22 201.93) (diameter 0) (color 0 0 0 0) (uuid "a89feab3-80ea-5005-9cec-fd4c4a62ebed"))
-	(junction (at 367.03 179.07) (diameter 0) (color 0 0 0 0) (uuid "510d72cf-f299-5d80-b5e9-1f4fc4c83b28"))
 	(junction (at 355.6 233.68) (diameter 0) (color 0 0 0 0) (uuid "10dd3e47-41ae-51b1-a079-4a0e7c952e2c"))
 	(junction (at 363.22 233.68) (diameter 0) (color 0 0 0 0) (uuid "ef8d3383-4aed-5564-ad61-fd51b05c8532"))
 	(junction (at 370.84 264.16) (diameter 0) (color 0 0 0 0) (uuid "5e0b297b-6350-5f0d-b15d-23a3634f785c"))
@@ -7885,7 +8116,7 @@
 	(text "WeAct STM32G474CEU6 Long (A1): 5V from PS1 into P3 VDD5V (pins 43/44). 3V3 from the on-board LDO (P4 pins 47/48, P5 pin 52).\nPin map: clear-air.ioc + README \"STM32G474CEU6 Pin Plan\". On-board only: PC6 user LED (LED_BOARD), PC13 user key, PB8 BOOT0 key,\nPA11/PA12 USB-C, PF0/PF1 8 MHz HSE, PC14/PC15 LSE. VREF+ (pin 37) tied to 3V3 so the ADCs read against 3.3V." (exclude_from_sim no) (at 25.4 335.28 0) (effects (font (size 1.27 1.27)) (justify left top)) (uuid "502a1d97-eb91-5cca-997b-f23c61f72e02"))
 	(text "I2C1: PA15 SCL / PB7 SDA. SPS30 SEL=GND (I2C, 0x69); BME680 SDO=3V3 (0x77), CS=3V3; PCF8563 RTC HW-689 (0x51, CR1220, COT and INT unused). 4k7 pull-ups to 3V3." (exclude_from_sim no) (at 25.4 345.44 0) (effects (font (size 1.27 1.27)) (justify left top)) (uuid "243732f3-38f8-5e55-bd93-822687aa6b09"))
 	(text "5V outputs -> 1k8 (series) / 3k3 (to GND) divider -> 3.24V max at MCU pin:\nMQ131 AO -> PA0 (ADC1_IN1), MiCS RED -> PA1 (ADC2_IN2), MiCS NOX -> PA7 (ADC2_IN4), RobotDyn Z-C -> PB0 (EXTI0)." (exclude_from_sim no) (at 25.4 350.52 0) (effects (font (size 1.27 1.27)) (justify left top)) (uuid "3871ab3e-4ce4-5f49-8861-3354221e38b4"))
-	(text "Buzzer: PB15 (BUZZER_IN) -> R9 -> Q3. Q3 inverts: PB15 HIGH -> buzzer OFF; LOW -> R16 pulls IRFZ44N gate to 12V -> buzzer ON.\nMiCS-4514 PRE <- PB12 (MICS_PREHEAT). Cold/warm boot button SW2 -> PB14 (BOOT_MODE, pull-up). Gate PB1 (TRIAC_DIMMER) -> RobotDyn PSM." (exclude_from_sim no) (at 25.4 358.14 0) (effects (font (size 1.27 1.27)) (justify left top)) (uuid "271c2dbd-78bc-55da-a774-def13076086d"))
+	(text "Buzzer: PB15 (BUZZER_IN) -> R9 -> Q3. Q3 inverts: PB15 HIGH -> buzzer OFF; LOW -> R16 pulls IRFZ44N gate to 12V -> buzzer ON.\nMiCS-4514 PRE tied to GND (boost not used). PB12 (MQ131_PREHEAT) -> R17 100R -> Q5 AO3400A gate, R18 100k pull-down: low-side switch in the MQ131 GND, HIGH = heater on. Cold/warm boot button SW2 -> PB14 (BOOT_MODE, pull-up). Gate PB1 (TRIAC_DIMMER) -> RobotDyn PSM." (exclude_from_sim no) (at 25.4 358.14 0) (effects (font (size 1.27 1.27)) (justify left top)) (uuid "271c2dbd-78bc-55da-a774-def13076086d"))
 	(text "J2 = STLINK-V3MINIE STDC14: 3 T_VCC, 4 SWDIO, 5/7/11 GND, 6 SWCLK, 12 T_NRST, 13 T_VCP_RX, 14 T_VCP_TX; 1/2/8/9/10 unused.\nSWD goes to the board P5 header (SWCLK/SWDIO/3V3/GND). USART2 VCP: PA2 TX -> T_VCP_TX, PA3 RX <- T_VCP_RX.\nUSART3 (future Arduino link): PB10 TX / PB11 RX through 2N7000 level shifters Q1/Q2." (exclude_from_sim no) (at 25.4 365.76 0) (effects (font (size 1.27 1.27)) (justify left top)) (uuid "ea359ce6-a477-5ddc-86e8-6134661f9193"))
 	(text "220VAC mains split: J1 -> RobotDyn TRIAC (fan) and PS1 AC-DC (12V buzzer, 5V board + peripherals).\nPS1 pins: 1 L, 2 N, 3 +12V, 4 +5V, 5 GND. M2 40mm fan runs all the time. JP1: bridge 1-2 for a 5V fan, 2-3 for a 12V fan." (exclude_from_sim no) (at 25.4 375.92 0) (effects (font (size 1.27 1.27)) (justify left top)) (uuid "9c7a92c2-2f06-54d7-b8d7-bf4eabe74f93"))
 	(text "HIGH VOLTAGE: J1, PS1 pins 1-2, RobotDyn IN/N/OUT, M1 carry 220VAC." (exclude_from_sim no) (at 420 25.4 0) (effects (font (size 1.27 1.27)) (justify left top)) (uuid "b9d78abb-c294-51c2-9de3-52d4b88838d1"))
@@ -7915,6 +8146,65 @@
 	(junction (at 223.52 200.66) (diameter 0) (color 0 0 0 0) (uuid "b6d35629-fa35-45ee-9407-6083534545bf"))
 	(no_connect (at 233.68 203.2) (uuid "b652d888-7f7a-4076-849e-bfb9702be59b"))
 	(no_connect (at 233.68 205.74) (uuid "e1ca5a5f-925d-4882-a0dd-f22b784a5a1c"))
+	(symbol (lib_id "Transistor_FET:AO3400A") (at 393.7 207.01 0) (unit 1)
+		(exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
+		(uuid "124f4699-2b35-4579-bc80-1f10ad2bba49")
+		(property "Reference" "Q5" (at 399.288 202.565 0) (effects (font (size 1.27 1.27)) (justify left)))
+		(property "Value" "AO3400A" (at 401.955 208.915 90) (effects (font (size 1.27 1.27))))
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23" (at 398.78 208.915 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Datasheet" "http://www.aosmd.com/pdfs/datasheet/AO3400A.pdf" (at 393.7 207.01 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Description" "30V Vds, 5.7A Id, N-Channel MOSFET, SOT-23. Low-side switch in the MQ131 module GND: PB12 HIGH = heater on." (at 393.7 207.01 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "ki_keywords" "N-Channel MOSFET" (at 393.7 207.01 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "ki_fp_filters" "SOT?23*" (at 393.7 207.01 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(pin "1" (uuid "310adbb5-e69a-4c7e-a9df-8e1a3f578638"))
+		(pin "2" (uuid "085e6544-9859-467e-ace9-047a3d9843e5"))
+		(pin "3" (uuid "08c7fa69-ec05-4511-91c7-d46a315db806"))
+		(instances (project "clearair" (path "/953560a5-36cf-5251-8f8d-509802d70a69" (reference "Q5") (unit 1)))))
+	(symbol (lib_id "Device:R") (at 381.0 207.01 90) (unit 1)
+		(exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
+		(uuid "6af759b5-0671-444a-9b50-83b4372c06be")
+		(property "Reference" "R17" (at 381.0 204.47 0) (effects (font (size 1.27 1.27))))
+		(property "Value" "100" (at 381.0 209.55 0) (effects (font (size 1.27 1.27))))
+		(property "Footprint" "" (at 381.0 207.01 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Datasheet" "" (at 381.0 207.01 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Description" "Resistor" (at 381.0 207.01 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "ki_keywords" "R res resistor" (at 381.0 207.01 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "ki_fp_filters" "R_*" (at 381.0 207.01 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(pin "1" (uuid "060e812c-612f-4e43-a8a3-bc7a55a56e23"))
+		(pin "2" (uuid "b8470e3a-66b3-4327-a0f2-3d9ddbcac0e5"))
+		(instances (project "clearair" (path "/953560a5-36cf-5251-8f8d-509802d70a69" (reference "R17") (unit 1)))))
+	(symbol (lib_id "Device:R") (at 388.62 212.09 0) (unit 1)
+		(exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
+		(uuid "7c31356b-974d-40bd-a4a0-14c8d22f9dfe")
+		(property "Reference" "R18" (at 390.652 212.09 90) (effects (font (size 1.27 1.27))))
+		(property "Value" "100k" (at 388.62 212.09 90) (effects (font (size 1.27 1.27))))
+		(property "Footprint" "" (at 388.62 212.09 90) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Datasheet" "" (at 388.62 212.09 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Description" "Resistor" (at 388.62 212.09 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "ki_keywords" "R res resistor" (at 388.62 212.09 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "ki_fp_filters" "R_*" (at 388.62 212.09 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(pin "1" (uuid "86f8c844-6951-4c47-81da-e7f4f4bd851f"))
+		(pin "2" (uuid "bf64b255-e320-4833-b7f6-1991f683cacd"))
+		(instances (project "clearair" (path "/953560a5-36cf-5251-8f8d-509802d70a69" (reference "R18") (unit 1)))))
+	(wire (pts (xy 294.64 299.72) (xy 294.64 294.64)) (stroke (width 0) (type default)) (uuid "656e2dff-cdee-471e-bc54-10c6663134ab"))
+	(wire (pts (xy 294.64 294.64) (xy 302.26 294.64)) (stroke (width 0) (type default)) (uuid "17c99af6-ae0f-406c-84e5-5ad3b1838c28"))
+	(wire (pts (xy 281.94 299.72) (xy 281.94 320.04)) (stroke (width 0) (type default)) (uuid "1ff56251-01de-4aeb-8a3a-34e664ddaf84"))
+	(wire (pts (xy 281.94 320.04) (xy 377.19 320.04)) (stroke (width 0) (type default)) (uuid "c2aa539c-0fd0-40e0-8bc2-c0387080e573"))
+	(wire (pts (xy 377.19 320.04) (xy 377.19 207.01)) (stroke (width 0) (type default)) (uuid "1f60209f-4c8f-4a97-986b-d0a4b4a14b8b"))
+	(wire (pts (xy 384.81 207.01) (xy 388.62 207.01)) (stroke (width 0) (type default)) (uuid "3ab750e4-3d6f-4427-bb6d-e1848a856aa5"))
+	(wire (pts (xy 388.62 207.01) (xy 388.62 208.28)) (stroke (width 0) (type default)) (uuid "14397bd3-5d8f-4b60-a5d9-75708b1d7c71"))
+	(wire (pts (xy 388.62 215.9) (xy 396.24 215.9)) (stroke (width 0) (type default)) (uuid "432c3b82-d218-4b75-a072-3e9b2b5dc6c2"))
+	(wire (pts (xy 396.24 215.9) (xy 396.24 212.09)) (stroke (width 0) (type default)) (uuid "7760463f-366d-4ad1-9dc7-2ca4c5c54b16"))
+	(wire (pts (xy 388.62 215.9) (xy 367.03 215.9)) (stroke (width 0) (type default)) (uuid "c8c08544-4a83-430f-8d6b-a58a02af8ddf"))
+	(wire (pts (xy 367.03 215.9) (xy 367.03 201.93)) (stroke (width 0) (type default)) (uuid "d0948303-145f-47ba-bccc-7223913b18c3"))
+	(wire (pts (xy 391.16 180.34) (xy 388.62 180.34)) (stroke (width 0) (type default)) (uuid "b40b482d-e05b-4804-a2fa-5cca62818abc"))
+	(wire (pts (xy 388.62 180.34) (xy 388.62 199.39)) (stroke (width 0) (type default)) (uuid "2fe59281-d31f-47dd-ac0f-acc090f7d83d"))
+	(wire (pts (xy 388.62 199.39) (xy 396.24 199.39)) (stroke (width 0) (type default)) (uuid "f791ac6a-bf32-4d43-aab0-68deb5cbe922"))
+	(wire (pts (xy 396.24 199.39) (xy 396.24 201.93)) (stroke (width 0) (type default)) (uuid "4687679c-7634-4ce6-ac0e-922241b781e4"))
+	(junction (at 302.26 294.64) (diameter 0) (color 0 0 0 0) (uuid "224c79f5-9793-4971-9e07-1003b5c6f54f"))
+	(junction (at 388.62 207.01) (diameter 0) (color 0 0 0 0) (uuid "e128bda3-9293-4cc1-b62d-526e433030d9"))
+	(junction (at 388.62 215.9) (diameter 0) (color 0 0 0 0) (uuid "f0fc3272-a483-442c-8f86-24479b17ada1"))
+	(junction (at 367.03 201.93) (diameter 0) (color 0 0 0 0) (uuid "bba48cd1-888e-4daa-82e4-16c48c704872"))
 	(sheet_instances (path "/" (page "1")))
 	(embedded_fonts no)
 )

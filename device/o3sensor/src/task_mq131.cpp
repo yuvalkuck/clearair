@@ -19,6 +19,12 @@ bool SensorO3::configure(bool isColdBoot) {
     isColdBoot_ = isColdBoot;
     METHODTRACE
 
+    // PB12 drives the low-side MOSFET in the module's GND: HIGH powers the
+    // heater (and the whole module). It stays on from here; the warm-up in
+    // taskLoop() counts from this moment.
+    HAL_GPIO_WritePin(MQ131_PREHEAT_GPIO_Port, MQ131_PREHEAT_Pin, GPIO_PIN_SET);
+    vTaskDelay(pdMS_TO_TICKS(100));
+
     uint32_t value = 0;
     for (auto limit = 5; limit > 0; --limit) {
         HAL_ADC_Start(&hadc1); // Start ADC conversion

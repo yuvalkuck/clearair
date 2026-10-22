@@ -14,9 +14,8 @@
 #define MICS4514_RED_R0 1000000	//Reference resistance for the RED sensing element
 
 namespace {
-// SGX AN2: boosted-power preheat pulse to bring the OX/NO2 element up to
-// temperature quickly, applied on every boot regardless of cold/warm.
-constexpr uint32_t MICS4514_BOOST_PREHEAT_MS = 30UL * 1000UL;
+// No boosted preheat: the module's PRE pin is tied to GND. Boosting runs the
+// OX heater near 75 mW, above the datasheet's 50 mW maximum.
 // Standard settle time before trusting readings, applied on every boot.
 constexpr uint32_t MICS4514_WARMUP_SETTLE_MS = 3UL * 60UL * 1000UL;
 // Cold-boot-only continuous soak to reestablish the R0 baseline after the
@@ -33,9 +32,6 @@ void SensorCO1NO2::configure(bool isColdBoot) {
 // reference taken from: https://github.com/paulopereira98/mics4514-stm32-driver
 [[noreturn]] void SensorCO1NO2::taskLoop() const {
     METHODTRACE
-    HAL_GPIO_WritePin(MICS_PREHEAT_GPIO_Port, MICS_PREHEAT_Pin, GPIO_PIN_SET);
-    vTaskDelay(pdMS_TO_TICKS(MICS4514_BOOST_PREHEAT_MS));
-    HAL_GPIO_WritePin(MICS_PREHEAT_GPIO_Port, MICS_PREHEAT_Pin, GPIO_PIN_RESET);
     if (isColdBoot_) {
         METHODLOGS(info, "MiCS-4514 cold-boot soak: %lums", (unsigned long)MICS4514_COLD_SOAK_MS);
         vTaskDelay(pdMS_TO_TICKS(MICS4514_COLD_SOAK_MS));
