@@ -135,6 +135,88 @@ TickType_t fanKickRemainingTicks() {
     return elapsed >= total ? 0 : total - elapsed;
 }
 
+// Evacuate alarm: the buzzer sounds for BUZZER_SOUND_MS, then pauses for
+// BUZZER_PAUSE_MS. If the air drops below Evacuate during the pause, two short
+// beeps say it is safe and the alarm stops; otherwise it sounds again.
+constexpr uint32_t BUZZER_SOUND_MS = 60UL * 1000UL;
+constexpr uint32_t BUZZER_PAUSE_MS = 60UL * 1000UL;
+// "Safe" signal steps: a short silence (so the beeps are not heard as the end
+// of the long sound), then beep, gap, beep. Odd steps sound.
+constexpr uint32_t BUZZER_SAFE_STEPS_MS[] = {1000, 300, 300, 300};
+constexpr uint8_t BUZZER_SAFE_STEP_COUNT = sizeof(BUZZER_SAFE_STEPS_MS) / sizeof(BUZZER_SAFE_STEPS_MS[0]);
+// Pin level that sounds the buzzer.
+constexpr GPIO_PinState BUZZER_ON = GPIO_PIN_SET;
+constexpr GPIO_PinState BUZZER_OFF = GPIO_PIN_RESET;
+
+enum class AlarmState : uint8_t { Idle, Sounding, Pausing, SafeBeeps };
+AlarmState alarmState = AlarmState::Idle;
+TickType_t alarmStepStart = 0;
+uint8_t safeStep = 0;
+
+TickType_t alarmStepTicks() {
+    switch (alarmState) {
+        case AlarmState::Sounding:
+            return pdMS_TO_TICKS(BUZZER_SOUND_MS);
+        case AlarmState::Pausing:
+            return pdMS_TO_TICKS(BUZZER_PAUSE_MS);
+        case AlarmState::SafeBeeps:
+            return pdMS_TO_TICKS(BUZZER_SAFE_STEPS_MS[safeStep]);
+        default:
+            return portMAX_DELAY;
+    }
+}
+
+// Ticks left of the current alarm step, or portMAX_DELAY when idle.
+TickType_t alarmRemainingTicks() {
+    if (alarmState == AlarmState::Idle) {
+        return portMAX_DELAY;
+    }
+    TickType_t elapsed = xTaskGetTickCount() - alarmStepStart;
+    TickType_t total = alarmStepTicks();
+    return elapsed >= total ? 0 : total - elapsed;
+}
+
+void enterAlarmStep(AlarmState state, bool buzzerOn) {
+    alarmState = state;
+    alarmStepStart = xTaskGetTickCount();
+    HAL_GPIO_WritePin(BUZZER_IN_GPIO_Port, BUZZER_IN_Pin, buzzerOn ? BUZZER_ON : BUZZER_OFF);
+}
+
+void updateAlarm(DangerLevel level) {
+    bool evacuate = level == DangerLevel::Evacuate;
+    switch (alarmState) {
+        case AlarmState::Idle:
+            if (evacuate) {
+                MESSAGELOG("evacuate alarm on\r\n");
+                enterAlarmStep(AlarmState::Sounding, true);
+            }
+            break;
+        case AlarmState::Sounding:
+            if (alarmRemainingTicks() == 0) {
+                enterAlarmStep(AlarmState::Pausing, false);
+            }
+            break;
+        case AlarmState::Pausing:
+            if (!evacuate) {
+                MESSAGELOG("air cleared, safe signal\r\n");
+                safeStep = 0;
+                enterAlarmStep(AlarmState::SafeBeeps, false);
+            } else if (alarmRemainingTicks() == 0) {
+                enterAlarmStep(AlarmState::Sounding, true);
+            }
+            break;
+        case AlarmState::SafeBeeps:
+            if (alarmRemainingTicks() == 0) {
+                if (++safeStep >= BUZZER_SAFE_STEP_COUNT) {
+                    enterAlarmStep(AlarmState::Idle, false);
+                } else {
+                    enterAlarmStep(AlarmState::SafeBeeps, safeStep % 2 == 1);
+                }
+            }
+            break;
+    }
+}
+
 // Fan and buzzer follow the worst severity across all metrics.
 void evaluateLevels() {
     METHODTRACE
@@ -142,10 +224,9 @@ void evaluateLevels() {
     if (worst.level != appliedLevel) {
 
         appliedLevel = worst.level;
-        HAL_GPIO_WritePin(BUZZER_IN_GPIO_Port, BUZZER_IN_Pin,
-                          worst.level == DangerLevel::Evacuate ? GPIO_PIN_SET : GPIO_PIN_RESET);
         METHODLOGS(info, "danger level:%u fan:%u%%", (unsigned)worst.level, (unsigned)worst.fanPercent);
     }
+    updateAlarm(worst.level);
 
     if (fanKicking) {
         if (worst.fanPercent == 0) {
@@ -176,7 +257,12 @@ extern "C" [[noreturn]] void mainSensorsMsgLoop(void* argument) {
     METHODTRACE
     auto xQueue = (QueueHandle_t)SensorEventsHandle;
     for (;;) {
-        if (xQueueReceive(xQueue, &msg, fanKickRemainingTicks()) == pdTRUE) {
+        TickType_t wait = fanKickRemainingTicks();
+        TickType_t alarmWait = alarmRemainingTicks();
+        if (alarmWait < wait) {
+            wait = alarmWait;
+        }
+        if (xQueueReceive(xQueue, &msg, wait) == pdTRUE) {
             switch (msg.id) {
                 case BME680: {
                     auto payload = msg.payload.bme680;

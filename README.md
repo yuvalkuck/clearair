@@ -87,8 +87,7 @@ The 5V total has no fan, because both fans run from the 12V rail.
 
 | Load | Typical | Peak / max |
 | :--- | :--- | :--- |
-| 12V buzzer (active type, only when latched on) | 30 mA | ~100 mA (loud siren type) |
-| R16 gate pull-up (buzzer off, Q3 conducting) | 1.2 mA | 1.2 mA |
+| 12V buzzer (active type, only while the alarm sounds) | 30 mA | ~100 mA (loud siren type) |
 | Front 80 mm fan (4-pin PWM) | not measured, below the label current at reduced speed | ~660 mA (label) |
 | Rear 80 mm fan (4-pin PWM) | not measured, below the label current at low speed | ~660 mA (label) |
 | **Total** | **not measured** | **~1.42 A ≈ 17 W** |
@@ -164,7 +163,6 @@ graph TD
         Fan_Front[Front Fan: 80 mm 4-pin PWM]
         Fan_Rear[Rear Fan: 80 mm 4-pin PWM]
         Trans_2N2222[NPN 2N2222A Transistor]
-        MOSFET_Z44[IRFZ44N N-MOSFET]
         GND[System GND]
         
         %% Microcontroller Internal Modules
@@ -224,9 +222,7 @@ graph TD
     TRIAC_Dim -->|Phase-Cut Output| AC_Fan
     
     T5 -->|GPIO Output| Trans_2N2222
-    Trans_2N2222 -->|Collector drives Gate| MOSFET_Z44
-    Buzzer_12 -->|Drain| MOSFET_Z44
-    MOSFET_Z44 -->|Source| GND
+    Buzzer_12 -->|Low side| Trans_2N2222
     Trans_2N2222 -->|Emitter| GND
 
     T5 -->|USART3 TX/RX, future| Level_Shift
@@ -354,7 +350,7 @@ The control loop (`mainSensorsMsgLoop` in `Core/Src/control_center.cpp`) turns e
 | `fanOff` | A running fan keeps running until the reading drops below this value. It sits slightly below `fanOn`, so the fan does not switch on and off when a reading hovers around the turn-on point. |
 | `fanOn` | A stopped fan turns on, at the minimum speed (50%), when the reading reaches this value. |
 | `fanMax` | The fan reaches 100% at this value. Between `fanOn` and `fanMax` the speed rises linearly from 50% to 100%. |
-| `evacuate` | At or above this value the buzzer turns on. It is at or above `fanMax`, so the fan is already at full speed when the alarm sounds. |
+| `evacuate` | At or above this value the evacuate alarm starts (see [Evacuate alarm](#evacuate-alarm)). It is at or above `fanMax`, so the fan is already at full speed when the alarm sounds. |
 
 These give each metric one of three danger levels:
 
@@ -362,9 +358,9 @@ These give each metric one of three danger levels:
 | :--- | :--- | :--- | :--- |
 | `Off` | Below `fanOn` (or below `fanOff` if the fan is already running) | Off | Off |
 | `Ventilate` | From `fanOn` up to `evacuate` | 50% to 100%, proportional to the reading | Off |
-| `Evacuate` | At or above `evacuate` | 100% | On |
+| `Evacuate` | At or above `evacuate` | 100% | Alarm cycle: 60 s on, 60 s off |
 
-**Across metrics.** Every reading that arrives updates only its own metrics in a shared structure that holds the latest level and requested fan speed of each metric. When the loop finishes handling a message, it evaluates the whole structure: the fan speed is the highest requested by any metric, and the buzzer is on if any metric is at `Evacuate`. The fan and buzzer are only written when the result changes.
+**Across metrics.** Every reading that arrives updates only its own metrics in a shared structure that holds the latest level and requested fan speed of each metric. When the loop finishes handling a message, it evaluates the whole structure: the fan speed is the highest requested by any metric, and the evacuate alarm starts if any metric is at `Evacuate`. The fan and buzzer are only written when the result changes.
 
 **Kick-start.** A stopped motor cannot start at 50% speed. When the fan turns on from off, it first runs at 100% for a fixed spin-up time (`FAN_KICKSTART_MS`), then drops to the requested speed. The fan has no tachometer, so this is a timer, not a measured speed. If the air becomes clean during the spin-up, the fan stops straight away. The loop waits on the queue with a timeout while a spin-up runs, so the fan drops to its target on time even if no sensor message arrives.
 
@@ -373,13 +369,12 @@ These give each metric one of three danger levels:
 ```mermaid
 flowchart TD
     Msg[Sensor reading arrives on the queue] --> Update[Update only that sensor's metrics:<br/>level + requested fan %]
-    Timeout[Spin-up timer expires<br/>queue wait timeout] --> Eval
+    Timeout[Spin-up or alarm timer expires<br/>queue wait timeout] --> Eval
     Update --> Eval[Evaluate all metrics]
     Eval --> Worst[Worst level and highest requested fan %]
 
     Worst --> Lvl{Worst level}
-    Lvl -->|Evacuate| BuzOn[Buzzer ON]
-    Lvl -->|Off or Ventilate| BuzOff[Buzzer OFF]
+    Lvl --> Alarm[Evacuate alarm cycle<br/>see Evacuate alarm]
 
     Worst --> Fan{Requested fan %}
     Fan -->|0 and fan stopped| Stay[Fan stays off]
@@ -398,10 +393,31 @@ flowchart LR
     A -->|below fanOn, fan stopped<br/>or below fanOff, fan running| O[Off: fan 0%]
     A -->|fanOn up to fanMax| V1[Ventilate: fan 50% to 100%, linear]
     A -->|fanMax up to evacuate| V2[Ventilate: fan 100%]
-    A -->|evacuate or above| E[Evacuate: fan 100% + buzzer ON]
+    A -->|evacuate or above| E[Evacuate: fan 100% + alarm]
 ```
 
-**Current limits.** The buzzer is not latched: it turns off when every metric drops below `evacuate`, unlike the latched `STATE_EVACUATE_LATCHED` in the [planned state machine](#planned-safety-latch-state-machine) above. A metric that has not reported yet counts as `Off`, and there is no stale-data or loss-of-signal handling yet. The MQ131 thresholds are placeholders on raw ADC counts and need calibration, and the other thresholds come from public exposure limits (see the comments next to them in `control_center.cpp`).
+### Evacuate alarm
+
+When the worst level reaches `Evacuate`, the buzzer runs a cycle (`updateAlarm()` in `Core/Src/control_center.cpp`):
+
+1. **Sound:** the buzzer is on for `BUZZER_SOUND_MS` (60 s).
+2. **Pause:** the buzzer is off for `BUZZER_PAUSE_MS` (60 s).
+3. If every metric drops below `evacuate` during the pause, the buzzer gives the safe signal: 1 s of silence, then two 300 ms beeps with a 300 ms gap (`BUZZER_SAFE_STEPS_MS`). The alarm then stops.
+4. If the air is still at `Evacuate` when the pause ends, the cycle starts again from step 1.
+
+The air is only checked during the pause, so a sound period always runs its full 60 s. All the timings, the safe-signal pattern and the pin level that sounds the buzzer (`BUZZER_ON`) are constants at the top of the alarm code, so they are easy to change.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Idle
+    Idle --> Sounding : worst level = Evacuate
+    Sounding --> Pausing : after BUZZER_SOUND_MS (60 s)
+    Pausing --> SafeBeeps : air below evacuate
+    Pausing --> Sounding : still Evacuate after BUZZER_PAUSE_MS (60 s)
+    SafeBeeps --> Idle : 1 s silence, beep, gap, beep
+```
+
+**Current limits.** The alarm is not latched: once every metric is below `evacuate` during a pause, it gives the safe signal and stops, unlike the latched `STATE_EVACUATE_LATCHED` in the [planned state machine](#planned-safety-latch-state-machine) above. A metric that has not reported yet counts as `Off`, and there is no stale-data or loss-of-signal handling yet. The MQ131 thresholds are placeholders on raw ADC counts and need calibration, and the other thresholds come from public exposure limits (see the comments next to them in `control_center.cpp`).
 
 ## 📉 Compensation & Normalization Models
 
@@ -451,7 +467,7 @@ Pin map for the **STM32G474CEU6** (UFQFPN48) on the WeAct G4 Long board, debugge
 | **RobotDyn Gate Out** | GPIO Output | PB1 (18) | Push-pull, high speed, driven from the `TIM3` ISR. |
 | **MQ131 Heater Enable** | GPIO Output | PB12 (25) | `MQ131_PREHEAT`. Push-pull, initial state LOW. Drives Q5 (AO3400A) through R17 100 Ω, with R18 100 kΩ gate pull-down: a low-side switch in the MQ131 module GND. HIGH powers the heater and the module. `task_mq131` sets it HIGH in `configure()` and keeps it on. |
 | **Cold/Warm Boot Select** | GPIO Input | PB14 (27) | Pull-up, read once at boot. |
-| **Safety Buzzer Latch** | GPIO Output | PB15 (28) | Drives the 2N2222A base for the 12V buzzer. Initial state LOW. |
+| **Safety Buzzer** | GPIO Output | PB15 (28) | Drives the 2N2222A base through R9 (1 kΩ); Q3 switches the 12V buzzer on its low side. HIGH = buzzer on. Initial state LOW. |
 | **Front Fan PWM (80 mm)** | TIM1_CH1 | PA8 (30) | 25 kHz PWM to the fan's PWM wire. 1 kΩ in series. Prescaler `0`, period `6799` at 170 MHz. Fan 12V and GND come from the 12V rail, GND common with the STM32. |
 | **Rear Fan PWM (80 mm)** | TIM1_CH2 | PA9 (31) | Same timer as the front fan, so the same 25 kHz. 1 kΩ in series. |
 | **Front Fan Tach** | TIM2_CH1 | PA5 (13) | Input capture, 10 kΩ pull-up to 3.3V. The tach is an open-collector output; confirm on the bench that the fan does not pull it up to 12V. |
