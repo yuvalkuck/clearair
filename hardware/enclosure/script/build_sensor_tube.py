@@ -1,5 +1,5 @@
 # Builds hardware/enclosure/sensor_tube.FCStd, the baseline model of the filter adapter, the sensor
-# tube, one separate fan mount part for both ends, a slot for each of the BME680 and MiCS-4514 boards (glued in, no
+# tube, one separate flat fan mount plate for both ends, a slot for each of the BME680 and MiCS-4514 boards (glued in, no
 # carrier, at 90 and 180 deg from the MQ131) and a hole for the MQ131 sensor itself. Every dimension lives in
 # the "Params" spreadsheet and the solids are bound to it by expressions, so edit the numbers in
 # FreeCAD and the model follows.
@@ -9,10 +9,11 @@
 # Running it again overwrites the .FCStd, so keep it for regenerating the baseline only and
 # do further design work in the .FCStd itself. Air flows along +X:
 #   filter -> adapter -> front fan -> sensor tube (sensors) -> rear fan -> exhaust
-# Printed parts: FilterAdapter, SensorTube and FanMount (two copies, FanMount_rear is its mirror).
+# Printed parts: FilterAdapter, SensorTube and FanMount (three copies, FanMount_front and FanMount_rear are its mirrors).
 import os
 import FreeCAD as App
 import Part
+import Draft
 
 # The model lives one directory up from this script.
 OUT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "sensor_tube.FCStd")
@@ -43,9 +44,6 @@ PARAMS = [
     ("adapter_len", "50 mm", "cone length from 22 mm port to the fan bore"),
     ("plate_size", "100 mm", "square mount plate (adapter flange and fan mounts)"),
     ("plate_t", "2 mm", "mount plate thickness"),
-    ("sleeve_len", "10 mm", "fan mount sleeve length over the tube end (keep it short of the sensor slots)"),
-    ("sleeve_wall", "2 mm", "fan mount sleeve wall"),
-    ("mount_clear", "0.3 mm", "fan mount sleeve clearance over the tube, room for glue"),
     ("tube_id", "85 mm", "sensor tube inner diameter"),
     ("tube_len", "100 mm", "sensor tube length between its two mount plates"),
     ("# BME680 and MiCS-4514 boards: pushed through a slot in the tube wall and glued. l along the flow, w radial (into the tube), t thick, x from the tube inlet, z offset along the wall (0 = centred on the slot line)", None, None),
@@ -195,30 +193,27 @@ def plate(name, x):
                "-Params.plate_size / 2", "-Params.plate_size / 2")
 
 
-# ---- Filter adapter: bayonet port, o-ring face groove, cone 22 mm -> fan bore, fan flange ----
+# ---- Filter adapter: bayonet port, o-ring face groove, cone 22 mm -> fan bore (the fan plate is a FanMount, glued on) ----
 port = cylinder("A_port", "Params.port_od / 2", "Params.port_len", "Params.x_adapter - Params.port_len")
 collar = cylinder("A_collar", "Params.port_od / 2 + Params.collar_w", "Params.collar_t", "Params.x_adapter")
 outer_cone = cone("A_cone_out", "Params.port_id / 2 + Params.wall", "Params.fan_bore / 2 + Params.wall",
                   "Params.adapter_len", "Params.x_cone")
-flange = plate("A_plate", "Params.x_plate_a")
-teeth = []
-for n, angle in enumerate((0, 120, 240)):
-    r = "(Params.port_od / 2 - 0.5 mm)"
-    teeth.append(box("A_tooth_%d" % n, "Params.tooth_t", "Params.tooth_w", "Params.tooth_h + 0.5 mm",
-                "Params.x_adapter - Params.port_len + Params.tooth_x",
-                "-Params.tooth_w / 2 * cos(%d deg) - %s * sin(%d deg)" % (angle, r, angle),
-                "-Params.tooth_w / 2 * sin(%d deg) + %s * cos(%d deg)" % (angle, r, angle),
-                     rotation=App.Rotation(V(1, 0, 0), angle)))
-adapter_solid = fuse("A_solid", [port, collar, outer_cone, flange] + teeth)
+# One bayonet tooth on +Z, repeated 3 times around the port axis (X) with a Draft polar array.
+r = "(Params.port_od / 2 - 0.5 mm)"
+tooth = box("A_tooth", "Params.tooth_t", "Params.tooth_w", "Params.tooth_h + 0.5 mm",
+            "Params.x_adapter - Params.port_len + Params.tooth_x", "-Params.tooth_w / 2", r)
+teeth = Draft.make_polar_array(tooth, number=3, angle=360, center=V(0, 0, 0), use_link=False)
+teeth.Axis = V(1, 0, 0)
+teeth.Fuse = True
+adapter_solid = fuse("A_solid", [port, collar, outer_cone, teeth])
 
 bore = cylinder("A_bore", "Params.port_id / 2", "Params.port_len + Params.collar_t + 2 mm", "Params.x_adapter - Params.port_len - 1 mm")
 inner_cone = cone("A_cone_in", "Params.port_id / 2", "Params.fan_bore / 2", "Params.adapter_len", "Params.x_cone")
-flange_bore = cylinder("A_plate_bore", "Params.fan_bore / 2", "Params.plate_t + 2 mm", "Params.x_plate_a - 1 mm")
 # o-ring face groove in the collar face, around the port; the filter back face seals against it
 groove_out = cylinder("A_groove_out", "Params.port_od / 2 + 1 mm + Params.groove_w", "Params.groove_d + 1 mm", "Params.x_adapter - 1 mm")
 groove_in = cylinder("A_groove_in", "Params.port_od / 2 + 1 mm", "Params.groove_d + 1 mm", "Params.x_adapter - 1 mm")
 groove = cut("A_groove", groove_out, groove_in)
-adapter_tools = fuse("A_tools", [bore, inner_cone, flange_bore, groove] + fan_holes("A_fan", "Params.x_plate_a"))
+adapter_tools = fuse("A_tools", [bore, inner_cone, groove])
 adapter = cut("FilterAdapter", adapter_solid, adapter_tools)
 
 # ---- BME680 and MiCS-4514: a slot through the tube side takes each board, which is glued in place ----
@@ -240,35 +235,35 @@ for p, label in (("bme", "BME"), ("mics", "MiCS")):
     sensor_refs.append(box("REF_" + label, P("l"), P("w"), P("t"), "Params.x_t0 + " + P("x"),
                            OUTER + " + Params.board_out - " + P("w"), P("z"), angle=P("ang")))
 
-# ---- Sensor tube: a plain tube, a slot per board, a boss and hole for the MQ131 (fan mounts are separate) ----
+# ---- Sensor tube: a plain tube, a slot per board, a hole for the MQ131 (fan mounts are separate) ----
 tube_out = cylinder("T_tube_out", "Params.tube_id / 2 + Params.wall", "Params.tube_len", "Params.x_t0")
-# MQ131: a flat boss on the -Y side seats the ledge, a hole slightly bigger than the base takes the sensor.
+# MQ131: a hole slightly bigger than the base on the -Y side takes the sensor. The boss/ring that seats the
+# ledge is left out on purpose, to be added by hand in the .FCStd.
 MQ_X = "Params.x_t0 + Params.mq_x"
 MQ_FACE = "(Params.tube_id / 2 + Params.wall + Params.mq_boss_h)"  # distance of the boss face from the axis
-mq_boss = cylinder_ny("T_mq_boss", "Params.mq_boss_d / 2", MQ_FACE + " - 15 mm", MQ_X, "-15 mm", "0 mm")
 mq_hole = cylinder_ny("T_mq_hole", "(Params.mq_base_d + Params.mq_hole_clear) / 2", MQ_FACE + " + 2 mm", MQ_X, "0 mm", "0 mm")
-tube_solid = fuse("T_solid", [tube_out, mq_boss])
 tube_tools = [cylinder("T_bore", "Params.tube_id / 2", "Params.tube_len + 2 mm", "Params.x_t0 - 1 mm")]
-sensor_tube = cut("SensorTube", tube_solid, fuse("T_tools", tube_tools + slots + [mq_hole]))
+sensor_tube = cut("SensorTube", tube_out, fuse("T_tools", tube_tools + slots + [mq_hole]))
 
 # ---- Fan mount: ONE part, printed separately and glued onto each tube end ----
-# A square plate with the fan opening and screw holes, plus a short sleeve that slips over the tube end.
-# The tube end butts against the inner face of the plate. The rear mount is the front one mirrored about
-# the middle of the tube, so editing FanMount changes both; print two copies.
-TUBE_OD = "(Params.tube_id + 2 * Params.wall)"
-RECESS_R = "((" + TUBE_OD + " + Params.mount_clear) / 2)"
+# A flat square plate with the fan opening and screw holes. The tube end is glued to its inner face.
+# The rear mount is the front one mirrored about the middle of the tube, so editing FanMount changes
+# both; print two copies.
 fm_plate = plate("FM_plate", "Params.x_tf")
-fm_sleeve = cylinder("FM_sleeve", RECESS_R + " + Params.sleeve_wall", "Params.sleeve_len", "Params.x_t0")
-fm_solid = fuse("FM_solid", [fm_plate, fm_sleeve])
-fm_tools = fuse("FM_tools", [cylinder("FM_bore", "Params.fan_bore / 2", "Params.plate_t + 2 mm", "Params.x_tf - 1 mm"),
-                             cylinder("FM_recess", RECESS_R, "Params.sleeve_len + 1 mm", "Params.x_t0")]
+fm_tools = fuse("FM_tools", [cylinder("FM_bore", "Params.fan_bore / 2", "Params.plate_t + 2 mm", "Params.x_tf - 1 mm")]
                 + fan_holes("FM_fan", "Params.x_tf"))
-fan_mount = cut("FanMount", fm_solid, fm_tools)
+fan_mount = cut("FanMount", fm_plate, fm_tools)
 fan_mount_rear = doc.addObject("Part::Mirroring", "FanMount_rear")
 fan_mount_rear.Source = fan_mount
 fan_mount_rear.Base = V(0, 0, 0)
 fan_mount_rear.Normal = V(1, 0, 0)
 fan_mount_rear.setExpression("Base.x", "(Params.x_t0 + Params.x_tr) / 2")
+# The front fan's upstream plate is the same part: FanMount mirrored about the middle of the front fan, glued to the cone end.
+fan_mount_front = doc.addObject("Part::Mirroring", "FanMount_front")
+fan_mount_front.Source = fan_mount
+fan_mount_front.Base = V(0, 0, 0)
+fan_mount_front.Normal = V(1, 0, 0)
+fan_mount_front.setExpression("Base.x", "(Params.x_fan_f + Params.x_tf) / 2")
 
 # ---- Reference bodies, not printed: parts the enclosure is built around ----
 refs = [
@@ -292,7 +287,7 @@ doc.recompute()
 
 # Built headless, so nothing hides the helper solids (cut tools, fuse inputs) the way the GUI does.
 # Show only the printed parts and the reference bodies.
-shown = {"FilterAdapter", "SensorTube", "FanMount", "FanMount_rear"} | {r.Name for r in refs}
+shown = {"FilterAdapter", "SensorTube", "FanMount", "FanMount_rear", "FanMount_front"} | {r.Name for r in refs}
 for o in doc.Objects:
     if hasattr(o, "Shape") and o.TypeId.startswith("Part::"):
         o.Visibility = o.Name in shown
