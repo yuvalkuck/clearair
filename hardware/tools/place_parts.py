@@ -48,11 +48,21 @@ Layout file format (JSON):
           "rotation": 90,          optional, degrees for every part in the group
           "refs": ["A1", "R1"]     references in packing order
         }
-      ]
+      ],
+      "fixed": {                   optional, parts moved by hand (see --capture)
+        "U6": [80.5, 0, 90]        x, y in mm relative to origin, rotation
+      }
     }
 
 Use "R1@90" in "refs" to give one part its own rotation. A part without a
 rotation gets the group rotation (0 when the group has none).
+
+Parts under "fixed" still take their place in their group, so the other
+parts do not shift, and are then moved to the saved spot, with pin 1
+snapped to "grid". After you move
+parts by hand in KiCad, run with --capture to record them:
+
+    $K place_parts.py board.kicad_pcb -l layout.json --capture
 """
 
 import argparse
@@ -74,7 +84,8 @@ DEFAULT_POWER_NETS = r"(?i)^(/)?(gnd\w*|\w*gnd|agnd|dgnd|pgnd|v(cc|dd|ss|ee|bat|
 
 
 def mm(value):
-    return pcbnew.FromMM(value)
+    # Round, not truncate: FromMM(64.46) gives 64459999 nm.
+    return int(round(value * pcbnew.FromMM(1)))
 
 
 def to_mm(value):
@@ -123,6 +134,15 @@ def grid_pad(fp):
     return numbered[0] if numbered else None
 
 
+def snap_to_grid(fp, grid):
+    """Move a footprint so its pin 1 (or its anchor if it has no numbered pad) is on the grid."""
+    if grid <= 0:
+        return
+    pin = grid_pad(fp)
+    p = pin.GetPosition() if pin is not None else fp.GetPosition()
+    fp.Move(pcbnew.VECTOR2I(snap(p.x, grid) - p.x, snap(p.y, grid) - p.y))
+
+
 def parse_ref(entry, group_rotation):
     if "@" in entry:
         ref, rot = entry.split("@", 1)
@@ -130,8 +150,8 @@ def parse_ref(entry, group_rotation):
     return entry, group_rotation
 
 
-def place_group(group, footprints, origin, grid, default_gap, dry_run):
-    """Pack one group. Return the set of references it placed."""
+def place_group(group, footprints, origin, grid, default_gap, dry_run, verbose=True):
+    """Pack one group. Return {ref: (position, rotation)} for the parts it placed."""
     name = group.get("name", "?")
     flow = group.get("flow", "right")
     if flow not in ("right", "down"):
@@ -140,7 +160,7 @@ def place_group(group, footprints, origin, grid, default_gap, dry_run):
     group_rotation = float(group.get("rotation", 0))
     cursor_x = origin[0] + mm(group["at"][0])
     cursor_y = origin[1] + mm(group["at"][1])
-    placed = set()
+    placed = {}
 
     for entry in group["refs"]:
         ref, rotation = parse_ref(entry, group_rotation)
@@ -162,31 +182,98 @@ def place_group(group, footprints, origin, grid, default_gap, dry_run):
         fp.SetPosition(pcbnew.VECTOR2I(int(cursor_x + dx), int(cursor_y + dy)))
         # Snap pin 1 (not the anchor, which some footprints put between pins)
         # so the pins land on the grid.
-        pin = grid_pad(fp)
-        if pin is not None and grid > 0:
-            p = pin.GetPosition()
-            fp.Move(pcbnew.VECTOR2I(snap(p.x, grid) - p.x, snap(p.y, grid) - p.y))
-        elif grid > 0:
-            p = fp.GetPosition()
-            fp.SetPosition(pcbnew.VECTOR2I(snap(p.x, grid), snap(p.y, grid)))
+        snap_to_grid(fp, grid)
         new_pos = fp.GetPosition()
 
-        print(
-            f"{name:>12}  {ref:<6} ({to_mm(old_pos.x):8.2f}, {to_mm(old_pos.y):8.2f}) @{old_rot:6.1f}"
-            f"  ->  ({to_mm(new_pos.x):8.2f}, {to_mm(new_pos.y):8.2f}) @{rotation:6.1f}"
-        )
+        if verbose:
+            print(
+                f"{name:>12}  {ref:<6} ({to_mm(old_pos.x):8.2f}, {to_mm(old_pos.y):8.2f}) @{old_rot:6.1f}"
+                f"  ->  ({to_mm(new_pos.x):8.2f}, {to_mm(new_pos.y):8.2f}) @{rotation:6.1f}"
+            )
 
         box = footprint_box(fp)
         if flow == "right":
             cursor_x = box.GetRight() + gap
         else:
             cursor_y = box.GetBottom() + gap
-        placed.add(ref)
+        placed[ref] = (new_pos, rotation)
 
         if dry_run:
             fp.SetOrientationDegrees(old_rot)
             fp.SetPosition(old_pos)
     return placed
+
+
+def write_layout(layout, path):
+    """Write a layout as JSON, with short lists (coordinates, refs) on one line."""
+    text = json.dumps(layout, indent=2)
+    text = re.sub(r"\[\s*([^\[\]{}]*?)\s*\]", lambda m: "[" + re.sub(r",\s+", ", ", m.group(1)) + "]", text)
+    with open(path, "w") as fh:
+        fh.write(text + "\n")
+
+
+def apply_fixed(layout, footprints, origin, grid, only_refs, dry_run):
+    """Move the parts listed under "fixed" to their saved spot, pin 1 on the grid. Return their refs."""
+    done = set()
+    for ref, (x, y, rot) in layout.get("fixed", {}).items():
+        fp = footprints.get(ref)
+        if fp is None:
+            print(f"warning: fixed: {ref} is not on the board, skipped")
+            continue
+        if only_refs is not None and ref not in only_refs:
+            continue
+        old_pos = fp.GetPosition()
+        old_rot = fp.GetOrientationDegrees()
+        fp.SetOrientationDegrees(float(rot))
+        fp.SetPosition(pcbnew.VECTOR2I(origin[0] + mm(x), origin[1] + mm(y)))
+        snap_to_grid(fp, grid)
+        new_pos = fp.GetPosition()
+        print(
+            f"{'fixed':>12}  {ref:<6} ({to_mm(old_pos.x):8.2f}, {to_mm(old_pos.y):8.2f}) @{old_rot:6.1f}"
+            f"  ->  ({to_mm(new_pos.x):8.2f}, {to_mm(new_pos.y):8.2f}) @{float(rot):6.1f}"
+        )
+        if dry_run:
+            fp.SetOrientationDegrees(old_rot)
+            fp.SetPosition(old_pos)
+        done.add(ref)
+    return done
+
+
+def capture(layout, footprints, origin, grid, default_gap, path):
+    """Store every part that is not where the groups would put it under "fixed"."""
+    computed = {}
+    for group in layout["groups"]:
+        computed.update(place_group(group, footprints, origin, grid, default_gap, dry_run=True, verbose=False))
+
+    fixed = {}
+    for ref in sorted(footprints):
+        fp = footprints[ref]
+        pos = fp.GetPosition()
+        rot = fp.GetOrientationDegrees()
+        if ref in computed:
+            want_pos, want_rot = computed[ref]
+            same_rot = abs((rot - want_rot + 180) % 360 - 180) < 0.01
+            if same_rot and abs(pos.x - want_pos.x) <= mm(0.001) and abs(pos.y - want_pos.y) <= mm(0.001):
+                continue
+        # Store the spot with pin 1 on the grid, where apply_fixed will put it.
+        snap_to_grid(fp, grid)
+        snapped = fp.GetPosition()
+        fp.SetPosition(pos)
+        fixed[ref] = [round(to_mm(snapped.x - origin[0]), 6), round(to_mm(snapped.y - origin[1]), 6), round(rot, 3)]
+
+    old = layout.get("fixed", {})
+    for ref in sorted(set(old) | set(fixed)):
+        if ref not in fixed:
+            print(f"capture: {ref} is back where its group puts it, removed from fixed")
+        elif old.get(ref) != fixed[ref]:
+            x, y, r = fixed[ref]
+            print(f"capture: {ref} fixed at ({x}, {y}) @{r} (relative to origin)")
+    if fixed:
+        layout["fixed"] = fixed
+    else:
+        layout.pop("fixed", None)
+    write_layout(layout, path)
+    print(f"layout: {path} ({len(fixed)} fixed part(s))")
 
 
 def signal_nets(footprints, power_re, max_net_parts):
@@ -387,6 +474,31 @@ def draw_outline(board, footprints, margin, replace):
     print(f"outline: {to_mm(box.GetWidth()):.2f} x {to_mm(box.GetHeight()):.2f} mm (margin {margin} mm)")
 
 
+def check_board(footprints, grid):
+    """Report courtyard overlaps and numbered pins off the grid. Return True if clean."""
+    refs = sorted(footprints)
+    boxes = {ref: footprint_box(footprints[ref]) for ref in refs}
+    overlaps = [(a, b) for i, a in enumerate(refs) for b in refs[i + 1:] if boxes[a].Intersects(boxes[b])]
+    for a, b in overlaps:
+        print(f"overlap: {a} and {b}")
+    print(f"overlaps: {len(overlaps)}")
+
+    off_grid = {}
+    if grid > 0:
+        step = mm(grid)
+        for ref in refs:
+            for pad in footprints[ref].Pads():
+                if not pad.GetNumber():
+                    continue  # mounting holes and other unnumbered pads
+                p = pad.GetPosition()
+                if abs(p.x - snap(p.x, grid)) > mm(0.01) or abs(p.y - snap(p.y, grid)) > mm(0.01):
+                    off_grid.setdefault(ref, []).append(pad.GetNumber())
+        for ref, pins in off_grid.items():
+            print(f"off grid: {ref} pin(s) {' '.join(sorted(set(pins)))}")
+        print(f"footprints with numbered pins off the {grid} mm grid: {len(off_grid)}")
+    return not overlaps and not off_grid
+
+
 def list_footprints(board):
     print(f"{'ref':<6} {'w mm':>6} {'h mm':>6} {'rot':>6} {'x mm':>9} {'y mm':>9} {'pads':>4}  nets")
     for fp in sorted(board.GetFootprints(), key=lambda f: f.GetReference()):
@@ -414,6 +526,8 @@ def main():
     mode.add_argument("-l", "--layout", help="JSON layout file (see format below)")
     mode.add_argument("-a", "--auto", action="store_true", help="build the groups from the netlist")
     mode.add_argument("--list", action="store_true", help="list footprints with size, position, pads and nets, then exit")
+    mode.add_argument("--check", action="store_true",
+                      help="report courtyard overlaps and numbered pins off --grid, then exit")
     mode.add_argument("--only", action="append", metavar="GROUP", help="place only this group (repeatable)")
 
     out = parser.add_argument_group("output")
@@ -421,6 +535,8 @@ def main():
     out.add_argument("-i", "--in-place", action="store_true", help="overwrite the input board (a .bak copy is kept)")
     out.add_argument("-n", "--dry-run", action="store_true", help="print the moves, change nothing")
     out.add_argument("--save-layout", metavar="FILE", help="write the layout used (e.g. from --auto) to a JSON file")
+    out.add_argument("--capture", action="store_true",
+                     help="with -l: save parts you moved by hand as 'fixed' in the layout file, change no board")
     out.add_argument("--outline", type=float, metavar="MARGIN_MM", help="draw an Edge.Cuts rectangle around all parts")
     out.add_argument("--replace-outline", action="store_true", help="delete existing Edge.Cuts items before --outline")
 
@@ -445,17 +561,22 @@ def main():
     if args.list:
         list_footprints(board)
         return
+    if args.check:
+        footprints = {fp.GetReference(): fp for fp in board.GetFootprints()}
+        sys.exit(0 if check_board(footprints, args.grid) else 1)
 
     if args.layout and args.auto:
         parser.error("--layout and --auto cannot be used together")
     if not args.layout and not args.auto and args.outline is None:
         parser.error("give --auto, --layout and/or --outline (or --list)")
-    if not args.dry_run and not args.output and not args.in_place and not (args.save_layout and not args.outline):
+    if not args.dry_run and not args.output and not args.in_place and not args.capture and not (args.save_layout and not args.outline):
         parser.error("give -o OUTPUT, --in-place, or --dry-run")
     if args.output and args.in_place:
         parser.error("-o and --in-place cannot be used together")
     if args.save_layout and not args.output and not args.in_place:
         args.dry_run = True
+    if args.capture and not args.layout:
+        parser.error("--capture needs -l LAYOUT")
 
     all_footprints = list(board.GetFootprints())
     footprints = {}
@@ -478,13 +599,14 @@ def main():
 
     if layout is not None:
         if args.save_layout:
-            with open(args.save_layout, "w") as fh:
-                json.dump(layout, fh, indent=2)
-                fh.write("\n")
+            write_layout(layout, args.save_layout)
             print(f"layout: {args.save_layout}")
         origin = (mm(layout.get("origin", [0, 0])[0]), mm(layout.get("origin", [0, 0])[1]))
         grid = float(layout.get("grid", 0))
         default_gap = float(layout.get("gap", 1.27))
+        if args.capture:
+            capture(layout, footprints, origin, grid, default_gap, args.save_layout or args.layout)
+            return
         placed = set()
         groups = layout["groups"]
         if args.only:
@@ -493,7 +615,8 @@ def main():
                 parser.error(f"unknown group(s): {', '.join(sorted(unknown))}")
             groups = [g for g in groups if g.get("name") in args.only]
         for group in groups:
-            placed |= place_group(group, footprints, origin, grid, default_gap, args.dry_run)
+            placed |= set(place_group(group, footprints, origin, grid, default_gap, args.dry_run))
+        placed |= apply_fixed(layout, footprints, origin, grid, None if not args.only else placed, args.dry_run)
         if not args.only:
             missing = sorted(set(footprints) - placed)
             if missing:

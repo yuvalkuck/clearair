@@ -1,12 +1,39 @@
-# place_parts.py: group placement for KiCad PCBs
+# KiCad PCB tools
+
+Two scripts for any KiCad 10 board:
+
+- [`place_parts.py`](#place_partspy-group-placement): places footprints in
+  groups, keeps the parts you moved by hand.
+- [`route_board.py`](#route_boardpy-autorouting-with-freerouting): autoroutes
+  the board as it is with Freerouting.
+
+## External tools
+
+| Tool | Needed by | Version tested | Install |
+|---|---|---|---|
+| KiCad (its Python with `pcbnew`, and `kicad-cli`) | both | 10.0.5 AppImage | [kicad.org/download](https://www.kicad.org/download/); this project uses `~/bin/kicad-10.0.5-x86_64.AppImage` |
+| Java (JRE) 17 or newer | `route_board.py` | OpenJDK 21 | `sudo apt install openjdk-21-jre` |
+| Freerouting **1.9.0** jar | `route_board.py` | 1.9.0 | `route_board.py --download` (saves `~/.local/share/freerouting/freerouting-1.9.0.jar`) |
+| ImageMagick (`magick` or `convert`) | `route_board.py --render x.png` | 7.1.1 | `sudo apt install imagemagick`. Not needed for `--render x.svg` |
+| `xvfb-run` | `route_board.py` with no display (SSH, CI) | not tested | `sudo apt install xvfb` |
+
+`kicad-cli` is also used for DRC (see [Checking the result](#checking-the-result)).
+With the AppImage it is `~/bin/kicad-10.0.5-x86_64.AppImage kicad-cli`.
+
+Freerouting 2.x does not work with `route_board.py`: 2.0 to 2.1 ignore the
+pass limit from the command line and never stop, and 2.2 and newer need
+Java 25.
+
+# place_parts.py: group placement
 
 KiCad has no auto-placement. `place_parts.py` moves the footprints of a
 `.kicad_pcb` file into groups packed in rows, so no two courtyards overlap.
 It can also draw a rectangular board outline on `Edge.Cuts`. It works on
 any KiCad board, not only ClearAir.
 
-It does not route tracks. It does not keep mains away from logic or put
-connectors at the board edge by itself. Use a layout file for that (see
+It does not route tracks (use [`route_board.py`](#route_boardpy-autorouting-with-freerouting)
+for that). It does not keep mains away from logic or put connectors at the
+board edge by itself. Use a layout file for that (see
 [Workflow](#recommended-workflow)).
 
 ## Requirements
@@ -116,7 +143,10 @@ rules the netlist cannot show (mains on one side, connectors at the edge).
       "rotation": 90,       // optional, rotation for every part in the group
       "refs": ["PS1@0", "U5@0", "R14", "R15"]
     }
-  ]
+  ],
+  "fixed": {                // optional, parts moved by hand, written by --capture
+    "U6": [75.5, 21.0, -90] // anchor x, y in mm relative to origin, rotation
+  }
 }
 ```
 
@@ -134,6 +164,42 @@ Rules:
 - A part listed in no group stays where it is. The script prints a warning
   with the list.
 - A reference that is not on the board is skipped with a warning.
+- A part under `fixed` still takes its place in its group, so the parts
+  after it do not shift. Then it moves to its `fixed` spot, with pin 1
+  snapped to `grid`. Delete its `fixed` entry to give it back to the group.
+
+## Keeping your manual changes (`--capture`)
+
+After `place_parts.py` runs, you will move some parts by hand in KiCad.
+Running the layout again would put them back. To keep them, save the
+board, close KiCad, and run:
+
+```sh
+$K $P $B -l hardware/WeAct-G474CE-Long/placement.json --capture
+```
+
+```
+capture: U6 fixed at (75.5, 21.0) @-90.0 (relative to origin)
+capture: M2 fixed at (59.17, 55.96) @0.0 (relative to origin)
+...
+layout: hardware/WeAct-G474CE-Long/placement.json (10 fixed part(s))
+```
+
+`--capture` compares every part with where its group would put it. Each
+part that differs, or that is in no group, goes under `fixed` with its
+current spot, moved so pin 1 is on `grid` (see [Grid and header pins](#grid-and-header-pins)).
+A part you moved back to its group spot is removed from `fixed`. The board
+is not changed, only the layout file. Running the layout again then gives
+your board, with every hand-placed part on the grid.
+
+Use `--save-layout FILE` with `--capture` to write a new file and keep the
+old layout.
+
+To move a hand-placed part with its group again, delete its line from
+`fixed`.
+
+`route_board.py` needs nothing like this: it routes the board file as it
+is saved and does not move parts.
 
 ## Samples
 
@@ -168,7 +234,9 @@ and the buzzer driver.
 $K $P $B -l hardware/WeAct-G474CE-Long/placement.json --outline 2.54 --in-place
 ```
 
-Result: 35 parts, no overlaps, outline 117.6 × 71.5 mm.
+Its `fixed` section holds the 10 parts moved by hand in KiCad (U6, M2,
+M3, R19 to R22, Q3, R9, BZ1), so running it again gives the board as it is
+now.
 
 ## Recommended workflow
 
@@ -194,7 +262,9 @@ Result: 35 parts, no overlaps, outline 117.6 × 71.5 mm.
    $K $P $B -l my_layout.json --outline 2.54 --replace-outline --in-place
    ```
 
-6. Fine-tune by hand in KiCad, then route.
+6. Fine-tune by hand in KiCad. Save, close KiCad, and record your moves
+   with `--capture` (see [Keeping your manual changes](#keeping-your-manual-changes---capture)).
+7. Route with `route_board.py`.
 
 ## All options
 
@@ -204,15 +274,17 @@ Result: 35 parts, no overlaps, outline 117.6 × 71.5 mm.
 | `-a`, `--auto` | | Build the groups from the netlist |
 | `-l`, `--layout FILE` | | Use groups from a JSON layout file |
 | `--list` | | List footprints (size, position, pads, nets) and exit |
+| `--check` | | Report courtyard overlaps and numbered pins off `--grid`, then exit (exit code 1 if any) |
 | `--only GROUP` | all | Place only this group; repeat for more |
 | `-o`, `--output FILE` | | Write the result to a new file |
 | `-i`, `--in-place` | | Overwrite the input board, keep `BOARD.kicad_pcb.bak` |
 | `-n`, `--dry-run` | | Print the moves, write nothing |
 | `--save-layout FILE` | | Write the layout used to JSON (works with `-n`) |
+| `--capture` | | With `-l`: save parts moved by hand under `fixed` in the layout file; the board is not changed |
 | `--outline MARGIN_MM` | | Draw an `Edge.Cuts` rectangle around all parts |
 | `--replace-outline` | | Delete existing `Edge.Cuts` items before `--outline` |
 | `--origin X Y` | `50 50` | Auto: board top-left in mm |
-| `--grid MM` | `2.54` | Auto: snap pitch, 0 = off |
+| `--grid MM` | `2.54` | Auto and `--check`: snap pitch, 0 = off |
 | `--gap MM` | `1.27` | Auto: space between parts |
 | `--group-gap MM` | `2.54` | Auto: space between groups |
 | `--width MM` | from area | Auto: target board width |
@@ -241,9 +313,55 @@ A custom `--power-nets` replaces the default, so include GND and the other
 rails in it too. KiCad may prefix net names with a sheet path such as
 `/Power/+5V`; match that if your names have it.
 
+## Grid and header pins
+
+Pins that take 2.54 mm (0.1") headers or perfboard holes must sit on a
+2.54 mm grid. With `"grid": 2.54` the script snaps **pin 1** of each part
+to the grid, not the footprint anchor: some footprints (the WeAct board,
+the RTC module) put the anchor between pins, which would leave every pin
+1.27 mm off. All other pins land on the grid too when the footprint's pin
+pitch is a multiple of 2.54.
+
+The grid starts at page 0,0 (KiCad's default grid origin), not at the
+layout `origin`.
+
+Some footprints can never be fully on the grid:
+
+| Footprint | Why | Fix |
+|---|---|---|
+| `TO-92_Inline` (Q1–Q3) | 1.27 mm pin pitch, middle pin is between grid points | Use `Package_TO_SOT_THT:TO-92_Inline_Wide` (2.54 mm pitch, legs bent out) in the schematic |
+| `SW_PUSH_6mm` (SW1, SW2) | Pins 6.5 × 4.5 mm apart | Leave it if no header goes there, or pick a button footprint with 2.54 mm pitch |
+| Unnumbered pads (mounting holes of PS1, U5, U6) | Not pins | Nothing; `--check` ignores them |
+
+Parts you move by hand get snapped too. If you move them in KiCad on a
+finer grid, `--capture` stores each one with pin 1 on the nearest 2.54
+grid point, so a part can move up to 1.27 mm from where you left it. To
+avoid that, set KiCad's grid to 2.54 mm (**View → Grid Settings**, or the
+grid box in the top toolbar) before you move parts.
+
+After `--capture`, run the layout once (`-l ... --in-place`) so the board
+matches the layout file.
+
+Check a board:
+
+```sh
+$K $P $B --check
+```
+
+```
+overlaps: 0
+off grid: Q1 pin(s) 2
+off grid: SW1 pin(s) 1 2
+footprints with numbered pins off the 2.54 mm grid: 2
+```
+
+It lists courtyard overlaps and numbered pins off `--grid` (default 2.54),
+and exits with 1 if it finds any. It changes nothing.
+
 ## Checking the result
 
-The script itself checks nothing after it writes. Check with KiCad's DRC:
+Use `--check` (above) for overlaps and the pin grid. For the rest, run
+KiCad's DRC:
 
 ```sh
 A=~/bin/kicad-10.0.5-x86_64.AppImage
@@ -253,6 +371,17 @@ grep -E '^\[' /tmp/drc.rpt | sed 's/\].*/]/' | sort | uniq -c
 
 On an unrouted board, `unconnected_items` is expected. `courtyards_overlap`
 means two parts collide: move a group. `silk_overlap` is cosmetic.
+`lib_footprint_issues` ("does not include the footprint library") appears
+when the board is checked outside its project folder, so KiCad does not
+find the project's `fp-lib-table`; run DRC on the board inside the project.
+
+To look at the board without opening KiCad, render it:
+
+```sh
+$A kicad-cli pcb export svg $B -l F.Cu,B.Cu,F.Silkscreen,F.Courtyard,Edge.Cuts \
+   --mode-single --fit-page-to-board -o /tmp/board.svg
+magick -density 200 -background white /tmp/board.svg -flatten /tmp/board.png
+```
 
 ## Troubleshooting
 
@@ -266,11 +395,192 @@ means two parts collide: move a group. `silk_overlap` is cosmetic.
 | `board already has N Edge.Cuts item(s)` | An outline exists. Add `--replace-outline` to delete it and draw a new one |
 | Parts overlap after `-l` | Two groups overlap. Change their `at`. Footprints with no courtyard use their body box, which may be smaller than the real part |
 | `swig/python detected a memory leak ...` at exit | Comes from KiCad's Python bindings. Harmless |
+| `Debug: Adding duplicate image handler for 'PNG file'` (and more) | Comes from KiCad's wxWidgets when a board is saved. Harmless |
 | Positions a little off the numbers in the layout | Pin 1 snaps to `grid`, so a part can move up to half a grid step |
+| Is the board open in KiCad? | KiCad leaves `~BOARD.kicad_pcb.lck` next to the board while it is open. No lock file = safe to write |
 
 ## Undo
 
-- `--in-place` keeps the previous board as `BOARD.kicad_pcb.bak`. Restore it
-  with `cp BOARD.kicad_pcb.bak BOARD.kicad_pcb`.
-- The board is in git, so `git checkout -- BOARD.kicad_pcb` also works if
-  you have not committed.
+- `--in-place` copies the board to `BOARD.kicad_pcb.bak` before it writes.
+  Each run overwrites the `.bak`, so it holds only the version just before
+  the last run. Restore it with `cp BOARD.kicad_pcb.bak BOARD.kicad_pcb`.
+- The board is in git, so `git checkout -- BOARD.kicad_pcb` brings back the
+  last committed version.
+- `--capture` rewrites the layout file without a backup. Commit the layout
+  file to git so you can go back.
+
+# route_board.py: autorouting with Freerouting
+
+## Ratsnest and tracks
+
+After placement, KiCad draws thin straight lines from pad to pad. That is
+the **ratsnest**: it only shows which pads must be connected. It runs at
+any angle, follows the parts when they move, and is not a wire. A board
+has wires only after **routing**, which draws tracks (copper, or the paths
+you will wire by hand on a carrier).
+
+There are three ways to route:
+
+1. **By hand in KiCad.** Open the board, press `X` (Route Single Track),
+   click a pad and follow its ratsnest line to the target pad. The router
+   keeps tracks at 45/90°. Press `V` while routing to change copper layer
+   (F.Cu/B.Cu); that places a via.
+2. **Freerouting from inside KiCad.** Install the Freerouting plugin from
+   **Tools → Plugin and Content Manager**, then click its button in the PCB
+   editor. Or by hand: **File → Export → Specctra DSN**, run
+   `java -jar freerouting-1.9.0.jar -de board.dsn -do board.ses -mp 30 -da`,
+   then **File → Import → Specctra Session**.
+3. **`route_board.py`** does option 2 for you, without opening KiCad.
+
+`route_board.py` routes a placed board. It exports the board as a Specctra
+DSN file, runs the [Freerouting](https://github.com/freerouting/freerouting)
+autorouter, imports the routed session (SES) back into the board and saves
+it. Tracks come out at 45/90°. It works on any `.kicad_pcb` file.
+
+## Requirements
+
+- KiCad's Python, as for `place_parts.py`.
+- Java 17 or newer (`java -version`).
+- Freerouting **1.9.0**. Get it once:
+
+  ```sh
+  $K hardware/tools/route_board.py --download
+  ```
+
+  This saves `~/.local/share/freerouting/freerouting-1.9.0.jar`. Use
+  `--jar` or `FREEROUTING_JAR` for another location. Newer releases do not
+  work here: 2.x ignores the pass limit from the command line and never
+  stops, and 2.2+ needs Java 25.
+- A display. Freerouting 1.9.0 opens a small progress window while it
+  routes. Without a display (SSH, CI), install `xvfb-run`; the script uses
+  it on its own.
+
+## Use
+
+```sh
+R=hardware/tools/route_board.py
+
+# Route into a new file and render a picture to look at.
+$K $R $B -o /tmp/routed.kicad_pcb --render /tmp/routed.png
+
+# Throw away the old tracks and route again, in place (keeps a .bak copy).
+$K $R $B --clear --in-place
+```
+
+Output:
+
+```
+routing: up to 30 passes, timeout 600 s (log: /tmp/route_board_.../freerouting.log)
+result: 271 track segments, 3 vias, 1677 mm of track, 3 unrouted connections
+written: /tmp/routed.kicad_pcb
+render: /tmp/routed.png
+```
+
+Without `--clear`, existing tracks go to Freerouting too and it routes
+around them.
+
+## Options
+
+| Option | Default | What it does |
+|---|---|---|
+| `board` | | Input `.kicad_pcb` file |
+| `-o`, `--output FILE` | | Write the routed board to a new file |
+| `-i`, `--in-place` | | Overwrite the input board, keep `BOARD.kicad_pcb.bak` |
+| `--clear` | | Delete existing tracks and vias before routing |
+| `--passes N` | `30` | Maximum autorouter passes |
+| `--threads N` | Freerouting | Optimizer threads |
+| `--timeout S` | `600` | Stop Freerouting after S seconds |
+| `--render FILE` | | Render copper, silkscreen and outline to `.png` (needs ImageMagick) or `.svg` |
+| `--keep DIR` | temp dir | Keep the DSN, SES and log files in DIR |
+| `--jar FILE` | `~/.local/share/freerouting/freerouting-1.9.0.jar` | Freerouting jar (or `$FREEROUTING_JAR`) |
+| `--java PROG` | `java` on PATH | Java program |
+| `--kicad-cli PROG` | next to KiCad's Python | `kicad-cli` used by `--render` |
+| `--download` | | Download Freerouting 1.9.0 to `--jar` |
+
+The script passes `-da` to Freerouting, which turns off its usage
+analytics.
+
+## After routing
+
+1. Run DRC (see [Checking the result](#checking-the-result)).
+   `unconnected_items` now lists the connections the router could not
+   make. Route those by hand with `X` in KiCad.
+2. Track width and clearance come from the board's net classes
+   (**File → Board Setup → Net Classes**). Set them before routing, for
+   example wider power tracks.
+3. An autorouted board works but is not tidy (see below).
+
+## Will the tracks be easy to follow?
+
+Freerouting always makes 45/90° tracks, so the angles are never the
+problem. Whether a track is easy to follow by eye depends on the placement:
+
+- **Short links inside a group** (a header and its divider resistors) are
+  a few mm long and easy to follow.
+- **Long links to the MCU** are hard. When a group does not sit near the
+  MCU pins it uses, its tracks run 50–60 mm across the board on diagonals
+  and bundle in the narrow channels between parts. Following one track
+  inside a bundle is the hard part.
+
+To make them easier:
+
+- Put each group next to the side of the MCU where its pins are, in pin
+  order (edit `at` and `refs` in the layout), so most tracks run short
+  and straight.
+- Leave wider channels: a larger group gap (for example `"gap": 5.08`
+  between groups) gives the tracks room to spread out.
+
+Crossings are not a problem in themselves: on two layers the router passes
+under with a via; on a hand-wired carrier, wires cross freely.
+
+## Tracks as grooves (3D-printed carrier)
+
+For a printed carrier with grooves for the wires, use the routed tracks
+(not the ratsnest) as the groove paths. Export them as DXF, in mm, and
+import the DXF into FreeCAD to cut the grooves:
+
+```sh
+A=~/bin/kicad-10.0.5-x86_64.AppImage
+$A kicad-cli pcb export dxf /tmp/routed.kicad_pcb -l F.Cu,Edge.Cuts \
+   --mode-single --ou mm -o /tmp/top_tracks.dxf
+$A kicad-cli pcb export dxf /tmp/routed.kicad_pcb -l B.Cu,Edge.Cuts \
+   --mode-single --ou mm -o /tmp/bottom_tracks.dxf
+```
+
+Each copper layer goes to its own file, so top and bottom grooves stay
+apart. The DXF also holds the pads. There is no script for the groove
+geometry yet.
+
+## ClearAir routing status
+
+Routing the ClearAir board (layout from `placement.json`, 2 layers, default
+net class) gives:
+
+```
+result: 271 track segments, 3 vias, 1677 mm of track, 3 unrouted connections
+```
+
+The 3 unrouted connections:
+
+- **2 come from the A1 footprint** (`WeAct_STM32G474CoreBoard_Long` in the
+  `libraries` footprint library, `~/kicad/libraries`). Its pad 24 (NRST)
+  and pad 52 (+3V3) are at the same spot. DRC reports this as
+  `shorting_items`, `solder_mask_bridge` and `holes_co_located`, and the
+  router cannot connect either pad. Moving A1 does not help: fix the
+  footprint.
+- **1 is the long PA9 link** from A1 to R20. Route it by hand with `X`.
+
+## Troubleshooting
+
+| Message or symptom | Cause and fix |
+|---|---|
+| `Freerouting jar not found` | Run with `--download`, or give `--jar` |
+| `Freerouting needs a display` | No `DISPLAY`. Use a desktop session or install `xvfb-run` |
+| `UnsupportedClassVersionError` in the log | The jar needs a newer Java. Use Freerouting 1.9.0 |
+| `Freerouting did not finish in 600 s` | Raise `--timeout` or lower `--passes` |
+| `Freerouting failed:` plus log lines | Read the full log: run again with `--keep DIR` |
+| Same few connections always unrouted | Often a footprint problem, e.g. two pads of different nets in the same place. Check DRC `shorting_items` |
+| Result gone after opening KiCad | The board was open in KiCad. Close it before `--in-place`, restore from `.bak` |
+| A window opens while it runs | Freerouting 1.9.0 shows its progress window. It closes when routing is done |
+| `New version available: v2.5.0` in the log | Freerouting checks for updates. Ignore it; 2.x does not work with this script |
+| Freerouting 2.x runs forever, never writes the SES | 2.0 to 2.1 ignore the pass limit. Use 1.9.0 |
