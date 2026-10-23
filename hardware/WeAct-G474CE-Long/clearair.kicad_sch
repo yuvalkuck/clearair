@@ -1404,6 +1404,193 @@
 						(font
 							(size 1.27 1.27))))))
 		(embedded_fonts no))
+		(symbol "Connector_Generic:Conn_01x06"
+		(pin_names
+			(offset 1.016)
+			(hide yes))
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(duplicate_pin_numbers_are_jumpers no)
+		(property "Reference" "J"
+			(at 0 7.62 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27))))
+		(property "Value" "Conn_01x06"
+			(at 0 -10.16 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27))))
+		(property "Footprint" ""
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27))))
+		(property "Datasheet" ""
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27))))
+		(property "Description" "Generic connector, single row, 01x06, script generated (kicad-library-utils/schlib/autogen/connector/)"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27))))
+		(property "ki_keywords" "connector"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27))))
+		(property "ki_fp_filters" "Connector*:*_1x??_*"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27))))
+				(symbol "Conn_01x06_1_1"
+			(rectangle
+				(start -1.27 6.35)
+				(end 1.27 -8.89)
+				(stroke
+					(width 0.254)
+					(type default))
+				(fill
+					(type background)))
+			(rectangle
+				(start -1.27 5.207)
+				(end 0 4.953)
+				(stroke
+					(width 0.1524)
+					(type default))
+				(fill
+					(type none)))
+			(rectangle
+				(start -1.27 2.667)
+				(end 0 2.413)
+				(stroke
+					(width 0.1524)
+					(type default))
+				(fill
+					(type none)))
+			(rectangle
+				(start -1.27 0.127)
+				(end 0 -0.127)
+				(stroke
+					(width 0.1524)
+					(type default))
+				(fill
+					(type none)))
+			(rectangle
+				(start -1.27 -2.413)
+				(end 0 -2.667)
+				(stroke
+					(width 0.1524)
+					(type default))
+				(fill
+					(type none)))
+			(rectangle
+				(start -1.27 -4.953)
+				(end 0 -5.207)
+				(stroke
+					(width 0.1524)
+					(type default))
+				(fill
+					(type none)))
+			(rectangle
+				(start -1.27 -7.493)
+				(end 0 -7.747)
+				(stroke
+					(width 0.1524)
+					(type default))
+				(fill
+					(type none)))
+			(pin passive line
+				(at -5.08 5.08 0)
+				(length 3.81)
+				(name "Pin_1"
+					(effects
+						(font
+							(size 1.27 1.27))))
+				(number "1"
+					(effects
+						(font
+							(size 1.27 1.27)))))
+			(pin passive line
+				(at -5.08 2.54 0)
+				(length 3.81)
+				(name "Pin_2"
+					(effects
+						(font
+							(size 1.27 1.27))))
+				(number "2"
+					(effects
+						(font
+							(size 1.27 1.27)))))
+			(pin passive line
+				(at -5.08 0 0)
+				(length 3.81)
+				(name "Pin_3"
+					(effects
+						(font
+							(size 1.27 1.27))))
+				(number "3"
+					(effects
+						(font
+							(size 1.27 1.27)))))
+			(pin passive line
+				(at -5.08 -2.54 0)
+				(length 3.81)
+				(name "Pin_4"
+					(effects
+						(font
+							(size 1.27 1.27))))
+				(number "4"
+					(effects
+						(font
+							(size 1.27 1.27)))))
+			(pin passive line
+				(at -5.08 -5.08 0)
+				(length 3.81)
+				(name "Pin_5"
+					(effects
+						(font
+							(size 1.27 1.27))))
+				(number "5"
+					(effects
+						(font
+							(size 1.27 1.27)))))
+			(pin passive line
+				(at -5.08 -7.62 0)
+				(length 3.81)
+				(name "Pin_6"
+					(effects
+						(font
+							(size 1.27 1.27))))
+				(number "6"
+					(effects
+						(font
+							(size 1.27 1.27))))))
+		(embedded_fonts no))
 		(symbol "Connector_Generic:Conn_02x07_Odd_Even"
 			(pin_names
 				(offset 1.016)
@@ -7304,37 +7491,6 @@
 		(pin "51" (uuid "907732d1-7c3e-5d3d-b0ad-89d9130aa353"))
 		(pin "52" (uuid "449c12bd-0720-55f5-bbc3-6a7e38b370e9"))
 		(instances (project "clearair" (path "/953560a5-36cf-5251-8f8d-509802d70a69" (reference "A1") (unit 1)))))
-	(symbol (lib_id "FullModules:SPS30") (at 215.9 180.34 90) (unit 1)
-		(exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
-		(uuid "52814fac-9881-5210-968a-e83f931e16e2")
-		(property "Reference" "U1" (at 215.9 191.77 90) (effects (font (size 1.27 1.27))))
-		(property "Value" "SPS30" (at 215.9 189.23 90) (effects (font (size 1.27 1.27))))
-		(property "Footprint" "libraries:SPS30" (at 215.9 180.34 90) (effects (font (size 1.27 1.27)) (hide yes)))
-		(property "Datasheet" "https://sensirion.com/media/documents/8600FF88/64A3B8D6/Sensirion_PM_Sensors_Datasheet_SPS30.pdf" (at 215.9 180.34 90) (effects (font (size 1.27 1.27)) (hide yes)))
-		(property "Description" "Sensirion SPS30 particulate matter (PM1.0/2.5/4.0/10) sensor, 5-pin JST ZHR-5 connector per Sensirion's own pinout: 1 VDD(5V,red) 2 SDA(green) 3 SCL(yellow) 4 SEL(blue, pull to GND before/at power-up to select I2C) 5 GND(black). I2C address 0x69." (at 215.9 180.34 90) (effects (font (size 1.27 1.27)) (hide yes)))
-		(property "ki_keywords" "SPS30 Sensirion particulate matter PM2.5 sensor" (at 215.9 180.34 90) (effects (font (size 1.27 1.27)) (hide yes)))
-		(pin "1" (uuid "59141e4a-7375-5b2a-9947-07e989cbacaa"))
-		(pin "2" (uuid "fefaafb0-2eda-51dd-80e4-1bbd861d9021"))
-		(pin "3" (uuid "797d9555-a000-5dc0-98de-5ef2cc716e3c"))
-		(pin "4" (uuid "4280beb8-0236-5c23-9347-eef48012a8a0"))
-		(pin "5" (uuid "d8114455-417a-5737-8c03-85a9c7161aab"))
-		(instances (project "clearair" (path "/953560a5-36cf-5251-8f8d-509802d70a69" (reference "U1") (unit 1)))))
-	(symbol (lib_id "FullModules:BME680_Board") (at 215.9 213.36 90) (unit 1)
-		(exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
-		(uuid "27f74cce-a293-5d04-b58f-f456eb559ed9")
-		(property "Reference" "U2" (at 215.9 226.06 90) (effects (font (size 1.27 1.27))))
-		(property "Value" "BME680" (at 215.9 223.52 90) (effects (font (size 1.27 1.27))))
-		(property "Footprint" "libraries:BME680_Board" (at 215.9 213.36 90) (effects (font (size 1.27 1.27)) (hide yes)))
-		(property "Datasheet" "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bme680-ds001.pdf" (at 215.9 213.36 90) (effects (font (size 1.27 1.27)) (hide yes)))
-		(property "Description" "Generic Bosch BME680 gas/humidity/pressure/temperature breakout ('GY-BME680' style), 6-pin combo I2C+SPI (VCC/GND/SCL-SCK/SDA-SDI/SDO/CS). For I2C: SCL+SDA, tie CS high, SDO selects address (GND=0x76, VCC=0x77). For SPI: SCL=SCK, SDA=MOSI/SDI, SDO=MISO, CS=chip select." (at 215.9 213.36 90) (effects (font (size 1.27 1.27)) (hide yes)))
-		(property "ki_keywords" "BME680 Bosch gas humidity pressure temperature sensor breakout GY-BME680" (at 215.9 213.36 90) (effects (font (size 1.27 1.27)) (hide yes)))
-		(pin "1" (uuid "3b2b62c7-3569-59f1-9163-a04ca9fa32a2"))
-		(pin "2" (uuid "8cdea0a4-9599-5989-9bc3-91af719d188f"))
-		(pin "3" (uuid "92241760-a721-57d1-9b66-06f7d474c69a"))
-		(pin "4" (uuid "454a2d9b-6a7a-5828-ab85-f3e8078c2f8e"))
-		(pin "5" (uuid "392da316-115d-55cb-b3ee-4baf22af1e70"))
-		(pin "6" (uuid "771a1b76-ece7-5605-8f3a-af1ace452d95"))
-		(instances (project "clearair" (path "/953560a5-36cf-5251-8f8d-509802d70a69" (reference "U2") (unit 1)))))
 	(symbol (lib_id "Device:R") (at 248.92 144.78 0) (unit 1)
 		(exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
 		(uuid "a7b06b4c-c3f5-52bb-908a-116bc1c1a47c")
@@ -7559,35 +7715,6 @@
 		(pin "1" (uuid "ec851cd2-8966-5589-a733-68d718d1ff60"))
 		(pin "2" (uuid "fe0ef84c-8c73-5c0f-8836-c2f4351dad04"))
 		(instances (project "clearair" (path "/953560a5-36cf-5251-8f8d-509802d70a69" (reference "R4") (unit 1)))))
-	(symbol (lib_id "FullModules:MQ131_FlyingFish") (at 396.24 181.61 270) (unit 1)
-		(exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
-		(uuid "9c8c38ee-fabd-5bf3-a3f9-6944a8d3be15")
-		(property "Reference" "U3" (at 396.24 193.04 90) (effects (font (size 1.27 1.27))))
-		(property "Value" "MQ131" (at 396.24 190.5 90) (effects (font (size 1.27 1.27))))
-		(property "Footprint" "libraries:MQ131_FlyingFish" (at 396.24 181.61 90) (effects (font (size 1.27 1.27)) (hide yes)))
-		(property "Datasheet" "https://www.sensorsportal.com/DOWNLOADS/MQ131.pdf" (at 396.24 181.61 90) (effects (font (size 1.27 1.27)) (hide yes)))
-		(property "Description" "Generic MQ-131 ozone (O3) gas sensor breakout ('flying fish' style module), 4-pin (VCC/GND/DO/AO), LM393 comparator + onboard sensitivity trimmer. Silkscreen pin ORDER varies between vendors of this generic clone board - wire by label, not position." (at 396.24 181.61 90) (effects (font (size 1.27 1.27)) (hide yes)))
-		(property "ki_keywords" "MQ-131 MQ131 ozone O3 gas sensor flying fish module" (at 396.24 181.61 90) (effects (font (size 1.27 1.27)) (hide yes)))
-		(pin "1" (uuid "ef33dc21-fe2c-55ec-9ea0-d29153e0e801"))
-		(pin "2" (uuid "b23af03c-6de7-57fa-a779-ae613ffecc4a"))
-		(pin "3" (uuid "86992443-6070-5fb5-980f-2d2074195f6a"))
-		(pin "4" (uuid "23fde7fc-be22-521d-83c6-53818b8423f3"))
-		(instances (project "clearair" (path "/953560a5-36cf-5251-8f8d-509802d70a69" (reference "U3") (unit 1)))))
-	(symbol (lib_id "FullModules:MICS4514_Module") (at 299.72 304.8 180) (unit 1)
-		(exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
-		(uuid "4e5be593-016e-51fc-a282-89b2bae9651b")
-		(property "Reference" "U4" (at 289.56 311.15 0) (effects (font (size 1.27 1.27))))
-		(property "Value" "MiCS-4514" (at 289.56 313.69 0) (effects (font (size 1.27 1.27))))
-		(property "Footprint" "libraries:MICS4514_Module" (at 299.72 304.8 0) (effects (font (size 1.27 1.27)) (hide yes)))
-		(property "Datasheet" "https://www.sgxsensortech.com/content/uploads/2014/08/0278_Datasheet-MiCS-4514.pdf" (at 299.72 304.8 0) (effects (font (size 1.27 1.27)) (hide yes)))
-		(property "Description" "MiCS-4514 dual gas (CO/reducing + NO2/oxidizing) sensor breakout, 5-pin analog style (VCC/GND/RED/NOX/PRE), e.g. ACROBOTIC MiCS4514 breakout. RED/NOX are raw analog sensor outputs (need external pull-down + your own ppm conversion); PRE is the heater control input (PWM from host). This is NOT the DFRobot Gravity I2C variant (SEN0377), which instead exposes VCC/GND/SDA/SCL." (at 299.72 304.8 0) (effects (font (size 1.27 1.27)) (hide yes)))
-		(property "ki_keywords" "MICS-4514 MICS4514 CO NO2 gas sensor analog module" (at 299.72 304.8 0) (effects (font (size 1.27 1.27)) (hide yes)))
-		(pin "1" (uuid "1665319f-309d-5844-855d-abf5629fc7e6"))
-		(pin "2" (uuid "5b66a538-8678-5e16-bf7d-a0726f676510"))
-		(pin "3" (uuid "78a2d3a7-792d-5e11-b7d5-730126a6def0"))
-		(pin "4" (uuid "0265819c-5c69-558d-8fd6-4b85a36d2145"))
-		(pin "5" (uuid "5e02607d-b559-5cd1-be13-ee47077fbecb"))
-		(instances (project "clearair" (path "/953560a5-36cf-5251-8f8d-509802d70a69" (reference "U4") (unit 1)))))
 	(symbol (lib_id "Device:R") (at 342.9 279.4 0) (unit 1)
 		(exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
 		(uuid "ebcd9246-46e3-5042-baf6-571a0bac005a")
@@ -8370,7 +8497,7 @@
 	(text "5V outputs -> 1k8 (series) / 3k3 (to GND) divider -> 3.24V max at MCU pin:\nMQ131 AO -> PA0 (ADC1_IN1), MiCS RED -> PA1 (ADC2_IN2), MiCS NOX -> PA7 (ADC2_IN4), RobotDyn Z-C -> PB0 (EXTI0)." (exclude_from_sim no) (at 25.4 350.52 0) (effects (font (size 1.27 1.27)) (justify left top)) (uuid "3871ab3e-4ce4-5f49-8861-3354221e38b4"))
 	(text "Buzzer: PB15 (BUZZER_IN) -> R9 1k -> Q3 2N2222A base. Q3 switches the 12V buzzer on its low side: PB15 HIGH -> buzzer ON, LOW -> OFF.\nMiCS-4514 PRE tied to GND (boost not used). MQ131 heater runs on a steady 5 V (VCC/GND straight to the rails, no switch); PB12 is unused. Cold/warm boot button SW2 -> PB14 (BOOT_MODE, pull-up). Gate PB1 (TRIAC_DIMMER) -> RobotDyn PSM." (exclude_from_sim no) (at 25.4 358.14 0) (effects (font (size 1.27 1.27)) (justify left top)) (uuid "271c2dbd-78bc-55da-a774-def13076086d"))
 	(text "J2 = STLINK-V3MINIE STDC14: 3 T_VCC, 4 SWDIO, 5/7/11 GND, 6 SWCLK, 12 T_NRST, 13 T_VCP_RX, 14 T_VCP_TX; 1/2/8/9/10 unused.\nSWD goes to the board P5 header (SWCLK/SWDIO/3V3/GND). USART2 VCP: PA2 TX -> T_VCP_TX, PA3 RX <- T_VCP_RX.\nUSART3 (future Arduino link): PB10 TX / PB11 RX through 2N7000 level shifters Q1/Q2." (exclude_from_sim no) (at 25.4 365.76 0) (effects (font (size 1.27 1.27)) (justify left top)) (uuid "ea359ce6-a477-5ddc-86e8-6134661f9193"))
-	(text "220VAC mains split: J1 -> RobotDyn TRIAC (fan) and two separate AC-DC supplies (12V 2A: buzzer + M2/M3 fans, 5V 2A: board + peripherals).\nOff board (on_board no): J1, M1 and the AC side of PS1 and U5, wired with 1.5 mm2 copper. PS1 pins: 1 L, 2 N, 3 +12V, 4 +5V, 5 GND; the DC pins go to two 2-pin headers. U5 logic pins 1-4 go to a 4-pin header. Fans M2 (front) and M3 (rear) are 12V 4-pin 80 mm: 1 GND, 2 +12V, 3 TACH, 4 PWM. M2 PWM -> PA8 (TIM1_CH1), TACH -> PA5 (TIM2_CH1). M3 PWM -> PA9 (TIM1_CH2), TACH -> PB3 (TIM2_CH2). PWM has 1k series (R19, R20); tach has 10k pull-up to +3V3 (R21, R22)." (exclude_from_sim no) (at 25.4 375.92 0) (effects (font (size 1.27 1.27)) (justify left top)) (uuid "9c7a92c2-2f06-54d7-b8d7-bf4eabe74f93"))
+	(text "220VAC mains split: J1 -> RobotDyn TRIAC (fan) and two separate AC-DC supplies (12V 2A: buzzer + M2/M3 fans, 5V 2A: board + peripherals).\nOff board (on_board no): J1, M1 and the AC side of PS1 and U5, wired with 1.5 mm2 copper. The sensor modules (SPS30, BME680, MQ131, MiCS-4514) are off the PCB and are connected with wires to the PCB wire headers J3 (SPS30), J4 (BME680), J5 (MQ131) and J6 (MiCS-4514); the pin order is in each header's Value. PS1 pins: 1 L, 2 N, 3 +12V, 4 +5V, 5 GND; the DC pins go to two 2-pin headers. U5 logic pins 1-4 go to a 4-pin header. Fans M2 (front) and M3 (rear) are 12V 4-pin 80 mm: 1 GND, 2 +12V, 3 TACH, 4 PWM. M2 PWM -> PA8 (TIM1_CH1), TACH -> PA5 (TIM2_CH1). M3 PWM -> PA9 (TIM1_CH2), TACH -> PB3 (TIM2_CH2). PWM has 1k series (R19, R20); tach has 10k pull-up to +3V3 (R21, R22)." (exclude_from_sim no) (at 25.4 375.92 0) (effects (font (size 1.27 1.27)) (justify left top)) (uuid "9c7a92c2-2f06-54d7-b8d7-bf4eabe74f93"))
 	(text "HIGH VOLTAGE: J1, PS1 pins 1-2, RobotDyn IN/N/OUT, M1 carry 220VAC." (exclude_from_sim no) (at 420 25.4 0) (effects (font (size 1.27 1.27)) (justify left top)) (uuid "b9d78abb-c294-51c2-9de3-52d4b88838d1"))
 	(symbol (lib_id "FullModules:PCF8563_HW689") (at 238.76 199.39 270) (unit 1)
 		(exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
@@ -8404,6 +8531,62 @@
 	(junction (at 302.26 294.64) (diameter 0) (color 0 0 0 0) (uuid "224c79f5-9793-4971-9e07-1003b5c6f54f"))
 	(wire (pts (xy 185.42 71.12) (xy 185.42 66.04)) (stroke (width 0) (type default)) (uuid "4d3f92c0-6882-47a8-b918-d56da4bbeae8"))
 	(wire (pts (xy 185.42 66.04) (xy 210.82 66.04)) (stroke (width 0) (type default)) (uuid "1ae58973-0159-477e-8e9f-aa7a4cd61d45"))
+	(symbol (lib_id "Connector_Generic:Conn_01x05") (at 215.9 180.34 180) (unit 1)
+		(exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
+		(uuid "8e26c0c8-2afc-4239-83c1-478057261dc5")
+		(property "Reference" "J3" (at 215.9 169.99 0) (effects (font (size 1.27 1.27))))
+		(property "Value" "SPS30 wire header (1 VDD, 2 SDA, 3 SCL, 4 SEL, 5 GND)" (at 215.9 190.69 0) (effects (font (size 1.27 1.27))))
+		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x05_P2.54mm_Vertical" (at 215.9 180.34 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Datasheet" "" (at 215.9 180.34 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Description" "Wire header to the off-board sensor module" (at 215.9 180.34 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(pin "1" (uuid "478fe83a-33ef-4109-93ff-eaa5a702578e"))
+		(pin "2" (uuid "d375fa91-c8ce-46de-9189-e3e8e257e0c3"))
+		(pin "3" (uuid "80a8d7b7-7d1b-4010-9e37-522af4bea4b5"))
+		(pin "4" (uuid "7d9fc1fb-6f1b-44e9-a885-7bbef27050c8"))
+		(pin "5" (uuid "2b6f4afe-e5bc-4e91-976c-0c688adf939d"))
+		(instances (project "clearair" (path "/953560a5-36cf-5251-8f8d-509802d70a69" (reference "J3") (unit 1)))))
+	(symbol (lib_id "Connector_Generic:Conn_01x06") (at 215.9 214.63 180) (unit 1)
+		(exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
+		(uuid "176e240d-7329-433a-8735-78ff961b6142")
+		(property "Reference" "J4" (at 215.9 203.01 0) (effects (font (size 1.27 1.27))))
+		(property "Value" "BME680 wire header (1 VCC, 2 GND, 3 SCL, 4 SDA, 5 SDO, 6 CS)" (at 215.9 226.25 0) (effects (font (size 1.27 1.27))))
+		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x06_P2.54mm_Vertical" (at 215.9 214.63 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Datasheet" "" (at 215.9 214.63 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Description" "Wire header to the off-board sensor module" (at 215.9 214.63 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(pin "1" (uuid "245d7ce6-193c-4cd7-b69b-f7fb3c1e6e77"))
+		(pin "2" (uuid "2ce18eb7-8bc5-47e7-b333-909b9cc2aa39"))
+		(pin "3" (uuid "23e2be44-15a2-4f63-a3a3-ad764d907ef9"))
+		(pin "4" (uuid "76ca0209-2bcf-4933-b98f-9b2547404bea"))
+		(pin "5" (uuid "6c97b5d8-f777-4e54-b877-dc3521add8e9"))
+		(pin "6" (uuid "73650f96-500e-4960-89e3-fee3520f9d66"))
+		(instances (project "clearair" (path "/953560a5-36cf-5251-8f8d-509802d70a69" (reference "J4") (unit 1)))))
+	(symbol (lib_id "Connector_Generic:Conn_01x04") (at 396.24 180.34 0) (unit 1)
+		(exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
+		(uuid "9fec124e-eadf-4559-b677-ac3359f8970c")
+		(property "Reference" "J5" (at 396.24 171.26 0) (effects (font (size 1.27 1.27))))
+		(property "Value" "MQ131 wire header (1 VCC, 2 GND, 3 DO nc, 4 AO)" (at 396.24 189.42 0) (effects (font (size 1.27 1.27))))
+		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical" (at 396.24 180.34 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Datasheet" "" (at 396.24 180.34 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Description" "Wire header to the off-board sensor module" (at 396.24 180.34 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(pin "1" (uuid "1f5bd39d-520f-405c-9418-5c17169ffe9c"))
+		(pin "2" (uuid "afac634e-5b57-45ec-849f-5fed46bab927"))
+		(pin "3" (uuid "1c54b636-4e69-4fc8-bc8f-71c35852b415"))
+		(pin "4" (uuid "79a9495f-d597-420a-b457-b55aea216fec"))
+		(instances (project "clearair" (path "/953560a5-36cf-5251-8f8d-509802d70a69" (reference "J5") (unit 1)))))
+	(symbol (lib_id "Connector_Generic:Conn_01x05") (at 299.72 304.8 270) (unit 1)
+		(exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
+		(uuid "06b52729-f1d4-4f50-a43a-8408ab06ca17")
+		(property "Reference" "J6" (at 299.72 294.45 0) (effects (font (size 1.27 1.27))))
+		(property "Value" "MiCS-4514 wire header (1 VCC, 2 GND, 3 RED, 4 NOX, 5 PRE)" (at 299.72 315.15 0) (effects (font (size 1.27 1.27))))
+		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x05_P2.54mm_Vertical" (at 299.72 304.8 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Datasheet" "" (at 299.72 304.8 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Description" "Wire header to the off-board sensor module" (at 299.72 304.8 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(pin "1" (uuid "b50f5855-dcdc-480e-99ef-c85901a14c63"))
+		(pin "2" (uuid "06dccc89-0866-427e-b22f-4a48d0112562"))
+		(pin "3" (uuid "ae9e72c0-ab41-4f77-8a52-4b8157ada054"))
+		(pin "4" (uuid "616e3189-31be-42ce-b7a9-81ecbddbe09a"))
+		(pin "5" (uuid "66522b62-fd26-437c-8024-5bdfbafbf027"))
+		(instances (project "clearair" (path "/953560a5-36cf-5251-8f8d-509802d70a69" (reference "J6") (unit 1)))))
 	(sheet_instances (path "/" (page "1")))
 	(embedded_fonts no)
 )
