@@ -110,12 +110,17 @@ print("carrier: %d holes, %d groove segments, %d cut tools" % (len(data["holes"]
 solid = plate.cut(tools[0].multiFuse(tools[1:])) if tools else plate
 solid = solid.removeSplitter()
 
-# Netgen gives a closed mesh even where a groove passes very close to a
-# hole. The standard mesher leaves open edges there, but is faster.
+# Netgen can put stray triangles outside the plate on a face with many small
+# islands between grooves, so its mesh is checked against the solid's box.
 mesh = None
 if data["mesher"] == "netgen":
     try:
         mesh = MeshPart.meshFromShape(Shape=solid, Fineness=2, SecondOrder=0, Optimize=0, AllowQuad=0)
+        mb, sb = mesh.BoundBox, solid.BoundBox
+        if (mb.XMin < sb.XMin - 0.01 or mb.XMax > sb.XMax + 0.01 or mb.YMin < sb.YMin - 0.01
+                or mb.YMax > sb.YMax + 0.01 or mb.ZMin < sb.ZMin - 0.01 or mb.ZMax > sb.ZMax + 0.01):
+            print("carrier: netgen mesh reaches outside the plate, using the standard mesher")
+            mesh = None
     except Exception as exc:
         print("carrier: netgen failed (%s), using the standard mesher" % exc)
 if mesh is None:
@@ -237,8 +242,9 @@ def main():
                         help="added to every drill diameter, because printed holes shrink (default: 0.3)")
     parser.add_argument("--layers", default="F.Cu,B.Cu", help="copper layers that become grooves (default: F.Cu,B.Cu)")
     parser.add_argument("--no-grooves", action="store_true", help="plate and holes only")
-    parser.add_argument("--mesher", choices=("netgen", "standard"), default="netgen",
-                        help="netgen: closed mesh, slower (default); standard: faster, may leave open edges")
+    parser.add_argument("--mesher", choices=("netgen", "standard"), default="standard",
+                        help="standard: fast, closed mesh (default); netgen: slower, can put stray triangles "
+                             "outside the plate (checked, falls back to standard)")
     parser.add_argument("--deflection", type=float, default=0.02,
                         help="standard mesher accuracy in mm, smaller = finer (default: 0.02)")
     parser.add_argument("--freecad", help="command that runs a FreeCAD script without a window "

@@ -681,7 +681,7 @@ It writes an STL or 3MF file. The board file is never changed.
 
 How it works: KiCad's Python reads the outline, holes and tracks, then
 FreeCAD (no window) builds the solid, cuts everything in one boolean cut
-and meshes it with Netgen, which gives a closed (manifold) mesh.
+and meshes it with FreeCAD's standard mesher, which gives a closed mesh.
 
 ## Requirements
 
@@ -740,7 +740,7 @@ never changed.
 | `--hole-clearance MM` | `0.3` | Added to every drill diameter, because printed holes come out small |
 | `--layers LIST` | `F.Cu,B.Cu` | Copper layers that become grooves |
 | `--no-grooves` | | Plate and holes only |
-| `--mesher` | `netgen` | `netgen`: closed mesh, slower. `standard`: faster, can leave open edges |
+| `--mesher` | `standard` | `standard`: fast, closed mesh. `netgen`: slower; on a dense board it can put stray triangles outside the plate (the script checks and falls back to `standard`) |
 | `--deflection MM` | `0.02` | Accuracy of the `standard` mesher |
 | `--freecad CMD` | auto | Command that runs a FreeCAD script without a window, e.g. `'~/bin/freecad freecadcmd'` |
 | `--keep DIR` | temp dir | Keep the JSON, FreeCAD script and log in DIR |
@@ -796,7 +796,7 @@ Build it again after every placement change (step 7 of
 | `the board has no closed Edge.Cuts outline` | Draw one: `place_parts.py ... --outline 2.54` |
 | `the board has no tracks ... so there are no grooves` | Add `--route`, or route the board first |
 | `FreeCAD did not write the mesh:` plus lines | Read the full log: run again with `--keep DIR`, see `DIR/freecad.log` |
-| `closed mesh: False` | Use the default `--mesher netgen`. PrusaSlicer repairs small mesh errors on load anyway |
-| `netgen failed ..., using the standard mesher` | FreeCAD build without Netgen. The mesh may have open edges; PrusaSlicer repairs them on load |
+| `closed mesh: False` | Use the default `--mesher standard`. PrusaSlicer repairs small mesh errors on load anyway |
+| `netgen failed ...` or `netgen mesh reaches outside the plate, using the standard mesher` | Only with `--mesher netgen`. The script switched to the standard mesher; nothing to do |
 | Plate mirrored | It is not: the plate is the top view. Print it top face up |
 | `routing failed` | See the `route_board.py` messages above it and [its troubleshooting](#troubleshooting-1) |
