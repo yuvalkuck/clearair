@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-CleanAir is STM32 firmware (the `.ioc`, the build and the schematic target the STM32G474 on a WeAct G474CE Long board, see the README pin plan; the older STM32F446RE Nucleo-64 files are kept for reference only) for an AC vent fan controller that reads air-quality sensors (SPS30 particulates, BME680 + Bosch BSEC2, MQ131 ozone, MiCS-4514 CO/NO2) and phase-cuts an AC fan motor via a TRIAC. Each sensor reading is turned into a danger level (Off / Ventilate / Evacuate) and the fan follows the worst one; the buzzer sounds at Evacuate. See `README.md` for the hardware architecture, pin mapping, and control-loop diagrams — read it before making hardware-facing changes (peripheral assignments, timing, safety thresholds).
+CleanAir is STM32 firmware (the `.ioc`, the build and the schematic target the STM32G474 on a WeAct G474CE Long board, see the README pin plan; the older STM32F446RE Nucleo-64 files are kept for reference only; its pin table, power notes and board damage note are in `doc/board_stm32f466.md`, and the README describes only the G474) for an AC vent fan controller that reads air-quality sensors (SPS30 particulates, BME680 + Bosch BSEC2, MQ131 ozone, MiCS-4514 CO/NO2) and phase-cuts an AC fan motor via a TRIAC. Each sensor reading is turned into a danger level (Off / Ventilate / Evacuate) and the fan follows the worst one; the buzzer sounds at Evacuate. See `README.md` for the hardware architecture, pin mapping, and control-loop diagrams — read it before making hardware-facing changes (peripheral assignments, timing, safety thresholds).
 
 ## Build
 
