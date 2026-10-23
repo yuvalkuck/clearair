@@ -19,11 +19,13 @@ Examples:
 
     K="$HOME/bin/kicad-10.0.5-x86_64.AppImage python3.11"
     $K make_carrier.py board.kicad_pcb --route -o carrier.stl
+    $K make_carrier.py board.kicad_pcb --route --groove-wall 0.8 -o carrier.stl
     $K make_carrier.py routed.kicad_pcb -o carrier.3mf --thickness 4 --groove-width 1.5
     $K make_carrier.py board.kicad_pcb --no-grooves -o plate.stl
 
-The board file is never changed. With --route, the routed copy is written
-next to the output (carrier.routed.kicad_pcb) so you can look at it.
+The board file is never changed. With --route, the routed copy is deleted
+after the build. Add --keep-routed to write it next to the output
+(carrier.routed.kicad_pcb) so you can look at it.
 """
 
 import argparse
@@ -203,8 +205,11 @@ def find_freecad(explicit):
 
 
 def route(board_path, out_path, args):
+    # Route with groove-sized rules: the board's own rules (0.2 mm tracks) let
+    # tracks run so close that their grooves merge and cut into other holes.
     cmd = [sys.executable, os.path.join(HERE, "route_board.py"), board_path, "-o", out_path,
-           "--clear", "--passes", str(args.passes)]
+           "--clear", "--passes", str(args.passes),
+           "--width", str(args.groove_width), "--clearance", str(args.groove_wall)]
     print("routing with route_board.py ...", flush=True)
     result = subprocess.run(cmd)
     if result.returncode != 0:
@@ -220,10 +225,14 @@ def main():
     parser.add_argument("board", help="input .kicad_pcb file")
     parser.add_argument("-o", "--output", required=True, help="output mesh, .stl or .3mf")
     parser.add_argument("--route", action="store_true", help="route the board first with route_board.py (old tracks are replaced)")
+    parser.add_argument("--keep-routed", action="store_true",
+                        help="with --route, keep the routed board next to the output (OUTPUT.routed.kicad_pcb)")
     parser.add_argument("--passes", type=int, default=30, help="autorouter passes with --route (default: 30)")
     parser.add_argument("--thickness", type=float, default=3.0, help="plate thickness in mm (default: 3.0)")
     parser.add_argument("--groove-width", type=float, default=1.2, help="groove width in mm (default: 1.2, fits 24 AWG)")
     parser.add_argument("--groove-depth", type=float, default=1.2, help="groove depth in mm (default: 1.2)")
+    parser.add_argument("--groove-wall", type=float, default=0.45,
+                        help="with --route, smallest wall between two grooves or a groove and a pad (default: 0.45)")
     parser.add_argument("--hole-clearance", type=float, default=0.3,
                         help="added to every drill diameter, because printed holes shrink (default: 0.3)")
     parser.add_argument("--layers", default="F.Cu,B.Cu", help="copper layers that become grooves (default: F.Cu,B.Cu)")
@@ -241,6 +250,8 @@ def main():
     ext = os.path.splitext(args.output)[1].lower()
     if ext not in (".stl", ".3mf"):
         parser.error("output must end in .stl or .3mf")
+    if args.keep_routed and not args.route:
+        parser.error("--keep-routed needs --route")
     if args.groove_depth >= args.thickness:
         parser.error("--groove-depth must be less than --thickness")
     if not args.no_grooves and "F.Cu" in args.layers and "B.Cu" in args.layers and 2 * args.groove_depth >= args.thickness:
@@ -248,9 +259,14 @@ def main():
 
     output = os.path.abspath(args.output)
     os.makedirs(os.path.dirname(output), exist_ok=True)
+    workdir = args.keep or tempfile.mkdtemp(prefix="make_carrier_")
+    os.makedirs(workdir, exist_ok=True)
     board_path = args.board
     if args.route:
-        board_path = os.path.splitext(output)[0] + ".routed.kicad_pcb"
+        if args.keep_routed:
+            board_path = os.path.splitext(output)[0] + ".routed.kicad_pcb"
+        else:
+            board_path = os.path.join(workdir, "routed.kicad_pcb")
         route(args.board, board_path, args)
 
     board = pcbnew.LoadBoard(board_path)
@@ -262,8 +278,6 @@ def main():
         "hole_clearance": args.hole_clearance, "deflection": args.deflection, "mesher": args.mesher, "output": output,
     })
 
-    workdir = args.keep or tempfile.mkdtemp(prefix="make_carrier_")
-    os.makedirs(workdir, exist_ok=True)
     json_path = os.path.join(workdir, "carrier.json")
     script_path = os.path.join(workdir, "carrier_freecad.py")
     log_path = os.path.join(workdir, "freecad.log")

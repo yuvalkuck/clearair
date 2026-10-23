@@ -30,6 +30,7 @@ the result on its next save.
 
 import argparse
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -85,6 +86,29 @@ def clear_tracks(board):
     for t in tracks:
         board.Remove(t)
     print(f"cleared: {len(tracks)} existing track and via items")
+
+
+def set_dsn_rules(dsn, width, clearance):
+    """Set the track width and clearance in every rule of the DSN file.
+
+    KiCad writes the net classes from the project file into the DSN; changing
+    them on the loaded board has no effect, so the DSN text is changed here.
+    """
+    with open(dsn) as fh:
+        text = fh.read()
+    unit = re.search(r"\(unit (\w+)\)", text)
+    scale = {"um": 1000, "mm": 1, "mil": 1 / 0.0254, "inch": 1 / 25.4}.get(unit.group(1) if unit else "um")
+    if scale is None:
+        sys.exit(f"error: unknown DSN unit {unit.group(1)}")
+    if width:
+        text, n = re.subn(r"\(width [\d.]+\)", f"(width {width * scale:g})", text)
+        print(f"rules: track width {width} mm in {n} rules")
+    if clearance:
+        # Only the plain clearance; the typed ones (smd_smd, ...) stay.
+        text, n = re.subn(r"\(clearance [\d.]+\)", f"(clearance {clearance * scale:g})", text)
+        print(f"rules: clearance {clearance} mm in {n} rules")
+    with open(dsn, "w") as fh:
+        fh.write(text)
 
 
 def run_freerouting(args, dsn, ses, workdir):
@@ -145,6 +169,10 @@ def main():
     parser.add_argument("-i", "--in-place", action="store_true", help="overwrite the input board (a .bak copy is kept)")
     parser.add_argument("--clear", action="store_true", help="delete existing tracks and vias before routing")
     parser.add_argument("--passes", type=int, default=30, help="maximum autorouter passes (default: 30)")
+    parser.add_argument("--width", type=float, metavar="MM",
+                        help="track width for every net, overrides the board's net classes")
+    parser.add_argument("--clearance", type=float, metavar="MM",
+                        help="clearance for every net, overrides the board's net classes")
     parser.add_argument("--threads", type=int, help="optimizer threads (default: Freerouting's choice)")
     parser.add_argument("--timeout", type=int, default=600, help="stop Freerouting after this many seconds (default: 600)")
     parser.add_argument("--render", metavar="FILE", help="also render the result to FILE (.png needs ImageMagick, or .svg)")
@@ -183,6 +211,8 @@ def main():
 
     if not pcbnew.ExportSpecctraDSN(board, dsn):
         sys.exit("error: KiCad could not export the DSN file")
+    if args.width or args.clearance:
+        set_dsn_rules(dsn, args.width, args.clearance)
     run_freerouting(args, dsn, ses, workdir)
     if not pcbnew.ImportSpecctraSES(board, ses):
         sys.exit("error: KiCad could not import the SES file")

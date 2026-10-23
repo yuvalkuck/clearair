@@ -73,9 +73,10 @@ to it), it overwrites the script's result on its next save.
    $K $T/make_carrier.py $B --route -o hardware/WeAct-G474CE-Long/carrier/clearair_carrier.stl
    ```
 
-   It writes `clearair_carrier.stl` and the routed copy
-   `clearair_carrier.routed.kicad_pcb`. Open the routed copy in KiCad to
-   see the wire paths; any connection it reports as unrouted has no groove.
+   It writes `clearair_carrier.stl` and deletes the routed copy. Add
+   `--keep-routed` to keep it as `clearair_carrier.routed.kicad_pcb`, then
+   open it in KiCad to see the wire paths; any connection it reports as
+   unrouted has no groove.
 
 8. **Print.** In PrusaSlicer: **File → Import → Import STL/3MF/STEP/OBJ…**
    (Ctrl+I), pick the STL, keep it flat (top face up), slice, print. See
@@ -709,7 +710,7 @@ Output for ClearAir:
 ```
 routing with route_board.py ...
 result: 281 track segments, 5 vias, 1789 mm of track, 2 unrouted connections
-written: .../carrier/clearair_carrier.routed.kicad_pcb
+written: /tmp/make_carrier_.../routed.kicad_pcb
 building in FreeCAD: 158 holes, 281 groove segments (log: /tmp/make_carrier_.../freecad.log)
 carrier: volume 17342 of 20244 mm3 plate, 193382 facets, closed mesh: True, valid solid: True
 plate: 92.3 x 73.1 x 3.0 mm
@@ -719,8 +720,10 @@ written: .../carrier/clearair_carrier.stl
 It takes about 45 s (routing 15 s, FreeCAD 30 s). `closed mesh: True` means
 PrusaSlicer will load it without repairs.
 
-With `--route`, the routed copy is written next to the output as
-`NAME.routed.kicad_pcb`. Open it in KiCad to see where each groove goes.
+With `--route`, the routed copy is deleted after the build. Add
+`--keep-routed` to write it next to the output as `NAME.routed.kicad_pcb`,
+then open it in KiCad to see where each groove goes. Your board file is
+never changed.
 
 ## Options
 
@@ -729,6 +732,7 @@ With `--route`, the routed copy is written next to the output as
 | `board` | | Input `.kicad_pcb` file |
 | `-o`, `--output FILE` | required | Output mesh, `.stl` or `.3mf` |
 | `--route` | | Route a copy with `route_board.py` first (replaces its tracks) |
+| `--keep-routed` | | With `--route`, keep the routed copy as `NAME.routed.kicad_pcb` next to the output |
 | `--passes N` | `30` | Autorouter passes with `--route` |
 | `--thickness MM` | `3.0` | Plate thickness |
 | `--groove-width MM` | `1.2` | Groove width (fits insulated 24 AWG wire) |
@@ -775,8 +779,8 @@ in about 1 h 45 min.
 ## ClearAir carrier
 
 `hardware/WeAct-G474CE-Long/carrier/` holds the current printable file
-`clearair_carrier.stl` (92.3 × 73.1 × 3.0 mm, closed mesh) and the routed
-copy it was built from. Two connections have no groove: the A1 footprint
+`clearair_carrier.stl` (92.3 × 73.1 × 3.0 mm, closed mesh). The routed copy
+it was built from is not kept; build with `--keep-routed` to see it. Two connections have no groove: the A1 footprint
 puts pad 24 (NRST) and pad 52 (+3V3) at the same spot, so the router cannot
 connect them (see [ClearAir routing status](#clearair-routing-status)).
 Wire those two by hand.
