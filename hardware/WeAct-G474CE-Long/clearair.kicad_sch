@@ -5784,6 +5784,241 @@
 						(font
 							(size 1.27 1.27))))))
 		(embedded_fonts no))
+		(symbol "Transistor_FET:AO3400A"
+		(pin_names
+			(hide yes))
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(duplicate_pin_numbers_are_jumpers no)
+		(property "Reference" "Q"
+			(at 5.08 1.905 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(justify left)))
+		(property "Value" "AO3400A"
+			(at 5.08 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(justify left)))
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+			(at 5.08 -1.905 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+					(italic yes))
+				(justify left)))
+		(property "Datasheet" "http://www.aosmd.com/pdfs/datasheet/AO3400A.pdf"
+			(at 5.08 -3.81 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(justify left)))
+		(property "Description" "30V Vds, 5.7A Id, N-Channel MOSFET, SOT-23"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27))))
+		(property "ki_keywords" "N-Channel MOSFET Logic-Level"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27))))
+		(property "ki_fp_filters" "SOT?23*"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27))))
+		(symbol "AO3400A_0_1"
+			(polyline
+				(pts
+					(xy 0.254 1.905)
+					(xy 0.254 -1.905))
+				(stroke
+					(width 0.254)
+					(type default))
+				(fill
+					(type none)))
+			(polyline
+				(pts
+					(xy 0.254 0)
+					(xy -2.54 0))
+				(stroke
+					(width 0)
+					(type default))
+				(fill
+					(type none)))
+			(polyline
+				(pts
+					(xy 0.762 2.286)
+					(xy 0.762 1.27))
+				(stroke
+					(width 0.254)
+					(type default))
+				(fill
+					(type none)))
+			(polyline
+				(pts
+					(xy 0.762 0.508)
+					(xy 0.762 -0.508))
+				(stroke
+					(width 0.254)
+					(type default))
+				(fill
+					(type none)))
+			(polyline
+				(pts
+					(xy 0.762 -1.27)
+					(xy 0.762 -2.286))
+				(stroke
+					(width 0.254)
+					(type default))
+				(fill
+					(type none)))
+			(polyline
+				(pts
+					(xy 0.762 -1.778)
+					(xy 3.302 -1.778)
+					(xy 3.302 1.778)
+					(xy 0.762 1.778))
+				(stroke
+					(width 0)
+					(type default))
+				(fill
+					(type none)))
+			(polyline
+				(pts
+					(xy 1.016 0)
+					(xy 2.032 0.381)
+					(xy 2.032 -0.381)
+					(xy 1.016 0))
+				(stroke
+					(width 0)
+					(type default))
+				(fill
+					(type outline)))
+			(circle
+				(center 1.651 0)
+				(radius 2.794)
+				(stroke
+					(width 0.254)
+					(type default))
+				(fill
+					(type none)))
+			(polyline
+				(pts
+					(xy 2.54 2.54)
+					(xy 2.54 1.778))
+				(stroke
+					(width 0)
+					(type default))
+				(fill
+					(type none)))
+			(circle
+				(center 2.54 1.778)
+				(radius 0.254)
+				(stroke
+					(width 0)
+					(type default))
+				(fill
+					(type outline)))
+			(circle
+				(center 2.54 -1.778)
+				(radius 0.254)
+				(stroke
+					(width 0)
+					(type default))
+				(fill
+					(type outline)))
+			(polyline
+				(pts
+					(xy 2.54 -2.54)
+					(xy 2.54 0)
+					(xy 0.762 0))
+				(stroke
+					(width 0)
+					(type default))
+				(fill
+					(type none)))
+			(polyline
+				(pts
+					(xy 2.794 0.508)
+					(xy 2.921 0.381)
+					(xy 3.683 0.381)
+					(xy 3.81 0.254))
+				(stroke
+					(width 0)
+					(type default))
+				(fill
+					(type none)))
+			(polyline
+				(pts
+					(xy 3.302 0.381)
+					(xy 2.921 -0.254)
+					(xy 3.683 -0.254)
+					(xy 3.302 0.381))
+				(stroke
+					(width 0)
+					(type default))
+				(fill
+					(type none))))
+		(symbol "AO3400A_1_1"
+			(pin passive line
+				(at 2.54 -5.08 90)
+				(length 2.54)
+				(name "S"
+					(effects
+						(font
+							(size 1.27 1.27))))
+				(number "2"
+					(effects
+						(font
+							(size 1.27 1.27)))))
+			(pin input line
+				(at -5.08 0 0)
+				(length 2.54)
+				(name "G"
+					(effects
+						(font
+							(size 1.27 1.27))))
+				(number "1"
+					(effects
+						(font
+							(size 1.27 1.27)))))
+			(pin passive line
+				(at 2.54 5.08 270)
+				(length 2.54)
+				(name "D"
+					(effects
+						(font
+							(size 1.27 1.27))))
+				(number "3"
+					(effects
+						(font
+							(size 1.27 1.27))))))
+		(embedded_fonts no))
 		(symbol "Transistor_FET:IRLZ44N"
 		(pin_names
 			(hide yes))
@@ -6643,6 +6878,153 @@
 				(fill
 					(type none))))
 		(embedded_fonts no))
+	(symbol "FullModules:PCF8563_HW689"
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(property "Reference" "A"
+			(at -8.89 8.89 0)
+			(effects (font (size 1.27 1.27)) (justify left))
+		)
+		(property "Value" "PCF8563_HW689"
+			(at -8.89 -8.08 0)
+			(effects (font (size 1.27 1.27)) (justify left))
+		)
+		(property "Footprint" "libraries:PCF8563_HW689"
+			(at 0 0 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "Datasheet" "https://www.nxp.com/docs/en/data-sheet/PCF8563.pdf"
+			(at 0 0 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "Description" "PCF8563 real-time clock module, board marking HW-689 (43 x 17 mm), I2C address 0x51, 1.0-5.5 V. 6-pin header VCC/GND/SDA/SCL/COT/INT in the order printed on the board. COT is the programmable clock output, INT is the open-drain alarm/timer interrupt (needs a pull-up if used). CR1220 backup cell holder on board (12.5 mm cell, 3.5 mm deep). The photographed board seems to have no I2C pull-ups: add 4.7k to 3V3 on the bus."
+			(at 0 0 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "ki_keywords" "PCF8563 HW-689 RTC real time clock I2C module CR1220"
+			(at 0 0 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(symbol "PCF8563_HW689_0_1"
+			(rectangle
+				(start -8.89 7.62)
+				(end 8.89 -2.54)
+				(stroke (width 0.254) (type default))
+				(fill (type background))
+			)
+		)
+		(symbol "PCF8563_HW689_1_1"
+			(pin power_in line
+				(at -6.35 -5.08 90)
+				(length 2.54)
+				(name "VCC"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "1"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin power_in line
+				(at -3.81 -5.08 90)
+				(length 2.54)
+				(name "GND"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "2"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin bidirectional line
+				(at -1.27 -5.08 90)
+				(length 2.54)
+				(name "SDA"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "3"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin input line
+				(at 1.27 -5.08 90)
+				(length 2.54)
+				(name "SCL"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "4"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin output line
+				(at 3.81 -5.08 90)
+				(length 2.54)
+				(name "COT"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "5"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin open_collector line
+				(at 6.35 -5.08 90)
+				(length 2.54)
+				(name "INT"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "6"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+		)
+	)
 	)
 	(symbol (lib_id "FullModules:WeAct_STM32G474CoreBoard_Long") (at 299.72 200.66 0) (unit 1)
 		(exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
@@ -6804,33 +7186,6 @@
 		(pin "2" (uuid "1f32469e-3a97-56c8-9010-f8406c2ef65d"))
 		(pin "3" (uuid "1eea2f65-e466-5549-a9e1-e30794fe9110"))
 		(instances (project "clearair" (path "/953560a5-36cf-5251-8f8d-509802d70a69" (reference "Q3") (unit 1)))))
-	(symbol (lib_id "Device:R") (at 193.04 86.36 180) (unit 1)
-		(exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
-		(uuid "eab8906d-84b2-5d90-aa57-dfbc858fbd53")
-		(property "Reference" "R16" (at 195.072 86.36 90) (effects (font (size 1.27 1.27))))
-		(property "Value" "10k" (at 193.04 86.36 90) (effects (font (size 1.27 1.27))))
-		(property "Footprint" "" (at 194.818 86.36 90) (effects (font (size 1.27 1.27)) (hide yes)))
-		(property "Datasheet" "" (at 193.04 86.36 0) (effects (font (size 1.27 1.27)) (hide yes)))
-		(property "Description" "Resistor" (at 193.04 86.36 0) (effects (font (size 1.27 1.27)) (hide yes)))
-		(property "ki_keywords" "R res resistor" (at 193.04 86.36 0) (effects (font (size 1.27 1.27)) (hide yes)))
-		(property "ki_fp_filters" "R_*" (at 193.04 86.36 0) (effects (font (size 1.27 1.27)) (hide yes)))
-		(pin "1" (uuid "eb995ed0-eaf3-5116-9f54-5008253e6d17"))
-		(pin "2" (uuid "a3024194-1edc-52b0-b4db-f0f9460a7752"))
-		(instances (project "clearair" (path "/953560a5-36cf-5251-8f8d-509802d70a69" (reference "R16") (unit 1)))))
-	(symbol (lib_id "Transistor_FET:IRLZ44N") (at 205.74 76.2 0) (unit 1)
-		(exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
-		(uuid "ef5f4cef-20b4-50e0-bdb0-4a1644e87a82")
-		(property "Reference" "Q4" (at 210.82 74.295 0) (effects (font (size 1.27 1.27))))
-		(property "Value" "IRFZ44N" (at 210.82 76.2 0) (effects (font (size 1.27 1.27))))
-		(property "Footprint" "Package_TO_SOT_THT:TO-220-3_Vertical" (at 210.82 78.105 0) (effects (font (size 1.27 1.27)) (hide yes)))
-		(property "Datasheet" "http://www.irf.com/product-info/datasheets/data/irlz44n.pdf" (at 210.82 80.01 0) (effects (font (size 1.27 1.27)) (hide yes)))
-		(property "Description" "47A Id, 55V Vds, 22mOhm Rds Single N-Channel HEXFET Power MOSFET, TO-220AB" (at 205.74 76.2 0) (effects (font (size 1.27 1.27)) (hide yes)))
-		(property "ki_keywords" "N-Channel HEXFET MOSFET Logic-Level" (at 205.74 76.2 0) (effects (font (size 1.27 1.27)) (hide yes)))
-		(property "ki_fp_filters" "TO?220*" (at 205.74 76.2 0) (effects (font (size 1.27 1.27)) (hide yes)))
-		(pin "1" (uuid "6517dfd5-fed1-5a9c-9a06-966a273cdaff"))
-		(pin "2" (uuid "60968ba4-3a93-567a-ba43-481d783abd60"))
-		(pin "3" (uuid "7f781c0d-df5d-5377-816f-167ff1318fb7"))
-		(instances (project "clearair" (path "/953560a5-36cf-5251-8f8d-509802d70a69" (reference "Q4") (unit 1)))))
 	(symbol (lib_id "Device:Buzzer") (at 213.36 63.5 0) (unit 1)
 		(exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
 		(uuid "932f85be-77ea-551e-a17d-3d4676631614")
@@ -7388,16 +7743,8 @@
 	(wire (pts (xy 165.1 224.79) (xy 276.86 224.79)) (stroke (width 0) (type default)) (uuid "02d46c69-764c-5181-94d5-43d3955fadff"))
 	(wire (pts (xy 276.86 224.79) (xy 276.86 215.9)) (stroke (width 0) (type default)) (uuid "cdf3df3d-e335-5aeb-ad98-90762a6cf2c7"))
 	(wire (pts (xy 276.86 215.9) (xy 281.94 215.9)) (stroke (width 0) (type default)) (uuid "e219d55e-7916-519c-a175-ae3524194565"))
-	(wire (pts (xy 294.64 299.72) (xy 281.94 299.72)) (stroke (width 0) (type default)) (uuid "d4af6e7b-86e8-5aad-8a81-d2d4e5f117bc"))
 	(wire (pts (xy 281.94 299.72) (xy 281.94 223.52)) (stroke (width 0) (type default)) (uuid "c2663977-c92e-5eb6-a503-1ebc53c00c67"))
 	(wire (pts (xy 177.8 76.2) (xy 173.99 76.2)) (stroke (width 0) (type default)) (uuid "98e1a18b-da82-5752-9ee5-8ea69cde81df"))
-	(wire (pts (xy 193.04 82.55) (xy 193.04 76.2)) (stroke (width 0) (type default)) (uuid "b2ec02d0-22b6-5573-bc1c-a73c04ab47ed"))
-	(wire (pts (xy 193.04 76.2) (xy 193.04 69.85)) (stroke (width 0) (type default)) (uuid "e77b5ae4-950d-5baf-850e-e81e69a961ea"))
-	(wire (pts (xy 193.04 69.85) (xy 185.42 69.85)) (stroke (width 0) (type default)) (uuid "62d6f150-07ef-51d3-8bd2-652e46aa57f1"))
-	(wire (pts (xy 185.42 69.85) (xy 185.42 71.12)) (stroke (width 0) (type default)) (uuid "83334860-e08d-5c55-9666-0a4069a9bf28"))
-	(wire (pts (xy 200.66 76.2) (xy 193.04 76.2)) (stroke (width 0) (type default)) (uuid "133a55cf-f81e-57f9-b313-38cc46baa7b0"))
-	(wire (pts (xy 208.28 71.12) (xy 208.28 66.04)) (stroke (width 0) (type default)) (uuid "52bcccf7-a736-5f22-bc71-6073d748922c"))
-	(wire (pts (xy 208.28 66.04) (xy 210.82 66.04)) (stroke (width 0) (type default)) (uuid "a6818f2d-187a-51f7-bd41-d0423cff951f"))
 	(wire (pts (xy 345.44 172.72) (xy 345.44 181.61)) (stroke (width 0) (type default)) (uuid "8e95330e-4b55-5964-961d-ac03dbf80a29"))
 	(wire (pts (xy 345.44 181.61) (xy 345.44 182.88)) (stroke (width 0) (type default)) (uuid "3b6010e3-f938-5131-bad5-26dd3a740e0e"))
 	(wire (pts (xy 345.44 182.88) (xy 317.5 182.88)) (stroke (width 0) (type default)) (uuid "a5f564ba-aeac-5a8a-9350-b66b843ad333"))
@@ -7503,7 +7850,6 @@
 	(wire (pts (xy 510.54 60.96) (xy 482.6 60.96)) (stroke (width 0) (type default)) (uuid "9690e561-ea38-5ca8-8bd8-8b5cde5256d6"))
 	(wire (pts (xy 482.6 60.96) (xy 482.6 68.58)) (stroke (width 0) (type default)) (uuid "1d0fa36e-59b2-5a53-8c74-b3db53696a8d"))
 	(wire (pts (xy 482.6 68.58) (xy 477.52 68.58)) (stroke (width 0) (type default)) (uuid "15dabe85-bc4b-51ff-bb15-37cb8cf5458f"))
-	(wire (pts (xy 193.04 90.17) (xy 193.04 101.6)) (stroke (width 0) (type default)) (uuid "04607d38-b7c3-59b4-a18d-1329144ac888"))
 	(wire (pts (xy 256.54 81.28) (xy 256.54 101.6)) (stroke (width 0) (type default)) (uuid "b532f5f8-4045-5a64-b28a-eb470313643b"))
 	(wire (pts (xy 210.82 60.96) (xy 198.12 60.96)) (stroke (width 0) (type default)) (uuid "cc6cb6a0-c521-58a6-9e8c-3275b4b62993"))
 	(wire (pts (xy 198.12 60.96) (xy 198.12 101.6)) (stroke (width 0) (type default)) (uuid "f67022ba-0596-5b96-adfa-837bc7e324aa"))
@@ -7562,7 +7908,6 @@
 	(wire (pts (xy 228.6 209.55) (xy 220.98 209.55)) (stroke (width 0) (type default)) (uuid "7c42029d-044f-5991-939e-e2a456d2883f"))
 	(wire (pts (xy 266.7 83.82) (xy 266.7 106.68)) (stroke (width 0) (type default)) (uuid "be5d9410-69b2-5795-b510-a1c1d1dddfa3"))
 	(wire (pts (xy 185.42 81.28) (xy 185.42 106.68)) (stroke (width 0) (type default)) (uuid "b1ccd2d8-2bc9-5e5c-8fb5-0f530abc9333"))
-	(wire (pts (xy 208.28 81.28) (xy 208.28 106.68)) (stroke (width 0) (type default)) (uuid "8c21b923-47c5-5434-b39c-963a18560a01"))
 	(wire (pts (xy 302.26 299.72) (xy 302.26 294.64)) (stroke (width 0) (type default)) (uuid "a8792ab4-e953-514f-b5c6-6f0a952363fb"))
 	(wire (pts (xy 302.26 294.64) (xy 311.15 294.64)) (stroke (width 0) (type default)) (uuid "d98acb0c-0949-589d-98eb-e036253e1faf"))
 	(wire (pts (xy 311.15 294.64) (xy 311.15 327.66)) (stroke (width 0) (type default)) (uuid "dee9c118-e5ab-5067-afb8-7657f189ea13"))
@@ -7585,8 +7930,6 @@
 	(wire (pts (xy 367.03 201.93) (xy 367.03 179.07)) (stroke (width 0) (type default)) (uuid "76f83219-be1a-5d51-828a-b4e221641803"))
 	(wire (pts (xy 367.03 179.07) (xy 367.03 160.02)) (stroke (width 0) (type default)) (uuid "c1729204-3886-5f3f-b6ce-268f17609ba7"))
 	(wire (pts (xy 367.03 160.02) (xy 345.44 160.02)) (stroke (width 0) (type default)) (uuid "a88e81f3-3576-58a9-a6f3-ade3dde258f9"))
-	(wire (pts (xy 391.16 180.34) (xy 391.16 179.07)) (stroke (width 0) (type default)) (uuid "db4dafd0-c4ad-5b0f-a75b-5fbadefaccd0"))
-	(wire (pts (xy 391.16 179.07) (xy 367.03 179.07)) (stroke (width 0) (type default)) (uuid "d3b0e6a6-1305-5347-8328-91e56967a884"))
 	(wire (pts (xy 355.6 232.41) (xy 355.6 233.68)) (stroke (width 0) (type default)) (uuid "2ea24062-8e51-50e3-94d1-89b270381190"))
 	(wire (pts (xy 355.6 233.68) (xy 363.22 233.68)) (stroke (width 0) (type default)) (uuid "5c315d3c-87b0-56fc-a38d-37ad2234931d"))
 	(wire (pts (xy 363.22 233.68) (xy 363.22 201.93)) (stroke (width 0) (type default)) (uuid "42933fb0-1933-5a24-9767-2d694281e75f"))
@@ -7608,7 +7951,6 @@
 	(wire (pts (xy 220.98 175.26) (xy 220.98 177.8)) (stroke (width 0) (type default)) (uuid "5722c8d1-8987-51c5-9512-849db1de5296"))
 	(wire (pts (xy 480.06 259.08) (xy 480.06 327.66)) (stroke (width 0) (type default)) (uuid "88c210e8-cd23-5efa-be6f-b06c1f022aa1"))
 	(wire (pts (xy 482.6 259.08) (xy 480.06 259.08)) (stroke (width 0) (type default)) (uuid "baa46388-1098-5055-b153-9cca2de0d4aa"))
-	(junction (at 193.04 101.6) (diameter 0) (color 0 0 0 0) (uuid "c323dd66-7581-5e99-b10e-6d8032a4dfa0"))
 	(junction (at 198.12 101.6) (diameter 0) (color 0 0 0 0) (uuid "af671abb-4ed5-5ccf-af6e-1af09f87ded8"))
 	(junction (at 256.54 101.6) (diameter 0) (color 0 0 0 0) (uuid "abaca9df-64bd-5dae-87cf-143b2d2545e7"))
 	(junction (at 372.11 101.6) (diameter 0) (color 0 0 0 0) (uuid "18048278-c9da-5a31-afb7-51998bfdef24"))
@@ -7624,7 +7966,6 @@
 	(junction (at 303.53 241.3) (diameter 0) (color 0 0 0 0) (uuid "fb18cdaa-ec03-5a75-9819-be6767cffad7"))
 	(junction (at 313.69 241.3) (diameter 0) (color 0 0 0 0) (uuid "35e14b8e-ae87-5ae4-b39b-765877901f64"))
 	(junction (at 185.42 106.68) (diameter 0) (color 0 0 0 0) (uuid "d209f0da-2d74-5a82-9c8b-113ef6d968ff"))
-	(junction (at 208.28 106.68) (diameter 0) (color 0 0 0 0) (uuid "33827ef8-a49f-5aab-bdc7-609aac474e3e"))
 	(junction (at 266.7 106.68) (diameter 0) (color 0 0 0 0) (uuid "a3f92bf1-cc53-559b-a483-807f43740fa6"))
 	(junction (at 341.63 106.68) (diameter 0) (color 0 0 0 0) (uuid "68d3af30-9445-522e-95e1-2237f543803e"))
 	(junction (at 386.08 106.68) (diameter 0) (color 0 0 0 0) (uuid "db01abfd-dd39-5cec-9813-66877925dda0"))
@@ -7641,7 +7982,6 @@
 	(junction (at 248.92 214.63) (diameter 0) (color 0 0 0 0) (uuid "71cabab1-ef31-5786-9c86-b5ff9b8758a9"))
 	(junction (at 259.08 180.34) (diameter 0) (color 0 0 0 0) (uuid "87a63a15-15da-58fe-a0ec-d1f396f98a40"))
 	(junction (at 226.06 182.88) (diameter 0) (color 0 0 0 0) (uuid "015ce052-88ea-5863-8707-e6d5bef5a64a"))
-	(junction (at 193.04 76.2) (diameter 0) (color 0 0 0 0) (uuid "b7ae07ad-b817-54b8-b56e-999a9e564c39"))
 	(junction (at 345.44 181.61) (diameter 0) (color 0 0 0 0) (uuid "1a26eb6d-ffe9-5e51-81ac-508dae4b5dd1"))
 	(junction (at 363.22 185.42) (diameter 0) (color 0 0 0 0) (uuid "6c552cd8-492a-5264-b214-9e6f4c9d9b01"))
 	(junction (at 355.6 223.52) (diameter 0) (color 0 0 0 0) (uuid "93386755-95b3-5fae-910b-22f44a669b2a"))
@@ -7673,7 +8013,6 @@
 	(junction (at 335.28 172.72) (diameter 0) (color 0 0 0 0) (uuid "46a8c2b4-c739-5597-af5e-307735ba5019"))
 	(junction (at 318.77 175.26) (diameter 0) (color 0 0 0 0) (uuid "afa490eb-b917-5533-8785-0cada779f2c3"))
 	(junction (at 363.22 201.93) (diameter 0) (color 0 0 0 0) (uuid "a89feab3-80ea-5005-9cec-fd4c4a62ebed"))
-	(junction (at 367.03 179.07) (diameter 0) (color 0 0 0 0) (uuid "510d72cf-f299-5d80-b5e9-1f4fc4c83b28"))
 	(junction (at 355.6 233.68) (diameter 0) (color 0 0 0 0) (uuid "10dd3e47-41ae-51b1-a079-4a0e7c952e2c"))
 	(junction (at 363.22 233.68) (diameter 0) (color 0 0 0 0) (uuid "ef8d3383-4aed-5564-ad61-fd51b05c8532"))
 	(junction (at 370.84 264.16) (diameter 0) (color 0 0 0 0) (uuid "5e0b297b-6350-5f0d-b15d-23a3634f785c"))
@@ -7736,12 +8075,99 @@
 	(no_connect (at 492.76 218.44) (uuid "f99d441d-3a56-56fe-a5a0-d138491b5cc2"))
 	(no_connect (at 477.52 208.28) (uuid "213e6555-f41c-5d75-aa8f-913d66b43a24"))
 	(text "WeAct STM32G474CEU6 Long (A1): 5V from PS1 into P3 VDD5V (pins 43/44). 3V3 from the on-board LDO (P4 pins 47/48, P5 pin 52).\nPin map: clear-air.ioc + README \"STM32G474CEU6 Pin Plan\". On-board only: PC6 user LED (LED_BOARD), PC13 user key, PB8 BOOT0 key,\nPA11/PA12 USB-C, PF0/PF1 8 MHz HSE, PC14/PC15 LSE. VREF+ (pin 37) tied to 3V3 so the ADCs read against 3.3V." (exclude_from_sim no) (at 25.4 335.28 0) (effects (font (size 1.27 1.27)) (justify left top)) (uuid "502a1d97-eb91-5cca-997b-f23c61f72e02"))
-	(text "I2C1: PA15 SCL / PB7 SDA. SPS30 SEL=GND (I2C, 0x69); BME680 SDO=3V3 (0x77), CS=3V3. 4k7 pull-ups to 3V3." (exclude_from_sim no) (at 25.4 345.44 0) (effects (font (size 1.27 1.27)) (justify left top)) (uuid "243732f3-38f8-5e55-bd93-822687aa6b09"))
+	(text "I2C1: PA15 SCL / PB7 SDA. SPS30 SEL=GND (I2C, 0x69); BME680 SDO=3V3 (0x77), CS=3V3; PCF8563 RTC HW-689 (0x51, CR1220, COT and INT unused). 4k7 pull-ups to 3V3." (exclude_from_sim no) (at 25.4 345.44 0) (effects (font (size 1.27 1.27)) (justify left top)) (uuid "243732f3-38f8-5e55-bd93-822687aa6b09"))
 	(text "5V outputs -> 1k8 (series) / 3k3 (to GND) divider -> 3.24V max at MCU pin:\nMQ131 AO -> PA0 (ADC1_IN1), MiCS RED -> PA1 (ADC2_IN2), MiCS NOX -> PA7 (ADC2_IN4), RobotDyn Z-C -> PB0 (EXTI0)." (exclude_from_sim no) (at 25.4 350.52 0) (effects (font (size 1.27 1.27)) (justify left top)) (uuid "3871ab3e-4ce4-5f49-8861-3354221e38b4"))
-	(text "Buzzer: PB15 (BUZZER_IN) -> R9 -> Q3. Q3 inverts: PB15 HIGH -> buzzer OFF; LOW -> R16 pulls IRFZ44N gate to 12V -> buzzer ON.\nMiCS-4514 PRE <- PB12 (MICS_PREHEAT). Cold/warm boot button SW2 -> PB14 (BOOT_MODE, pull-up). Gate PB1 (TRIAC_DIMMER) -> RobotDyn PSM." (exclude_from_sim no) (at 25.4 358.14 0) (effects (font (size 1.27 1.27)) (justify left top)) (uuid "271c2dbd-78bc-55da-a774-def13076086d"))
+	(text "Buzzer: PB15 (BUZZER_IN) -> R9 1k -> Q3 2N2222A base. Q3 switches the 12V buzzer on its low side: PB15 HIGH -> buzzer ON, LOW -> OFF.\nMiCS-4514 PRE tied to GND (boost not used). PB12 (MQ131_PREHEAT) -> R17 100R -> Q5 AO3400A gate, R18 100k pull-down: low-side switch in the MQ131 GND, HIGH = heater on. Cold/warm boot button SW2 -> PB14 (BOOT_MODE, pull-up). Gate PB1 (TRIAC_DIMMER) -> RobotDyn PSM." (exclude_from_sim no) (at 25.4 358.14 0) (effects (font (size 1.27 1.27)) (justify left top)) (uuid "271c2dbd-78bc-55da-a774-def13076086d"))
 	(text "J2 = STLINK-V3MINIE STDC14: 3 T_VCC, 4 SWDIO, 5/7/11 GND, 6 SWCLK, 12 T_NRST, 13 T_VCP_RX, 14 T_VCP_TX; 1/2/8/9/10 unused.\nSWD goes to the board P5 header (SWCLK/SWDIO/3V3/GND). USART2 VCP: PA2 TX -> T_VCP_TX, PA3 RX <- T_VCP_RX.\nUSART3 (future Arduino link): PB10 TX / PB11 RX through 2N7000 level shifters Q1/Q2." (exclude_from_sim no) (at 25.4 365.76 0) (effects (font (size 1.27 1.27)) (justify left top)) (uuid "ea359ce6-a477-5ddc-86e8-6134661f9193"))
 	(text "220VAC mains split: J1 -> RobotDyn TRIAC (fan) and PS1 AC-DC (12V buzzer, 5V board + peripherals).\nPS1 pins: 1 L, 2 N, 3 +12V, 4 +5V, 5 GND. M2 40mm fan runs all the time. JP1: bridge 1-2 for a 5V fan, 2-3 for a 12V fan." (exclude_from_sim no) (at 25.4 375.92 0) (effects (font (size 1.27 1.27)) (justify left top)) (uuid "9c7a92c2-2f06-54d7-b8d7-bf4eabe74f93"))
 	(text "HIGH VOLTAGE: J1, PS1 pins 1-2, RobotDyn IN/N/OUT, M1 carry 220VAC." (exclude_from_sim no) (at 420 25.4 0) (effects (font (size 1.27 1.27)) (justify left top)) (uuid "b9d78abb-c294-51c2-9de3-52d4b88838d1"))
+	(symbol (lib_id "FullModules:PCF8563_HW689") (at 238.76 199.39 270) (unit 1)
+		(exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
+		(uuid "4ffd69e1-36eb-4cd0-bb83-0f71b0cc98a9")
+		(property "Reference" "U6" (at 241.3 187.96 90) (effects (font (size 1.27 1.27))))
+		(property "Value" "PCF8563 RTC" (at 241.3 211.0 90) (effects (font (size 1.27 1.27))))
+		(property "Footprint" "libraries:PCF8563_HW689" (at 238.76 199.39 90) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Datasheet" "https://www.nxp.com/docs/en/data-sheet/PCF8563.pdf" (at 238.76 199.39 90) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Description" "PCF8563 real-time clock module, board marking HW-689 (43 x 17 mm), I2C address 0x51, 1.0-5.5 V. 6-pin header VCC/GND/SDA/SCL/COT/INT in the order printed on the board. COT is the programmable clock output, INT is the open-drain alarm/timer interrupt (needs a pull-up if used). CR1220 backup cell holder on board (12.5 mm cell, 3.5 mm deep). The photographed board seems to have no I2C pull-ups: add 4.7k to 3V3 on the bus." (at 238.76 199.39 90) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "ki_keywords" "PCF8563 HW-689 RTC real time clock I2C module CR1220" (at 238.76 199.39 90) (effects (font (size 1.27 1.27)) (hide yes)))
+		(pin "1" (uuid "9042fb01-05f7-4f5c-a76e-6cdb22afafaf"))
+		(pin "2" (uuid "a16c0c12-4bf8-4c77-9e72-bfb51b2922fd"))
+		(pin "3" (uuid "bb2095f9-3733-44ed-9452-338bf046fd16"))
+		(pin "4" (uuid "683934d8-52f3-4b52-8ad0-fa0c09c0f190"))
+		(pin "5" (uuid "de5dbc4b-5982-4bba-9963-9b36995f7a00"))
+		(pin "6" (uuid "a02a9e9b-a398-4398-80c6-136c43705c17"))
+		(instances (project "clearair" (path "/953560a5-36cf-5251-8f8d-509802d70a69" (reference "U6") (unit 1)))))
+	(wire (pts (xy 233.68 193.04) (xy 220.98 193.04)) (stroke (width 0) (type default)) (uuid "7cf3327c-b642-458f-824b-ab20f21408b8"))
+	(junction (at 220.98 193.04) (diameter 0) (color 0 0 0 0) (uuid "08938dbe-2772-4186-94a7-b2c5d82713e5"))
+	(wire (pts (xy 233.68 195.58) (xy 231.14 195.58)) (stroke (width 0) (type default)) (uuid "d9ebccac-962e-49ab-9e83-087f49127ee3"))
+	(junction (at 231.14 195.58) (diameter 0) (color 0 0 0 0) (uuid "d26f2bdb-223f-4b84-ab74-66ebfaa7969e"))
+	(wire (pts (xy 233.68 198.12) (xy 226.06 198.12)) (stroke (width 0) (type default)) (uuid "08017653-afa9-4c7f-ae6f-d3eae79fb772"))
+	(junction (at 226.06 198.12) (diameter 0) (color 0 0 0 0) (uuid "9d062511-cdc4-4072-83b4-68e3dbd2e982"))
+	(wire (pts (xy 233.68 200.66) (xy 223.52 200.66)) (stroke (width 0) (type default)) (uuid "4da4bd29-94fa-4c19-acdc-065f631e18ba"))
+	(junction (at 223.52 200.66) (diameter 0) (color 0 0 0 0) (uuid "b6d35629-fa35-45ee-9407-6083534545bf"))
+	(no_connect (at 233.68 203.2) (uuid "b652d888-7f7a-4076-849e-bfb9702be59b"))
+	(no_connect (at 233.68 205.74) (uuid "e1ca5a5f-925d-4882-a0dd-f22b784a5a1c"))
+	(symbol (lib_id "Transistor_FET:AO3400A") (at 393.7 207.01 0) (unit 1)
+		(exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
+		(uuid "124f4699-2b35-4579-bc80-1f10ad2bba49")
+		(property "Reference" "Q5" (at 399.288 202.565 0) (effects (font (size 1.27 1.27)) (justify left)))
+		(property "Value" "AO3400A" (at 401.955 208.915 90) (effects (font (size 1.27 1.27))))
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23" (at 398.78 208.915 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Datasheet" "http://www.aosmd.com/pdfs/datasheet/AO3400A.pdf" (at 393.7 207.01 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Description" "30V Vds, 5.7A Id, N-Channel MOSFET, SOT-23. Low-side switch in the MQ131 module GND: PB12 HIGH = heater on." (at 393.7 207.01 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "ki_keywords" "N-Channel MOSFET" (at 393.7 207.01 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "ki_fp_filters" "SOT?23*" (at 393.7 207.01 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(pin "1" (uuid "310adbb5-e69a-4c7e-a9df-8e1a3f578638"))
+		(pin "2" (uuid "085e6544-9859-467e-ace9-047a3d9843e5"))
+		(pin "3" (uuid "08c7fa69-ec05-4511-91c7-d46a315db806"))
+		(instances (project "clearair" (path "/953560a5-36cf-5251-8f8d-509802d70a69" (reference "Q5") (unit 1)))))
+	(symbol (lib_id "Device:R") (at 381.0 207.01 90) (unit 1)
+		(exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
+		(uuid "6af759b5-0671-444a-9b50-83b4372c06be")
+		(property "Reference" "R17" (at 381.0 204.47 0) (effects (font (size 1.27 1.27))))
+		(property "Value" "100" (at 381.0 209.55 0) (effects (font (size 1.27 1.27))))
+		(property "Footprint" "" (at 381.0 207.01 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Datasheet" "" (at 381.0 207.01 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Description" "Resistor" (at 381.0 207.01 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "ki_keywords" "R res resistor" (at 381.0 207.01 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "ki_fp_filters" "R_*" (at 381.0 207.01 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(pin "1" (uuid "060e812c-612f-4e43-a8a3-bc7a55a56e23"))
+		(pin "2" (uuid "b8470e3a-66b3-4327-a0f2-3d9ddbcac0e5"))
+		(instances (project "clearair" (path "/953560a5-36cf-5251-8f8d-509802d70a69" (reference "R17") (unit 1)))))
+	(symbol (lib_id "Device:R") (at 388.62 212.09 0) (unit 1)
+		(exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
+		(uuid "7c31356b-974d-40bd-a4a0-14c8d22f9dfe")
+		(property "Reference" "R18" (at 390.652 212.09 90) (effects (font (size 1.27 1.27))))
+		(property "Value" "100k" (at 388.62 212.09 90) (effects (font (size 1.27 1.27))))
+		(property "Footprint" "" (at 388.62 212.09 90) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Datasheet" "" (at 388.62 212.09 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Description" "Resistor" (at 388.62 212.09 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "ki_keywords" "R res resistor" (at 388.62 212.09 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "ki_fp_filters" "R_*" (at 388.62 212.09 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(pin "1" (uuid "86f8c844-6951-4c47-81da-e7f4f4bd851f"))
+		(pin "2" (uuid "bf64b255-e320-4833-b7f6-1991f683cacd"))
+		(instances (project "clearair" (path "/953560a5-36cf-5251-8f8d-509802d70a69" (reference "R18") (unit 1)))))
+	(wire (pts (xy 294.64 299.72) (xy 294.64 294.64)) (stroke (width 0) (type default)) (uuid "656e2dff-cdee-471e-bc54-10c6663134ab"))
+	(wire (pts (xy 294.64 294.64) (xy 302.26 294.64)) (stroke (width 0) (type default)) (uuid "17c99af6-ae0f-406c-84e5-5ad3b1838c28"))
+	(wire (pts (xy 281.94 299.72) (xy 281.94 320.04)) (stroke (width 0) (type default)) (uuid "1ff56251-01de-4aeb-8a3a-34e664ddaf84"))
+	(wire (pts (xy 281.94 320.04) (xy 377.19 320.04)) (stroke (width 0) (type default)) (uuid "c2aa539c-0fd0-40e0-8bc2-c0387080e573"))
+	(wire (pts (xy 377.19 320.04) (xy 377.19 207.01)) (stroke (width 0) (type default)) (uuid "1f60209f-4c8f-4a97-986b-d0a4b4a14b8b"))
+	(wire (pts (xy 384.81 207.01) (xy 388.62 207.01)) (stroke (width 0) (type default)) (uuid "3ab750e4-3d6f-4427-bb6d-e1848a856aa5"))
+	(wire (pts (xy 388.62 207.01) (xy 388.62 208.28)) (stroke (width 0) (type default)) (uuid "14397bd3-5d8f-4b60-a5d9-75708b1d7c71"))
+	(wire (pts (xy 388.62 215.9) (xy 396.24 215.9)) (stroke (width 0) (type default)) (uuid "432c3b82-d218-4b75-a072-3e9b2b5dc6c2"))
+	(wire (pts (xy 396.24 215.9) (xy 396.24 212.09)) (stroke (width 0) (type default)) (uuid "7760463f-366d-4ad1-9dc7-2ca4c5c54b16"))
+	(wire (pts (xy 388.62 215.9) (xy 367.03 215.9)) (stroke (width 0) (type default)) (uuid "c8c08544-4a83-430f-8d6b-a58a02af8ddf"))
+	(wire (pts (xy 367.03 215.9) (xy 367.03 201.93)) (stroke (width 0) (type default)) (uuid "d0948303-145f-47ba-bccc-7223913b18c3"))
+	(wire (pts (xy 391.16 180.34) (xy 388.62 180.34)) (stroke (width 0) (type default)) (uuid "b40b482d-e05b-4804-a2fa-5cca62818abc"))
+	(wire (pts (xy 388.62 180.34) (xy 388.62 199.39)) (stroke (width 0) (type default)) (uuid "2fe59281-d31f-47dd-ac0f-acc090f7d83d"))
+	(wire (pts (xy 388.62 199.39) (xy 396.24 199.39)) (stroke (width 0) (type default)) (uuid "f791ac6a-bf32-4d43-aab0-68deb5cbe922"))
+	(wire (pts (xy 396.24 199.39) (xy 396.24 201.93)) (stroke (width 0) (type default)) (uuid "4687679c-7634-4ce6-ac0e-922241b781e4"))
+	(junction (at 302.26 294.64) (diameter 0) (color 0 0 0 0) (uuid "224c79f5-9793-4971-9e07-1003b5c6f54f"))
+	(junction (at 388.62 207.01) (diameter 0) (color 0 0 0 0) (uuid "e128bda3-9293-4cc1-b62d-526e433030d9"))
+	(junction (at 388.62 215.9) (diameter 0) (color 0 0 0 0) (uuid "f0fc3272-a483-442c-8f86-24479b17ada1"))
+	(junction (at 367.03 201.93) (diameter 0) (color 0 0 0 0) (uuid "bba48cd1-888e-4daa-82e4-16c48c704872"))
+	(wire (pts (xy 185.42 71.12) (xy 185.42 66.04)) (stroke (width 0) (type default)) (uuid "4d3f92c0-6882-47a8-b918-d56da4bbeae8"))
+	(wire (pts (xy 185.42 66.04) (xy 210.82 66.04)) (stroke (width 0) (type default)) (uuid "1ae58973-0159-477e-8e9f-aa7a4cd61d45"))
 	(sheet_instances (path "/" (page "1")))
 	(embedded_fonts no)
 )

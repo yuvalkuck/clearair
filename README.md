@@ -60,6 +60,8 @@ graph TD
 *   **Logic Interfacing:** The `I2C3` bus uses 4.7 kΩ pull-up resistors tied strictly to the STM32's 3.3V rail. The 5V-powered modules (MQ131, MiCS-4514, RobotDyn dimmer) send their outputs (MQ131 `AO`, MiCS-4514 `RED`/`NOX`, RobotDyn `Z-C`) through passive 1.8 kΩ (series) / 3.3 kΩ (to GND) voltage dividers, which drop a 5V signal to ~3.24V, under the 3.3V GPIO/ADC limit.
 *   **Board Damage Note:** On this specific STM32F446RE board, the `I2C1` and `I2C2` peripherals are physically damaged ("fried") and unusable. `I2C3` (PA8/PC9) remains the only viable I2C peripheral. `clearair.ioc` is the source of truth for pin allocation; the USART3 link below uses `PB10` (TX) / `PC5` (RX) as allocated there.
 *   **USART3 Link to Arduino (future):** A dedicated **USART3** connection will eventually bridge the STM32 to a secondary **Arduino Nano** (already in stock), running on its native 5V logic domain — kept separate from the sensor `I2C3` bus. A pair of **2N7000** MOSFETs will handle bidirectional 3.3V↔5V level shifting on the TX/RX lines between the STM32's 3.3V USART3 pins and the Arduino's 5V UART pins. The Arduino Nano will drive a future visualization stage — an LED array or 7-segment display — for per-sensor status indication, receiving status bytes over this serial link. The safety-latch buzzer stays wired directly to the STM32 (see Safety Core & Fail-Safes) so it keeps working even if the Arduino is unreachable or dead.
+*   **Real-Time Clock (RTC):** A PCF8563 on a HW-689 module (I2C address 0x51, 1.0 to 5.5 V) shares the `I2C` bus with the SPS30 and BME680, with no extra pull-ups; its `COT` and `INT` pins stay unconnected. A CR1220 cell on the module keeps the clock running during a power loss. Before fitting a non-rechargeable cell, power the module with no cell and check that the cell's + contact reads about 0 V: some RTC modules charge the cell, which would damage a CR1220. The driver (`device/rtc`) is not written yet. The planned use: after a power loss the system starts in Standby and reads the RTC to find how long it was off. Under 1 hour offline means the 3 minute MQ131 warm-up, and 1 hour or more means the 48 hour preheat. This will replace the cold-boot flag that `PB14` gives today. A momentary button on that pin would then switch between Active and Standby.
+*   **Gas Sensor Heaters:** The MQ131 module's GND goes through Q5, an AO3400A N-MOSFET (logic-level gate), so `PB12` (`MQ131_PREHEAT`) switches the heater: HIGH = on. The datasheet asks for a constant 5 V heater and a 48 h preheat, so the firmware turns it on at boot and keeps it on, in Standby too. The MOSFET drop shifts the `AO` reading by a few mV (about 8 mV at 160 mA for a 50 mΩ part); calibrate with Q5 in place. The MiCS-4514 heaters run on constant power from VCC through the module's own resistors (82 Ω RED, 51 + 82 Ω OX). Its `PRE` pin is tied to GND, so the boost (which shorts the 51 Ω and runs the OX heater near 75 mW, above the 50 mW maximum) is never used. Tie `PRE` to GND only after checking it has the 100 kΩ pull-down to GND (unpowered, `PRE` to GND about 100 kΩ).
 
 ### Power Budget (estimate)
 
@@ -70,14 +72,14 @@ Typical datasheet values, not measurements (±20%). STM32 at 180 MHz (`clearair.
 | Load | Typical | Peak / max |
 | :--- | :--- | :--- |
 | NUCLEO-F446RE (MCU @ 180 MHz + ST-LINK + LEDs) | ~100 mA | 150 mA |
-| 3V3 loads via Nucleo regulator (BME680 incl. gas-heater pulses, I2C pull-ups, 2N7000 pull-ups) | ~5 mA | 15 mA |
+| 3V3 loads via Nucleo regulator (BME680 incl. gas-heater pulses, I2C pull-ups, 2N7000 pull-ups, PCF8563 RTC) | ~5 mA | 15 mA |
 | SPS30 (measuring) | 60 mA | 80 mA |
-| MQ131 heater + module | ~170 mA | 185 mA |
-| MiCS-4514 (RED + OX heaters + module) | ~60 mA | 75 mA (preheat) |
+| MQ131 heater + module (switched by Q5 from `PB12`) | ~170 mA | 185 mA |
+| MiCS-4514 (RED + OX heaters + module, `PRE` tied to GND, no boost) | ~60 mA | 65 mA |
 | RobotDyn logic side (Z-C opto + PSM) | ~5 mA | 15 mA |
 | 1.8k/3.3k dividers (×4) + 5V pull-ups R11/R13 | ~5 mA | 5 mA |
 | Arduino Nano (board only) | ~25 mA | 40 mA |
-| **Total** | **~430 mA ≈ 2.2 W** | **~570 mA ≈ 2.9 W** |
+| **Total** | **~430 mA ≈ 2.2 W** | **~560 mA ≈ 2.8 W** |
 
 The 5V total has no fan, because both fans run from the 12V rail.
 
@@ -85,13 +87,12 @@ The 5V total has no fan, because both fans run from the 12V rail.
 
 | Load | Typical | Peak / max |
 | :--- | :--- | :--- |
-| 12V buzzer (active type, only when latched on) | 30 mA | ~100 mA (loud siren type) |
-| R16 gate pull-up (buzzer off, Q3 conducting) | 1.2 mA | 1.2 mA |
+| 12V buzzer (active type, only while the alarm sounds) | 30 mA | ~100 mA (loud siren type) |
 | Front 80 mm fan (4-pin PWM) | not measured, below the label current at reduced speed | ~660 mA (label) |
 | Rear 80 mm fan (4-pin PWM) | not measured, below the label current at low speed | ~660 mA (label) |
 | **Total** | **not measured** | **~1.42 A ≈ 17 W** |
 
-**PSU sizing:** 5V ≥ 1 A (≈ 1.5 A with the future display), 12V ≥ 1.5 A. The two 2 A modules cover both rails: the 5V module has about 3.5 times margin over the 0.57 A peak, and the 12V module has about 30% margin over the 1.42 A peak, so measure the real fan current and the startup surge on the bench. The extra 5V headroom covers cold-heater inrush on the MQ131 and MiCS-4514. The gas-sensor heaters are ~60% of the 5V load. The fan rows use the label current quoted in the listing; replace them with measured values.
+**PSU sizing:** 5V ≥ 1 A (≈ 1.5 A with the future display), 12V ≥ 1.5 A. The two 2 A modules cover both rails: the 5V module has about 3.5 times margin over the 0.56 A peak, and the 12V module has about 30% margin over the 1.42 A peak, so measure the real fan current and the startup surge on the bench. The extra 5V headroom covers cold-heater inrush on the MQ131 and MiCS-4514. The gas-sensor heaters are ~60% of the 5V load. The fan rows use the label current quoted in the listing; replace them with measured values.
 
 ---
 
@@ -162,7 +163,6 @@ graph TD
         Fan_Front[Front Fan: 80 mm 4-pin PWM]
         Fan_Rear[Rear Fan: 80 mm 4-pin PWM]
         Trans_2N2222[NPN 2N2222A Transistor]
-        MOSFET_Z44[IRFZ44N N-MOSFET]
         GND[System GND]
         
         %% Microcontroller Internal Modules
@@ -222,9 +222,7 @@ graph TD
     TRIAC_Dim -->|Phase-Cut Output| AC_Fan
     
     T5 -->|GPIO Output| Trans_2N2222
-    Trans_2N2222 -->|Collector drives Gate| MOSFET_Z44
-    Buzzer_12 -->|Drain| MOSFET_Z44
-    MOSFET_Z44 -->|Source| GND
+    Buzzer_12 -->|Low side| Trans_2N2222
     Trans_2N2222 -->|Emitter| GND
 
     T5 -->|USART3 TX/RX, future| Level_Shift
@@ -352,7 +350,7 @@ The control loop (`mainSensorsMsgLoop` in `Core/Src/control_center.cpp`) turns e
 | `fanOff` | A running fan keeps running until the reading drops below this value. It sits slightly below `fanOn`, so the fan does not switch on and off when a reading hovers around the turn-on point. |
 | `fanOn` | A stopped fan turns on, at the minimum speed (50%), when the reading reaches this value. |
 | `fanMax` | The fan reaches 100% at this value. Between `fanOn` and `fanMax` the speed rises linearly from 50% to 100%. |
-| `evacuate` | At or above this value the buzzer turns on. It is at or above `fanMax`, so the fan is already at full speed when the alarm sounds. |
+| `evacuate` | At or above this value the evacuate alarm starts (see [Evacuate alarm](#evacuate-alarm)). It is at or above `fanMax`, so the fan is already at full speed when the alarm sounds. |
 
 These give each metric one of three danger levels:
 
@@ -360,9 +358,9 @@ These give each metric one of three danger levels:
 | :--- | :--- | :--- | :--- |
 | `Off` | Below `fanOn` (or below `fanOff` if the fan is already running) | Off | Off |
 | `Ventilate` | From `fanOn` up to `evacuate` | 50% to 100%, proportional to the reading | Off |
-| `Evacuate` | At or above `evacuate` | 100% | On |
+| `Evacuate` | At or above `evacuate` | 100% | Alarm: 60 s on, then 30 s off / 10 s on repeating |
 
-**Across metrics.** Every reading that arrives updates only its own metrics in a shared structure that holds the latest level and requested fan speed of each metric. When the loop finishes handling a message, it evaluates the whole structure: the fan speed is the highest requested by any metric, and the buzzer is on if any metric is at `Evacuate`. The fan and buzzer are only written when the result changes.
+**Across metrics.** Every reading that arrives updates only its own metrics in a shared structure that holds the latest level and requested fan speed of each metric. When the loop finishes handling a message, it evaluates the whole structure: the fan speed is the highest requested by any metric, and the evacuate alarm starts if any metric is at `Evacuate`. The fan and buzzer are only written when the result changes.
 
 **Kick-start.** A stopped motor cannot start at 50% speed. When the fan turns on from off, it first runs at 100% for a fixed spin-up time (`FAN_KICKSTART_MS`), then drops to the requested speed. The fan has no tachometer, so this is a timer, not a measured speed. If the air becomes clean during the spin-up, the fan stops straight away. The loop waits on the queue with a timeout while a spin-up runs, so the fan drops to its target on time even if no sensor message arrives.
 
@@ -371,13 +369,12 @@ These give each metric one of three danger levels:
 ```mermaid
 flowchart TD
     Msg[Sensor reading arrives on the queue] --> Update[Update only that sensor's metrics:<br/>level + requested fan %]
-    Timeout[Spin-up timer expires<br/>queue wait timeout] --> Eval
+    Timeout[Spin-up or alarm timer expires<br/>queue wait timeout] --> Eval
     Update --> Eval[Evaluate all metrics]
     Eval --> Worst[Worst level and highest requested fan %]
 
     Worst --> Lvl{Worst level}
-    Lvl -->|Evacuate| BuzOn[Buzzer ON]
-    Lvl -->|Off or Ventilate| BuzOff[Buzzer OFF]
+    Lvl --> Alarm[Evacuate alarm cycle<br/>see Evacuate alarm]
 
     Worst --> Fan{Requested fan %}
     Fan -->|0 and fan stopped| Stay[Fan stays off]
@@ -396,10 +393,32 @@ flowchart LR
     A -->|below fanOn, fan stopped<br/>or below fanOff, fan running| O[Off: fan 0%]
     A -->|fanOn up to fanMax| V1[Ventilate: fan 50% to 100%, linear]
     A -->|fanMax up to evacuate| V2[Ventilate: fan 100%]
-    A -->|evacuate or above| E[Evacuate: fan 100% + buzzer ON]
+    A -->|evacuate or above| E[Evacuate: fan 100% + alarm]
 ```
 
-**Current limits.** The buzzer is not latched: it turns off when every metric drops below `evacuate`, unlike the latched `STATE_EVACUATE_LATCHED` in the [planned state machine](#planned-safety-latch-state-machine) above. A metric that has not reported yet counts as `Off`, and there is no stale-data or loss-of-signal handling yet. The MQ131 thresholds are placeholders on raw ADC counts and need calibration, and the other thresholds come from public exposure limits (see the comments next to them in `control_center.cpp`).
+### Evacuate alarm
+
+When the worst level reaches `Evacuate`, the buzzer runs a cycle (`updateAlarm()` in `Core/Src/control_center.cpp`):
+
+1. **First sound:** the buzzer is on for `BUZZER_FIRST_SOUND_MS` (60 s).
+2. **Pause:** the buzzer is off for `BUZZER_PAUSE_MS` (30 s).
+3. **Buzz:** the buzzer is on for `BUZZER_REPEAT_SOUND_MS` (10 s), then the cycle goes back to the pause. Steps 2 and 3 repeat while the air stays at `Evacuate`.
+4. If every metric drops below `evacuate` during a pause, the buzzer gives the safe signal (`BUZZER_SAFE_STEPS_MS`): 1 s of silence, three 2 s beeps with 2 s gaps, a 6 s stop, then three more 2 s beeps with 2 s gaps. The alarm then stops.
+
+The air is only checked during the pause, so a sound or buzz period always runs in full. All the timings, the safe-signal pattern and the pin level that sounds the buzzer (`BUZZER_ON`) are constants at the top of the alarm code, so they are easy to change.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Idle
+    Idle --> AlarmOn : worst level = Evacuate
+    AlarmOn --> Pausing : after BUZZER_FIRST_SOUND_MS (60 s)
+    Pausing --> SafeBeeps : air below evacuate
+    Pausing --> Buzzing : still Evacuate after BUZZER_PAUSE_MS (30 s)
+    Buzzing --> Pausing : after BUZZER_REPEAT_SOUND_MS (10 s)
+    SafeBeeps --> Idle : 1 s silence, 3 beeps, 6 s stop, 3 beeps
+```
+
+**Current limits.** The alarm is not latched: once every metric is below `evacuate` during a pause, it gives the safe signal and stops, unlike the latched `STATE_EVACUATE_LATCHED` in the [planned state machine](#planned-safety-latch-state-machine) above. A metric that has not reported yet counts as `Off`, and there is no stale-data or loss-of-signal handling yet. The MQ131 thresholds are placeholders on raw ADC counts and need calibration, and the other thresholds come from public exposure limits (see the comments next to them in `control_center.cpp`).
 
 ## 📉 Compensation & Normalization Models
 
@@ -434,21 +453,22 @@ flowchart LR
 
 Pin map for the **STM32G474CEU6** (UFQFPN48) on the WeAct G4 Long board, debugged with an STLINK-V3MINIE. It is applied in `clear-air.ioc` except for the front and rear fan PWM and tach rows (`TIM1`, `TIM2`), which are still planned. Pin functions come from the CubeMX DB (`STM32G474C(B-C-E)Ux.xml`).
 
-**CubeMX labels used by `device/*`:** `MQ131_ADC`, `MICS_CO1`, `MICS_NO2`, `ZC_INPUT`, `TRIAC_DIMMER`, `MICS_PREHEAT`, `BOOT_MODE`, `BUZZER_IN`, `LED_BOARD`, `I2C_SCL`, `I2C_SDA`. The sensor bus handle is `hi2c1` (`Core/Src/cpp_main.cpp`).
+**CubeMX labels used by `device/*`:** `MQ131_ADC`, `MICS_CO1`, `MICS_NO2`, `ZC_INPUT`, `TRIAC_DIMMER`, `MQ131_PREHEAT`, `BOOT_MODE`, `BUZZER_IN`, `LED_BOARD`, `I2C_SCL`, `I2C_SDA`. The sensor bus handle is `hi2c1` (`Core/Src/cpp_main.cpp`).
 
 ### Service → Pin Assignments
 
 | Service | Peripheral | G474 Pin (UFQFPN48 pin #) | Notes |
 | :--- | :--- | :--- | :--- |
 | **SPS30 + BME680** | I2C1 | PA15 SCL (38), PB7 SDA (45) | 4.7 kΩ pull-ups to 3.3V. `PA15` is free because debug uses SWD only (no `JTDI`). |
+| **PCF8563 RTC (HW-689)** | I2C1 (shared) | PA15 SCL (38), PB7 SDA (45) | Address 0x51, same bus and 4.7 kΩ pull-ups as the SPS30 and BME680. `COT` and `INT` are not connected. CR1220 backup cell on the module. |
 | **MQ-131 Output** | ADC1_IN1 | PA0 (8) | Through the 1.8 kΩ / 3.3 kΩ divider. |
 | **MiCS-4514 (CO)** | ADC2_IN2 | PA1 (9) | `PA1` is shared by ADC1/ADC2 IN2. Select ADC2 in CubeMX. |
 | **MiCS-4514 ($NO_2$)** | ADC2_IN4 | PA7 (15) | Through the divider. |
 | **RobotDyn ZC Input** | GPIO EXTI0 | PB0 (17) | Falling edge, pull-up, through the divider. Uses the dedicated `EXTI0_IRQn` vector (priority 5). |
 | **RobotDyn Gate Out** | GPIO Output | PB1 (18) | Push-pull, high speed, driven from the `TIM3` ISR. |
-| **MiCS-4514 (Preheat)** | GPIO Output | PB12 (25) | Push-pull, initial state LOW. |
+| **MQ131 Heater Enable** | GPIO Output | PB12 (25) | `MQ131_PREHEAT`. Push-pull, initial state LOW. Drives Q5 (AO3400A) through R17 100 Ω, with R18 100 kΩ gate pull-down: a low-side switch in the MQ131 module GND. HIGH powers the heater and the module. `task_mq131` sets it HIGH in `configure()` and keeps it on. |
 | **Cold/Warm Boot Select** | GPIO Input | PB14 (27) | Pull-up, read once at boot. |
-| **Safety Buzzer Latch** | GPIO Output | PB15 (28) | Drives the 2N2222A base for the 12V buzzer. Initial state LOW. |
+| **Safety Buzzer** | GPIO Output | PB15 (28) | Drives the 2N2222A base through R9 (1 kΩ); Q3 switches the 12V buzzer on its low side. HIGH = buzzer on. Initial state LOW. |
 | **Front Fan PWM (80 mm)** | TIM1_CH1 | PA8 (30) | 25 kHz PWM to the fan's PWM wire. 1 kΩ in series. Prescaler `0`, period `6799` at 170 MHz. Fan 12V and GND come from the 12V rail, GND common with the STM32. |
 | **Rear Fan PWM (80 mm)** | TIM1_CH2 | PA9 (31) | Same timer as the front fan, so the same 25 kHz. 1 kΩ in series. |
 | **Front Fan Tach** | TIM2_CH1 | PA5 (13) | Input capture, 10 kΩ pull-up to 3.3V. The tach is an open-collector output; confirm on the bench that the fan does not pull it up to 12V. |
