@@ -105,7 +105,7 @@ rules the netlist cannot show (mains on one side, connectors at the edge).
 ```jsonc
 {
   "origin": [100, 60],      // board top-left in mm, page coordinates
-  "grid": 2.54,             // snap each footprint anchor to this pitch, 0 = off
+  "grid": 2.54,             // snap pin 1 of each part to this pitch, 0 = off
   "gap": 1.27,              // default space between parts in a group, mm
   "groups": [
     {
@@ -266,7 +266,7 @@ means two parts collide: move a group. `silk_overlap` is cosmetic.
 | `board already has N Edge.Cuts item(s)` | An outline exists. Add `--replace-outline` to delete it and draw a new one |
 | Parts overlap after `-l` | Two groups overlap. Change their `at`. Footprints with no courtyard use their body box, which may be smaller than the real part |
 | `swig/python detected a memory leak ...` at exit | Comes from KiCad's Python bindings. Harmless |
-| Positions a little off the numbers in the layout | Anchors snap to `grid`, so a part can move up to half a grid step |
+| Positions a little off the numbers in the layout | Pin 1 snaps to `grid`, so a part can move up to half a grid step |
 
 ## Undo
 

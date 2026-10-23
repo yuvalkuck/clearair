@@ -37,7 +37,7 @@ Layout file format (JSON):
 
     {
       "origin": [100, 100],        board top-left in mm (page coordinates)
-      "grid": 2.54,                snap footprint anchors to this pitch (0 = off)
+      "grid": 2.54,                snap pin 1 of each part to this pitch (0 = off)
       "gap": 1.27,                 default space between parts in mm
       "groups": [
         {
@@ -114,6 +114,15 @@ def snap_up_mm(value, grid):
     return math.ceil(value / grid - 1e-9) * grid
 
 
+def grid_pad(fp):
+    """Return the pad to snap to the grid: pad "1", else the first numbered pad."""
+    numbered = [p for p in fp.Pads() if p.GetNumber()]
+    for pad in numbered:
+        if pad.GetNumber() == "1":
+            return pad
+    return numbered[0] if numbered else None
+
+
 def parse_ref(entry, group_rotation):
     if "@" in entry:
         ref, rot = entry.split("@", 1)
@@ -150,8 +159,17 @@ def place_group(group, footprints, origin, grid, default_gap, dry_run):
         # Offset from the box top-left corner to the footprint anchor.
         dx = fp.GetPosition().x - box.GetX()
         dy = fp.GetPosition().y - box.GetY()
-        new_pos = pcbnew.VECTOR2I(snap(cursor_x + dx, grid), snap(cursor_y + dy, grid))
-        fp.SetPosition(new_pos)
+        fp.SetPosition(pcbnew.VECTOR2I(int(cursor_x + dx), int(cursor_y + dy)))
+        # Snap pin 1 (not the anchor, which some footprints put between pins)
+        # so the pins land on the grid.
+        pin = grid_pad(fp)
+        if pin is not None and grid > 0:
+            p = pin.GetPosition()
+            fp.Move(pcbnew.VECTOR2I(snap(p.x, grid) - p.x, snap(p.y, grid) - p.y))
+        elif grid > 0:
+            p = fp.GetPosition()
+            fp.SetPosition(pcbnew.VECTOR2I(snap(p.x, grid), snap(p.y, grid)))
+        new_pos = fp.GetPosition()
 
         print(
             f"{name:>12}  {ref:<6} ({to_mm(old_pos.x):8.2f}, {to_mm(old_pos.y):8.2f}) @{old_rot:6.1f}"
@@ -273,7 +291,7 @@ def auto_layout(footprints, args):
             rot = rotation_for(ref)
             w, h = box_size_at(footprints[ref], rot)
             parts.append(f"{ref}@{rot:g}")
-            width += w + args.grid  # allow for anchor snapping
+            width += w + args.grid  # allow for pin 1 snapping
             height = max(height, h + args.grid)
         width += gap * (len(refs) - 1)
         return {"refs": parts, "w": width, "h": height}
