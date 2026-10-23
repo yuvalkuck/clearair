@@ -68,6 +68,7 @@ parts by hand in KiCad, run with --capture to record them:
 import argparse
 import json
 import math
+import os
 import re
 import shutil
 import sys
@@ -640,7 +641,10 @@ def main():
     if args.in_place:
         shutil.copy2(args.board, args.board + ".bak")
         print(f"backup: {args.board}.bak")
+    os.makedirs(os.path.dirname(os.path.abspath(target)), exist_ok=True)
     board.Save(target)
+    if not os.path.exists(target):
+        sys.exit(f"error: KiCad could not write {target}")
     print(f"written: {target}")
 
 

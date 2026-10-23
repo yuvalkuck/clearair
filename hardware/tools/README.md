@@ -1,19 +1,101 @@
 # KiCad PCB tools
 
-Two scripts for any KiCad 10 board:
+Three scripts for any KiCad 10 board:
 
 - [`place_parts.py`](#place_partspy-group-placement): places footprints in
   groups, keeps the parts you moved by hand.
 - [`route_board.py`](#route_boardpy-autorouting-with-freerouting): autoroutes
   the board as it is with Freerouting.
+- [`make_carrier.py`](#make_carrierpy-printable-carrier-for-prusaslicer):
+  turns the board into a printable plate (holes for pins, grooves for
+  wires) for PrusaSlicer.
+
+## The whole sequence (best practice)
+
+From schematic to printed carrier. Do the steps in this order. Run every
+command from the repository root, with these variables set once per shell:
+
+```sh
+K="$HOME/bin/kicad-10.0.5-x86_64.AppImage python3.11"   # KiCad's Python
+A="$HOME/bin/kicad-10.0.5-x86_64.AppImage"              # for kicad-cli
+T=hardware/tools
+B=hardware/WeAct-G474CE-Long/clearair.kicad_pcb
+L=hardware/WeAct-G474CE-Long/placement.json
+```
+
+**Rule for every step that writes the board: save and close KiCad first.**
+If KiCad has the board open (there is a `~clearair.kicad_pcb.lck` file next
+to it), it overwrites the script's result on its next save.
+
+1. **Once per machine:** install the [external tools](#external-tools), then
+   get Freerouting:
+
+   ```sh
+   $K $T/route_board.py --download
+   ```
+
+2. **Schematic changed?** In KiCad's PCB editor run **Tools → Update PCB
+   from Schematic** (F8), save, close KiCad. New parts land off the board;
+   step 3 places them.
+
+3. **Place the parts.** New board: let `--auto` make a first layout and save
+   it, then edit the groups in the JSON. Existing layout: add new parts to a
+   group in `placement.json`.
+
+   ```sh
+   $K $T/place_parts.py $B --auto --save-layout $L        # new board only
+   $K $T/place_parts.py $B -l $L --outline 2.54 --replace-outline --in-place
+   ```
+
+4. **Adjust by hand in KiCad.** Set the grid to 2.54 mm first (**View → Grid
+   Settings**), so pins stay on the 0.1" grid. Move parts, save, close
+   KiCad.
+
+5. **Record your hand moves** in the layout, then apply it once so the
+   board matches the file and every pin is snapped to the grid:
+
+   ```sh
+   $K $T/place_parts.py $B -l $L --capture
+   $K $T/place_parts.py $B -l $L --outline 2.54 --replace-outline --in-place
+   ```
+
+6. **Check:** no overlaps, pins on the grid. Only footprints that can never
+   be on the grid should remain (see [Grid and header pins](#grid-and-header-pins)).
+
+   ```sh
+   $K $T/place_parts.py $B --check
+   ```
+
+7. **Build the printable carrier.** This routes a copy of the board (your
+   board file is not changed) and cuts the grooves:
+
+   ```sh
+   $K $T/make_carrier.py $B --route -o hardware/WeAct-G474CE-Long/carrier/clearair_carrier.stl
+   ```
+
+   It writes `clearair_carrier.stl` and the routed copy
+   `clearair_carrier.routed.kicad_pcb`. Open the routed copy in KiCad to
+   see the wire paths; any connection it reports as unrouted has no groove.
+
+8. **Print.** In PrusaSlicer: **File → Import → Import STL/3MF/STEP/OBJ…**
+   (Ctrl+I), pick the STL, keep it flat (top face up), slice, print. See
+   [Printing](#printing).
+
+9. **Commit** the board, `placement.json` and the carrier files, so you can
+   go back to any step.
+
+Repeat from step 2 when the schematic changes, from step 4 when you only
+move parts.
 
 ## External tools
 
 | Tool | Needed by | Version tested | Install |
 |---|---|---|---|
-| KiCad (its Python with `pcbnew`, and `kicad-cli`) | both | 10.0.5 AppImage | [kicad.org/download](https://www.kicad.org/download/); this project uses `~/bin/kicad-10.0.5-x86_64.AppImage` |
-| Java (JRE) 17 or newer | `route_board.py` | OpenJDK 21 | `sudo apt install openjdk-21-jre` |
-| Freerouting **1.9.0** jar | `route_board.py` | 1.9.0 | `route_board.py --download` (saves `~/.local/share/freerouting/freerouting-1.9.0.jar`) |
+| KiCad (its Python with `pcbnew`, and `kicad-cli`) | all three | 10.0.5 AppImage | [kicad.org/download](https://www.kicad.org/download/); this project uses `~/bin/kicad-10.0.5-x86_64.AppImage` |
+| FreeCAD 1.0 or newer | `make_carrier.py` | 1.1.3 AppImage | [freecad.org/downloads](https://www.freecad.org/downloads.php); the script finds `freecadcmd` on PATH or `~/bin/freecad` (AppImage) |
+| PrusaSlicer | printing | 2.7.4 AppImage | [prusa3d.com/prusaslicer](https://www.prusa3d.com/page/prusaslicer_424/) |
+| Java (JRE) 17 or newer | `route_board.py`, `make_carrier.py --route` | OpenJDK 21 | `sudo apt install openjdk-21-jre` |
+| Freerouting **1.9.0** jar | `route_board.py`, `make_carrier.py --route` | 1.9.0 | `route_board.py --download` (saves `~/.local/share/freerouting/freerouting-1.9.0.jar`) |
 | ImageMagick (`magick` or `convert`) | `route_board.py --render x.png` | 7.1.1 | `sudo apt install imagemagick`. Not needed for `--render x.svg` |
 | `xvfb-run` | `route_board.py` with no display (SSH, CI) | not tested | `sudo apt install xvfb` |
 
@@ -584,3 +666,133 @@ The 3 unrouted connections:
 | A window opens while it runs | Freerouting 1.9.0 shows its progress window. It closes when routing is done |
 | `New version available: v2.5.0` in the log | Freerouting checks for updates. Ignore it; 2.x does not work with this script |
 | Freerouting 2.x runs forever, never writes the SES | 2.0 to 2.1 ignore the pass limit. Use 1.9.0 |
+
+# make_carrier.py: printable carrier for PrusaSlicer
+
+`make_carrier.py` turns a board into a 3D-printable plate:
+
+- the board outline (from `Edge.Cuts`),
+- a hole at every through-hole pad and via, for pins and headers,
+- a groove along every track: tracks on `F.Cu` are cut into the top face,
+  tracks on `B.Cu` into the bottom face. Lay the wires in the grooves.
+
+It writes an STL or 3MF file. The board file is never changed.
+
+How it works: KiCad's Python reads the outline, holes and tracks, then
+FreeCAD (no window) builds the solid, cuts everything in one boolean cut
+and meshes it with Netgen, which gives a closed (manifold) mesh.
+
+## Requirements
+
+- KiCad's Python, as for the other scripts.
+- FreeCAD 1.0 or newer (see [External tools](#external-tools)).
+- For grooves, a routed board. `--route` routes a copy with
+  `route_board.py` first, so it also needs Java and Freerouting.
+
+## Use
+
+```sh
+C=hardware/tools/make_carrier.py
+
+# Route a copy and build the carrier (the usual way).
+$K $C $B --route -o hardware/WeAct-G474CE-Long/carrier/clearair_carrier.stl
+
+# Board already routed (by hand or with route_board.py): no --route.
+$K $C /tmp/routed.kicad_pcb -o /tmp/carrier.stl
+
+# Plate with holes only, no grooves.
+$K $C $B --no-grooves -o /tmp/plate.stl
+```
+
+Output for ClearAir:
+
+```
+routing with route_board.py ...
+result: 281 track segments, 5 vias, 1789 mm of track, 2 unrouted connections
+written: .../carrier/clearair_carrier.routed.kicad_pcb
+building in FreeCAD: 158 holes, 281 groove segments (log: /tmp/make_carrier_.../freecad.log)
+carrier: volume 17342 of 20244 mm3 plate, 193382 facets, closed mesh: True, valid solid: True
+plate: 92.3 x 73.1 x 3.0 mm
+written: .../carrier/clearair_carrier.stl
+```
+
+It takes about 45 s (routing 15 s, FreeCAD 30 s). `closed mesh: True` means
+PrusaSlicer will load it without repairs.
+
+With `--route`, the routed copy is written next to the output as
+`NAME.routed.kicad_pcb`. Open it in KiCad to see where each groove goes.
+
+## Options
+
+| Option | Default | What it does |
+|---|---|---|
+| `board` | | Input `.kicad_pcb` file |
+| `-o`, `--output FILE` | required | Output mesh, `.stl` or `.3mf` |
+| `--route` | | Route a copy with `route_board.py` first (replaces its tracks) |
+| `--passes N` | `30` | Autorouter passes with `--route` |
+| `--thickness MM` | `3.0` | Plate thickness |
+| `--groove-width MM` | `1.2` | Groove width (fits insulated 24 AWG wire) |
+| `--groove-depth MM` | `1.2` | Groove depth, on each face |
+| `--hole-clearance MM` | `0.3` | Added to every drill diameter, because printed holes come out small |
+| `--layers LIST` | `F.Cu,B.Cu` | Copper layers that become grooves |
+| `--no-grooves` | | Plate and holes only |
+| `--mesher` | `netgen` | `netgen`: closed mesh, slower. `standard`: faster, can leave open edges |
+| `--deflection MM` | `0.02` | Accuracy of the `standard` mesher |
+| `--freecad CMD` | auto | Command that runs a FreeCAD script without a window, e.g. `'~/bin/freecad freecadcmd'` |
+| `--keep DIR` | temp dir | Keep the JSON, FreeCAD script and log in DIR |
+
+## Choosing the sizes
+
+| Size | Rule |
+|---|---|
+| Groove width | Wire outer diameter + 0.2 mm. 24 AWG solid with PVC is about 1.0 mm, so 1.2 mm. 22 AWG: about 1.4 mm |
+| Groove depth | At least the wire diameter, so the wire sits below the surface |
+| Thickness | More than 2 × groove depth when both faces have grooves. Where a top and a bottom groove cross, the plate is only `thickness − 2 × depth` thick (0.6 mm with the defaults). The script warns when it would cut through |
+| Hole clearance | Header pins are 0.64 mm square (0.9 mm across the corners) and the footprints drill 1.0 mm, so 1.3 mm holes. Print a test piece and change it if pins are loose or do not go in |
+
+Where a groove passes very close to a hole, the wall between them can be
+thinner than one extrusion line; the slicer drops it, and the groove opens
+into the hole. That is harmless for wiring.
+
+## Printing
+
+- **Orientation:** flat, top face up, as it comes in. Do not flip it: the
+  pins and the KiCad view match the top face.
+- **Bottom grooves** face the bed. They print as short bridges (1.2 mm
+  wide), so no supports are needed. Turn supports off.
+- **Layer height:** 0.2 mm gives cleaner grooves than 0.3 mm.
+- **Material:** PLA or PETG. Use PETG near the AC side (mains, TRIAC, PSU):
+  it softens at a higher temperature.
+- **Holes too tight:** raise `--hole-clearance` (for example 0.4) and build
+  again, or set **Print Settings → Advanced → XY Size Compensation** in
+  PrusaSlicer to a small negative value (affects the whole part).
+- **3MF instead of STL:** `-o carrier.3mf` gives a smaller file; PrusaSlicer
+  opens both.
+
+PrusaSlicer's default profile (0.3 mm layers) slices the ClearAir carrier
+in about 1 h 45 min.
+
+## ClearAir carrier
+
+`hardware/WeAct-G474CE-Long/carrier/` holds the current printable file
+`clearair_carrier.stl` (92.3 × 73.1 × 3.0 mm, closed mesh) and the routed
+copy it was built from. Two connections have no groove: the A1 footprint
+puts pad 24 (NRST) and pad 52 (+3V3) at the same spot, so the router cannot
+connect them (see [ClearAir routing status](#clearair-routing-status)).
+Wire those two by hand.
+
+Build it again after every placement change (step 7 of
+[the whole sequence](#the-whole-sequence-best-practice)).
+
+## Troubleshooting
+
+| Message or symptom | Cause and fix |
+|---|---|
+| `FreeCAD not found` | Install FreeCAD, put `freecadcmd` on PATH, or give `--freecad` |
+| `the board has no closed Edge.Cuts outline` | Draw one: `place_parts.py ... --outline 2.54` |
+| `the board has no tracks ... so there are no grooves` | Add `--route`, or route the board first |
+| `FreeCAD did not write the mesh:` plus lines | Read the full log: run again with `--keep DIR`, see `DIR/freecad.log` |
+| `closed mesh: False` | Use the default `--mesher netgen`. PrusaSlicer repairs small mesh errors on load anyway |
+| `netgen failed ..., using the standard mesher` | FreeCAD build without Netgen. The mesh may have open edges; PrusaSlicer repairs them on load |
+| Plate mirrored | It is not: the plate is the top view. Print it top face up |
+| `routing failed` | See the `route_board.py` messages above it and [its troubleshooting](#troubleshooting-1) |
