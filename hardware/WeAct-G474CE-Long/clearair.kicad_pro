@@ -240,7 +240,7 @@
       "internal_id": "",
       "mfg": "",
       "mpn": "",
-      "sch_revision": ""
+      "sch_revision": "1"
     },
     "layer_pairs": [],
     "layer_presets": [],
@@ -658,7 +658,7 @@
       {
         "filename": "clearair.kicad_sch",
         "name": "clearair",
-        "uuid": "00000000-0000-0000-0000-000000000000"
+        "uuid": "953560a5-36cf-5251-8f8d-509802d70a69"
       }
     ],
     "used_designators": "",
@@ -667,7 +667,7 @@
   "sheets": [
     [
       "953560a5-36cf-5251-8f8d-509802d70a69",
-      "Root"
+      "clearair"
     ]
   ],
   "text_variables": {},
