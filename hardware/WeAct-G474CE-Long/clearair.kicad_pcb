@@ -105,7 +105,7 @@
 			)
 		)
 		(property "Value" "PCF8563 RTC"
-			(at 0 10.5 90)
+			(at -23.44 10.5 90)
 			(layer "F.Fab")
 			(uuid "76720773-1fe1-4025-9d7e-28d613577f1a")
 			(effects
@@ -432,7 +432,7 @@
 	(footprint "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"
 		(layer "F.Cu")
 		(uuid "0541514a-02a9-4eb4-873e-acc96945cd52")
-		(at 157.48 91.44 90)
+		(at 129.2 68 90)
 		(descr "Resistor, Axial_DIN0207 series, Axial, Horizontal, pin pitch=7.62mm, 0.25W = 1/4W, length*diameter=6.3*2.5mm^2, http://cdn-reichelt.de/documents/datenblatt/B400/1_4W%23YAG.pdf")
 		(tags "Resistor Axial_DIN0207 series Axial Horizontal pin pitch 7.62mm 0.25W = 1/4W length 6.3mm diameter 2.5mm")
 		(property "Reference" "R14"
@@ -898,13 +898,13 @@
 	(footprint "Connector_PinHeader_2.54mm:PinHeader_1x06_P2.54mm_Vertical"
 		(layer "F.Cu")
 		(uuid "11a4114a-8542-4b12-bc7a-d9b33170d7ff")
-		(at 149.86 96.52)
+		(at 149.86 74.25)
 		(descr "Through hole straight pin header, 1x06, 2.54mm pitch, single row")
 		(tags "Through hole pin header THT 1x06 2.54mm single row")
 		(property "Reference" "J4"
 			(at 0 -2.38 0)
 			(layer "F.SilkS")
-			(uuid "57e955a2-0eab-4178-a38d-42663f9d3f8b")
+			(uuid "4788d19d-503b-4372-9fce-ff65681164f6")
 			(effects
 				(font
 					(size 1 1)
@@ -915,7 +915,7 @@
 		(property "Value" "BME680 wire header (1 VCC, 2 GND, 3 SCL, 4 SDA, 5 SDO, 6 CS)"
 			(at 0 15.08 0)
 			(layer "F.Fab")
-			(uuid "d75da451-270c-429c-a7bf-347a5d5a952d")
+			(uuid "c38bb703-9933-4bf2-ad39-6a33342bb477")
 			(effects
 				(font
 					(size 1 1)
@@ -927,7 +927,7 @@
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "b11ad8d4-3aff-4a52-974c-7cff851aa057")
+			(uuid "7512a97a-ee29-4b4e-a995-41386f7de32c")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -938,7 +938,7 @@
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "8ecfba20-896d-42b1-a576-a44a2a3c2fef")
+			(uuid "b73d793f-e900-4bf8-a603-3fe4afd51789")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1416,13 +1416,13 @@
 	(footprint "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"
 		(layer "F.Cu")
 		(uuid "232afd42-7ad0-4939-850b-bb89a39c73d3")
-		(at 127 104.14 90)
+		(at 127 81.87 90)
 		(descr "Resistor, Axial_DIN0207 series, Axial, Horizontal, pin pitch=7.62mm, 0.25W = 1/4W, length*diameter=6.3*2.5mm^2, http://cdn-reichelt.de/documents/datenblatt/B400/1_4W%23YAG.pdf")
 		(tags "Resistor Axial_DIN0207 series Axial Horizontal pin pitch 7.62mm 0.25W = 1/4W length 6.3mm diameter 2.5mm")
 		(property "Reference" "R6"
 			(at 3.81 -2.37 90)
 			(layer "F.SilkS")
-			(uuid "550d8f95-984e-493a-8239-95db14409cf3")
+			(uuid "209e309d-07fc-4772-b77f-780cfd9327bd")
 			(effects
 				(font
 					(size 1 1)
@@ -1433,7 +1433,7 @@
 		(property "Value" "3k3"
 			(at 3.81 2.37 90)
 			(layer "F.Fab")
-			(uuid "3caded65-ad15-44f5-ad7f-25b19a5d33af")
+			(uuid "77de5d61-684c-4fa1-b1c5-fab8f9a8dcb4")
 			(effects
 				(font
 					(size 1 1)
@@ -1445,7 +1445,7 @@
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "bfb03538-5039-4692-a9c9-f05cd3b90e01")
+			(uuid "4e7041d4-cc07-4cd7-968b-841717adaba2")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1456,7 +1456,7 @@
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "208ff20b-cbc5-4818-a104-6191959abcda")
+			(uuid "516a696b-dd4d-42f2-9c62-e42fdabd0d91")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1882,7 +1882,7 @@
 	(footprint "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"
 		(layer "F.Cu")
 		(uuid "2a274154-4468-4bbc-a92d-91b5fc3fb32c")
-		(at 162.56 91.44 90)
+		(at 134.28 68 90)
 		(descr "Resistor, Axial_DIN0207 series, Axial, Horizontal, pin pitch=7.62mm, 0.25W = 1/4W, length*diameter=6.3*2.5mm^2, http://cdn-reichelt.de/documents/datenblatt/B400/1_4W%23YAG.pdf")
 		(tags "Resistor Axial_DIN0207 series Axial Horizontal pin pitch 7.62mm 0.25W = 1/4W length 6.3mm diameter 2.5mm")
 		(property "Reference" "R15"
@@ -2115,7 +2115,7 @@
 	(footprint "libraries:PSU_DC_12V_5V_Inputs"
 		(layer "F.Cu")
 		(uuid "2c6087e6-4b95-46dd-81e7-335aa5bb163f")
-		(at 129.54 88.9)
+		(at 101.26 65.46)
 		(descr "DC outputs of two separate AC-DC supplies (12 V 2 A and 5 V 2 A), each a 2-pin 2.54 mm male header soldered in two holes with AWG24 wires. Pads: 3 +12V, 5 GND (twice, one per supply), 4 +5V. Pads 1 and 2 (AC L and N) are on F.Fab only: the mains side stays off the board. Pad order and header positions are not measured: check against the supplies.")
 		(tags "PSU_DC_12V_5V_Inputs")
 		(property "Reference" "PS1"
@@ -2394,7 +2394,7 @@
 	(footprint "Button_Switch_THT:SW_PUSH_6mm"
 		(layer "F.Cu")
 		(uuid "37a1cef8-8d45-4c2c-b58f-171684520ecf")
-		(at 101.6 83.82)
+		(at 142.5 61)
 		(descr "Generic 6mm SW tactile push button")
 		(tags "tact sw push 6mm")
 		(property "Reference" "SW1"
@@ -2761,13 +2761,13 @@
 	(footprint "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"
 		(layer "F.Cu")
 		(uuid "3b1e0598-c3b2-4ecc-b096-92ce97ef491c")
-		(at 160.02 104.14 90)
+		(at 160.02 81.87 90)
 		(descr "Resistor, Axial_DIN0207 series, Axial, Horizontal, pin pitch=7.62mm, 0.25W = 1/4W, length*diameter=6.3*2.5mm^2, http://cdn-reichelt.de/documents/datenblatt/B400/1_4W%23YAG.pdf")
 		(tags "Resistor Axial_DIN0207 series Axial Horizontal pin pitch 7.62mm 0.25W = 1/4W length 6.3mm diameter 2.5mm")
 		(property "Reference" "R2"
 			(at 3.81 -2.37 90)
 			(layer "F.SilkS")
-			(uuid "c012fed6-6f9b-40de-8e6f-fd72d92b8475")
+			(uuid "608230d8-5266-4dc0-bdd2-2c5e4ee3d7f8")
 			(effects
 				(font
 					(size 1 1)
@@ -2778,7 +2778,7 @@
 		(property "Value" "4k7"
 			(at 3.81 2.37 90)
 			(layer "F.Fab")
-			(uuid "e3543623-86d8-46bd-b437-eacb7e3f7a69")
+			(uuid "bf2c4027-acbf-41aa-9324-9ccd375ebea1")
 			(effects
 				(font
 					(size 1 1)
@@ -2790,7 +2790,7 @@
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "e708423e-1827-45fe-8810-1892bd66d3e2")
+			(uuid "b2b3484e-c308-4586-ae1d-3406d3eb253e")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2801,7 +2801,7 @@
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "03a03543-1bf7-45e0-b03c-931c038b1a9e")
+			(uuid "18d0969d-372d-4db3-8d58-aa328454e0a5")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2994,7 +2994,7 @@
 	(footprint "Button_Switch_THT:SW_PUSH_6mm"
 		(layer "F.Cu")
 		(uuid "44c714be-751b-430c-b072-15be8e61eb51")
-		(at 114.3 83.82)
+		(at 155.2 61)
 		(descr "Generic 6mm SW tactile push button")
 		(tags "tact sw push 6mm")
 		(property "Reference" "SW2"
@@ -3594,13 +3594,13 @@
 	(footprint "Connector_PinHeader_2.54mm:PinHeader_1x05_P2.54mm_Vertical"
 		(layer "F.Cu")
 		(uuid "4a2221d7-e1e2-43a1-9955-a00141ffdc3c")
-		(at 144.78 96.52)
+		(at 144.78 74.25)
 		(descr "Through hole straight pin header, 1x05, 2.54mm pitch, single row")
 		(tags "Through hole pin header THT 1x05 2.54mm single row")
 		(property "Reference" "J3"
 			(at 0 -2.38 0)
 			(layer "F.SilkS")
-			(uuid "ca20db91-368a-43b5-a7c4-6b04954cfb49")
+			(uuid "c0ef73dd-9319-480b-8a9c-22a5fa8b325a")
 			(effects
 				(font
 					(size 1 1)
@@ -3611,7 +3611,7 @@
 		(property "Value" "SPS30 wire header (1 VDD, 2 SDA, 3 SCL, 4 SEL, 5 GND)"
 			(at 0 12.54 0)
 			(layer "F.Fab")
-			(uuid "1374d26f-ef76-4a08-b5f5-040da0db82e2")
+			(uuid "3cbf742c-81d4-448c-ad9b-f25c4cb7d613")
 			(effects
 				(font
 					(size 1 1)
@@ -3623,7 +3623,7 @@
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "7dfa1e4a-cb2d-43bd-87ed-da737a6fe703")
+			(uuid "44273ad9-ba6d-4c25-b83e-742c584b2596")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3634,7 +3634,7 @@
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "5ad7b3b6-984b-483c-879a-f313879dfdb2")
+			(uuid "0f7b825d-2117-4709-b0ff-9ac0292b0e05")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4334,13 +4334,13 @@
 	(footprint "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"
 		(layer "F.Cu")
 		(uuid "4fb98631-db6c-4247-b7b3-a839d4b26cd9")
-		(at 154.94 104.14 90)
+		(at 154.94 81.87 90)
 		(descr "Resistor, Axial_DIN0207 series, Axial, Horizontal, pin pitch=7.62mm, 0.25W = 1/4W, length*diameter=6.3*2.5mm^2, http://cdn-reichelt.de/documents/datenblatt/B400/1_4W%23YAG.pdf")
 		(tags "Resistor Axial_DIN0207 series Axial Horizontal pin pitch 7.62mm 0.25W = 1/4W length 6.3mm diameter 2.5mm")
 		(property "Reference" "R1"
 			(at 3.81 -2.37 90)
 			(layer "F.SilkS")
-			(uuid "3638e016-db63-4fd4-94d4-a90052c16117")
+			(uuid "f201e00e-b660-48d0-ad7c-c33f35e1acd3")
 			(effects
 				(font
 					(size 1 1)
@@ -4351,7 +4351,7 @@
 		(property "Value" "4k7"
 			(at 3.81 2.37 90)
 			(layer "F.Fab")
-			(uuid "7d7b5b81-73f6-4cad-903f-2042e71c68d5")
+			(uuid "36705442-f9ab-4871-b08f-17f7d190cde5")
 			(effects
 				(font
 					(size 1 1)
@@ -4363,7 +4363,7 @@
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "daca6348-3ec0-4569-bf96-78847f5c9c58")
+			(uuid "cfcc857f-3892-4e5f-9fc0-eca72606a281")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4374,7 +4374,7 @@
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "69ea6c88-d19c-4e7f-9e66-b2bed8c008be")
+			(uuid "d39e7c87-5e15-4d52-9dca-f4d3977faa37")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5557,13 +5557,13 @@
 	(footprint "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"
 		(layer "F.Cu")
 		(uuid "83d15ece-ba8f-468e-a344-161a6fff2c85")
-		(at 106.68 104.14 90)
+		(at 106.68 81.87 90)
 		(descr "Resistor, Axial_DIN0207 series, Axial, Horizontal, pin pitch=7.62mm, 0.25W = 1/4W, length*diameter=6.3*2.5mm^2, http://cdn-reichelt.de/documents/datenblatt/B400/1_4W%23YAG.pdf")
 		(tags "Resistor Axial_DIN0207 series Axial Horizontal pin pitch 7.62mm 0.25W = 1/4W length 6.3mm diameter 2.5mm")
 		(property "Reference" "R3"
 			(at 3.81 -2.37 90)
 			(layer "F.SilkS")
-			(uuid "28b4bd3f-47ae-4b03-8a19-adc61699873c")
+			(uuid "28229607-ab7f-4390-9976-394578969713")
 			(effects
 				(font
 					(size 1 1)
@@ -5574,7 +5574,7 @@
 		(property "Value" "1k8"
 			(at 3.81 2.37 90)
 			(layer "F.Fab")
-			(uuid "0496116b-58ea-4416-b99c-0094ed6f1d87")
+			(uuid "3025d14a-1238-4488-8881-9f3b42407a97")
 			(effects
 				(font
 					(size 1 1)
@@ -5586,7 +5586,7 @@
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "a465ce63-84a7-4cfb-a381-542685c27e98")
+			(uuid "b79ae08a-fdff-496f-88d8-d60c4e439df1")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5597,7 +5597,7 @@
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "1e5a2ef1-5333-4782-b349-244f86df0f9b")
+			(uuid "f7114aff-374e-4750-9eba-1aff7e63691f")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6023,13 +6023,13 @@
 	(footprint "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"
 		(layer "F.Cu")
 		(uuid "95ce8b5c-8f74-41b7-953a-5df8bab658de")
-		(at 132.08 104.14 90)
+		(at 132.08 81.87 90)
 		(descr "Resistor, Axial_DIN0207 series, Axial, Horizontal, pin pitch=7.62mm, 0.25W = 1/4W, length*diameter=6.3*2.5mm^2, http://cdn-reichelt.de/documents/datenblatt/B400/1_4W%23YAG.pdf")
 		(tags "Resistor Axial_DIN0207 series Axial Horizontal pin pitch 7.62mm 0.25W = 1/4W length 6.3mm diameter 2.5mm")
 		(property "Reference" "R7"
 			(at 3.81 -2.37 90)
 			(layer "F.SilkS")
-			(uuid "34d76d90-7742-49f3-bec5-490e262da874")
+			(uuid "deed70c2-eb5e-4092-98f2-ec1886f7442e")
 			(effects
 				(font
 					(size 1 1)
@@ -6040,7 +6040,7 @@
 		(property "Value" "1k8"
 			(at 3.81 2.37 90)
 			(layer "F.Fab")
-			(uuid "e40b27c2-8942-44fc-948d-a9d026e4b997")
+			(uuid "6946adeb-6eaf-420c-873b-b9c0f44e2ceb")
 			(effects
 				(font
 					(size 1 1)
@@ -6052,7 +6052,7 @@
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "493e2752-e07c-4ca1-8607-f48b061ee320")
+			(uuid "1d133601-ab50-4cf2-8f55-f52228f4afb4")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6063,7 +6063,7 @@
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "05977b42-4576-4a05-ae06-35f0e7525a2b")
+			(uuid "4bf0e275-dcbb-4159-81ee-150731b728d8")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6496,7 +6496,7 @@
 	(footprint "libraries:RobotDyn_Dimmer_Logic"
 		(layer "F.Cu")
 		(uuid "9b6c211a-11cd-4f5d-b06e-2b18f279d170")
-		(at 144.78 88.9)
+		(at 116.5 65.46)
 		(descr "RobotDyn AC dimmer 8A (BTA16-600B), logic side only: 4-pin 2.54 mm header VCC GND Z-C PSM, pads 1-4. Pads 5-7 (IN N OUT, the AC screw terminal) are on F.Fab only: the mains side stays off the board.")
 		(tags "RobotDyn_Dimmer_Logic")
 		(property "Reference" "U5"
@@ -6778,13 +6778,13 @@
 	(footprint "Connector_PinHeader_2.54mm:PinHeader_1x05_P2.54mm_Vertical"
 		(layer "F.Cu")
 		(uuid "a3ee9d9a-ce37-4f9e-8858-2a6446984d4f")
-		(at 116.84 96.52)
+		(at 116.84 74.25)
 		(descr "Through hole straight pin header, 1x05, 2.54mm pitch, single row")
 		(tags "Through hole pin header THT 1x05 2.54mm single row")
 		(property "Reference" "J6"
 			(at 0 -2.38 0)
 			(layer "F.SilkS")
-			(uuid "6895bedd-cfff-4864-9963-daffa05e8a47")
+			(uuid "07163d3f-aa92-4613-8363-47621b007d63")
 			(effects
 				(font
 					(size 1 1)
@@ -6795,7 +6795,7 @@
 		(property "Value" "MiCS-4514 wire header (1 VCC, 2 GND, 3 RED, 4 NOX, 5 PRE)"
 			(at 0 12.54 0)
 			(layer "F.Fab")
-			(uuid "9bb30f6e-893a-45e5-83d2-3f1dd2a1fff1")
+			(uuid "2bd1796c-81a4-4bef-92df-a985ed8a1df4")
 			(effects
 				(font
 					(size 1 1)
@@ -6807,7 +6807,7 @@
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "da52f54a-98e7-4248-9844-17c7395cce28")
+			(uuid "811dc0fb-d2a7-435f-8065-7f361bc02cdd")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6818,7 +6818,7 @@
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "6dab60ef-a008-4b0a-b185-78499c46aa0f")
+			(uuid "31bc946f-7140-4fed-b0af-dcd5295977ed")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7052,13 +7052,13 @@
 	(footprint "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical"
 		(layer "F.Cu")
 		(uuid "a5e2acb9-4dbe-4fd5-9c4f-7c167e23589d")
-		(at 101.6 96.52)
+		(at 101.6 74.25)
 		(descr "Through hole straight pin header, 1x04, 2.54mm pitch, single row")
 		(tags "Through hole pin header THT 1x04 2.54mm single row")
 		(property "Reference" "J5"
 			(at 0 -2.38 0)
 			(layer "F.SilkS")
-			(uuid "415b451d-ac86-4b0f-aebe-9f527b25c89d")
+			(uuid "97d97d6f-0f7f-43a5-b3ba-5df35faab844")
 			(effects
 				(font
 					(size 1 1)
@@ -7069,7 +7069,7 @@
 		(property "Value" "MQ131 wire header (1 VCC, 2 GND, 3 DO nc, 4 AO)"
 			(at 0 10 0)
 			(layer "F.Fab")
-			(uuid "1afff625-cd14-4501-b277-7c7c94d47553")
+			(uuid "d2ac52d4-6e2d-4cfa-aa80-beb40eb18a82")
 			(effects
 				(font
 					(size 1 1)
@@ -7081,7 +7081,7 @@
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "83a1fe67-2180-4ee1-a9d0-e7ac7252026c")
+			(uuid "755435d7-eefe-4d52-bbcc-4cc38dcc9f60")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7092,7 +7092,7 @@
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "d2d51347-3e71-4273-8206-69ffb606d90c")
+			(uuid "e8ce7628-1e98-4bfb-a8c1-b36278bd08ed")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8077,13 +8077,13 @@
 	(footprint "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"
 		(layer "F.Cu")
 		(uuid "d778e2d4-e75f-42e4-9445-a3e5b41ca188")
-		(at 111.76 104.14 90)
+		(at 111.76 81.87 90)
 		(descr "Resistor, Axial_DIN0207 series, Axial, Horizontal, pin pitch=7.62mm, 0.25W = 1/4W, length*diameter=6.3*2.5mm^2, http://cdn-reichelt.de/documents/datenblatt/B400/1_4W%23YAG.pdf")
 		(tags "Resistor Axial_DIN0207 series Axial Horizontal pin pitch 7.62mm 0.25W = 1/4W length 6.3mm diameter 2.5mm")
 		(property "Reference" "R4"
 			(at 3.81 -2.37 90)
 			(layer "F.SilkS")
-			(uuid "3b0a868b-fb11-4de8-954f-90005780c4c3")
+			(uuid "3766d9bf-738f-477c-87d4-111af7f3d2f2")
 			(effects
 				(font
 					(size 1 1)
@@ -8094,7 +8094,7 @@
 		(property "Value" "3k3"
 			(at 3.81 2.37 90)
 			(layer "F.Fab")
-			(uuid "0508756c-5f21-42b5-9084-1d8e13b4c8a5")
+			(uuid "3e5eab3c-32dd-4596-b105-0166e51f2c1a")
 			(effects
 				(font
 					(size 1 1)
@@ -8106,7 +8106,7 @@
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "32a17510-2220-47d3-92f6-e88230feacef")
+			(uuid "0745170c-5673-4c15-ab6d-401f16a49b44")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8117,7 +8117,7 @@
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "077b67c9-80d3-42e8-9d8a-eb4af3242e27")
+			(uuid "03dcaca5-22ae-4bf5-a632-18b8b32bedfd")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8310,7 +8310,7 @@
 	(footprint "libraries:WeAct_STM32G474CoreBoard_Long"
 		(layer "F.Cu")
 		(uuid "e1589881-28cb-4a40-99a3-03e8ce47bafd")
-		(at 130.81 68.58)
+		(at 130.35 100.62)
 		(descr "WeAct Studio STM32G474CEU6 Core Board (Long). Board outline (61.42x18.24mm) and 15.24mm row spacing measured from WeAct's official dimension drawing (WeAct-STM32G474CoreBoard_Long_V10 Board Shape.pdf); P5 SWD column position is approximate.")
 		(tags "STM32G474 WeAct CoreBoard Long")
 		(property "Reference" "A1"
@@ -9082,13 +9082,13 @@
 	(footprint "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"
 		(layer "F.Cu")
 		(uuid "e9a1f2e0-7afe-46a4-99a2-b28fb70f6e7f")
-		(at 121.92 104.14 90)
+		(at 121.92 81.87 90)
 		(descr "Resistor, Axial_DIN0207 series, Axial, Horizontal, pin pitch=7.62mm, 0.25W = 1/4W, length*diameter=6.3*2.5mm^2, http://cdn-reichelt.de/documents/datenblatt/B400/1_4W%23YAG.pdf")
 		(tags "Resistor Axial_DIN0207 series Axial Horizontal pin pitch 7.62mm 0.25W = 1/4W length 6.3mm diameter 2.5mm")
 		(property "Reference" "R5"
 			(at 3.81 -2.37 90)
 			(layer "F.SilkS")
-			(uuid "9f611914-ac1d-42ce-8589-7ceebc4a3c25")
+			(uuid "5ed1fca8-be0f-4456-8318-e1f2d9b89166")
 			(effects
 				(font
 					(size 1 1)
@@ -9099,7 +9099,7 @@
 		(property "Value" "1k8"
 			(at 3.81 2.37 90)
 			(layer "F.Fab")
-			(uuid "ee7b53a6-6fef-4b37-b283-59e0abb6f082")
+			(uuid "5731016b-77ba-4ad6-b00e-f7c5704208a3")
 			(effects
 				(font
 					(size 1 1)
@@ -9111,7 +9111,7 @@
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "8ce9807a-4f64-45c4-8da7-c97d1cfbffc6")
+			(uuid "9b0be18b-a686-4d35-93aa-9fde04a510cd")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9122,7 +9122,7 @@
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "ff150e79-68d0-4ac6-9a99-a5b74f61b6f1")
+			(uuid "bbb22017-b5db-4787-8076-5e64667adf61")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9315,13 +9315,13 @@
 	(footprint "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"
 		(layer "F.Cu")
 		(uuid "f5619d01-52d1-408b-9492-97d669c244ea")
-		(at 137.16 104.14 90)
+		(at 137.16 81.87 90)
 		(descr "Resistor, Axial_DIN0207 series, Axial, Horizontal, pin pitch=7.62mm, 0.25W = 1/4W, length*diameter=6.3*2.5mm^2, http://cdn-reichelt.de/documents/datenblatt/B400/1_4W%23YAG.pdf")
 		(tags "Resistor Axial_DIN0207 series Axial Horizontal pin pitch 7.62mm 0.25W = 1/4W length 6.3mm diameter 2.5mm")
 		(property "Reference" "R8"
 			(at 3.81 -2.37 90)
 			(layer "F.SilkS")
-			(uuid "b6321695-fb72-41b7-9246-67937e106610")
+			(uuid "a549ff7a-4269-4939-94c7-3019b46817cb")
 			(effects
 				(font
 					(size 1 1)
@@ -9332,7 +9332,7 @@
 		(property "Value" "3k3"
 			(at 3.81 2.37 90)
 			(layer "F.Fab")
-			(uuid "5a5c1456-a2d5-43bf-b84e-2202ca6a4824")
+			(uuid "a23866f3-b46a-415d-b203-db79de256e29")
 			(effects
 				(font
 					(size 1 1)
@@ -9344,7 +9344,7 @@
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "9ebf538e-c27d-49f2-9d56-26f27c47d7a4")
+			(uuid "c16069ef-ed96-4788-9912-44f186b18375")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9355,7 +9355,7 @@
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "72bea6d9-8f55-4ca0-b21a-5f23486702e4")
+			(uuid "c7e19623-802e-4ad3-99e2-6abde6366d5c")
 			(effects
 				(font
 					(size 1.27 1.27)
