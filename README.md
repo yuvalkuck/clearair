@@ -358,7 +358,7 @@ These give each metric one of three danger levels:
 | :--- | :--- | :--- | :--- |
 | `Off` | Below `fanOn` (or below `fanOff` if the fan is already running) | Off | Off |
 | `Ventilate` | From `fanOn` up to `evacuate` | 50% to 100%, proportional to the reading | Off |
-| `Evacuate` | At or above `evacuate` | 100% | Alarm cycle: 60 s on, 60 s off |
+| `Evacuate` | At or above `evacuate` | 100% | Alarm: 60 s on, then 30 s off / 10 s on repeating |
 
 **Across metrics.** Every reading that arrives updates only its own metrics in a shared structure that holds the latest level and requested fan speed of each metric. When the loop finishes handling a message, it evaluates the whole structure: the fan speed is the highest requested by any metric, and the evacuate alarm starts if any metric is at `Evacuate`. The fan and buzzer are only written when the result changes.
 
@@ -400,21 +400,22 @@ flowchart LR
 
 When the worst level reaches `Evacuate`, the buzzer runs a cycle (`updateAlarm()` in `Core/Src/control_center.cpp`):
 
-1. **Sound:** the buzzer is on for `BUZZER_SOUND_MS` (60 s).
-2. **Pause:** the buzzer is off for `BUZZER_PAUSE_MS` (60 s).
-3. If every metric drops below `evacuate` during the pause, the buzzer gives the safe signal: 1 s of silence, then two 300 ms beeps with a 300 ms gap (`BUZZER_SAFE_STEPS_MS`). The alarm then stops.
-4. If the air is still at `Evacuate` when the pause ends, the cycle starts again from step 1.
+1. **First sound:** the buzzer is on for `BUZZER_FIRST_SOUND_MS` (60 s).
+2. **Pause:** the buzzer is off for `BUZZER_PAUSE_MS` (30 s).
+3. **Buzz:** the buzzer is on for `BUZZER_REPEAT_SOUND_MS` (10 s), then the cycle goes back to the pause. Steps 2 and 3 repeat while the air stays at `Evacuate`.
+4. If every metric drops below `evacuate` during a pause, the buzzer gives the safe signal (`BUZZER_SAFE_STEPS_MS`): 1 s of silence, three 2 s beeps with 2 s gaps, a 6 s stop, then three more 2 s beeps with 2 s gaps. The alarm then stops.
 
-The air is only checked during the pause, so a sound period always runs its full 60 s. All the timings, the safe-signal pattern and the pin level that sounds the buzzer (`BUZZER_ON`) are constants at the top of the alarm code, so they are easy to change.
+The air is only checked during the pause, so a sound or buzz period always runs in full. All the timings, the safe-signal pattern and the pin level that sounds the buzzer (`BUZZER_ON`) are constants at the top of the alarm code, so they are easy to change.
 
 ```mermaid
 stateDiagram-v2
     [*] --> Idle
-    Idle --> Sounding : worst level = Evacuate
-    Sounding --> Pausing : after BUZZER_SOUND_MS (60 s)
+    Idle --> AlarmOn : worst level = Evacuate
+    AlarmOn --> Pausing : after BUZZER_FIRST_SOUND_MS (60 s)
     Pausing --> SafeBeeps : air below evacuate
-    Pausing --> Sounding : still Evacuate after BUZZER_PAUSE_MS (60 s)
-    SafeBeeps --> Idle : 1 s silence, beep, gap, beep
+    Pausing --> Buzzing : still Evacuate after BUZZER_PAUSE_MS (30 s)
+    Buzzing --> Pausing : after BUZZER_REPEAT_SOUND_MS (10 s)
+    SafeBeeps --> Idle : 1 s silence, 3 beeps, 6 s stop, 3 beeps
 ```
 
 **Current limits.** The alarm is not latched: once every metric is below `evacuate` during a pause, it gives the safe signal and stops, unlike the latched `STATE_EVACUATE_LATCHED` in the [planned state machine](#planned-safety-latch-state-machine) above. A metric that has not reported yet counts as `Off`, and there is no stale-data or loss-of-signal handling yet. The MQ131 thresholds are placeholders on raw ADC counts and need calibration, and the other thresholds come from public exposure limits (see the comments next to them in `control_center.cpp`).
