@@ -1,6 +1,6 @@
 # KiCad PCB tools
 
-Three scripts for any KiCad 10 board:
+Four scripts for any KiCad 10 board:
 
 - [`place_parts.py`](#place_partspy-group-placement): places footprints in
   groups, keeps the parts you moved by hand.
@@ -9,6 +9,9 @@ Three scripts for any KiCad 10 board:
 - [`make_carrier.py`](#make_carrierpy-printable-carrier-for-prusaslicer):
   turns the board into a printable plate (holes for pins, grooves for
   wires) for PrusaSlicer.
+- [`wire_list.py`](#wire_listpy-perfboard-build-instructions): writes the
+  build instructions for a hand-wired perfboard (where each part goes, which
+  pin connects to which pin, with the wire gauge).
 
 ## The whole sequence (best practice)
 
@@ -66,7 +69,16 @@ to it), it overwrites the script's result on its next save.
    $K $T/place_parts.py $B --check
    ```
 
-7. **Build the printable carrier.** This routes a copy of the board (your
+7. **No 3D printer? Build a perfboard instead.** Skip the carrier below and step 8, and
+   write the build instructions (`perfboard_wiring.md` next to the board):
+
+   ```sh
+   cd hardware/WeAct-G474CE-Long && python3 ../tools/wire_list.py
+   ```
+
+   See [wire_list.py](#wire_listpy-perfboard-build-instructions).
+
+   **Build the printable carrier (needs a 3D printer).** This routes a copy of the board (your
    board file is not changed) and cuts the grooves:
 
    ```sh
@@ -800,3 +812,69 @@ Build it again after every placement change (step 7 of
 | `netgen failed ...` or `netgen mesh reaches outside the plate, using the standard mesher` | Only with `--mesher netgen`. The script switched to the standard mesher; nothing to do |
 | Plate mirrored | It is not: the plate is the top view. Print it top face up |
 | `routing failed` | See the `route_board.py` messages above it and [its troubleshooting](#troubleshooting-1) |
+
+---
+
+# wire_list.py: perfboard build instructions
+
+Reads the board file and writes `perfboard_wiring.md`: everything you need to
+build the circuit on 2.54 mm perfboard by hand. It uses plain Python and
+needs no KiCad. It does not change the board.
+
+## Use
+
+Run it from the board folder (after you place the parts, step 4 above):
+
+```sh
+cd hardware/WeAct-G474CE-Long
+python3 ../tools/wire_list.py                       # clearair.kicad_pcb -> perfboard_wiring.md
+python3 ../tools/wire_list.py BOARD.kicad_pcb OUT.md
+```
+
+Run it again after you move parts. The file is generated, so do not edit it
+by hand.
+
+## Boards
+
+It builds one perfboard per `Edge.Cuts` rectangle (sorted left to right), so
+draw each board's **hole area** as one rectangle: for a 24 x 18 hole board
+that is 58.42 x 43.18 mm. A part belongs to the board that holds its pins.
+A portrait board (taller than wide) is shown rotated 90° clockwise so every
+board lies landscape.
+
+## What is in the file
+
+1. **Parts (top side).** One table per board: part, type (for example
+   `1x06 socket`, `resistor 4k7`, `transistor 2N7000`) and the holes to
+   place it at, as `(column,row)`.
+2. **Wires (back side).** One row per wire: number, board, net, from pin and hole,
+   to pin and hole, **AWG** and max length. Every pin of a net gets one
+   wire to the net's hub pin (a star). The hub is the MCU module pin if the
+   net has one, else a connector pin. One wire per net joins the two boards.
+3. **Check list per part.** Every pin with the wire numbers that touch it.
+
+Holes are `(column,row)`, row 1 at the top. **Top** holes (column 1 at the
+left) are for placing parts. **Back** holes are for the wires: the board
+turned over left to right, so back column = 25 - top column.
+
+## Wire gauge
+
+Only AWG24 and AWG30 are used. Set in `wire_kind()`, from the current budget
+in the main README:
+
+| Wires | AWG |
+| :--- | :--- |
+| `+12V`, ground at the supply, fans and buzzer, ground link between boards | 24 |
+| `+5V` supply to the MCU module | 24 |
+| `+5V` and ground to the SPS30, MQ131 and MiCS headers (`J3`, `J5`, `J6`) | 24 |
+| everything else: `+3V3`, signals, pull-ups, other grounds | 30 |
+
+Change `SENSORS`, `HEAVY` or the numbers in `wire_kind()` if your budget or
+your wire stock changes. Pins of the MCU module that sit on the same net need
+no wire between them.
+
+## Check the layout first
+
+If a pin is more than 0.35 mm off the 2.54 mm grid, the file starts with a
+warning listing the parts, and the holes are rounded. Fix the layout (see
+[Grid and header pins](#grid-and-header-pins)) and run it again.
