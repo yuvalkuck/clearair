@@ -792,7 +792,7 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOC_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, TRIAC_DIMMER_Pin|MQ131_PREHEAT_Pin|BUZZER_IN_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, TRIAC_DIMMER_Pin|BUZZER_IN_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(LED_BOARD_GPIO_Port, LED_BOARD_Pin, GPIO_PIN_RESET);
@@ -810,18 +810,18 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
   HAL_GPIO_Init(TRIAC_DIMMER_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : MQ131_PREHEAT_Pin BUZZER_IN_Pin */
-  GPIO_InitStruct.Pin = MQ131_PREHEAT_Pin|BUZZER_IN_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
-
   /*Configure GPIO pin : BOOT_MODE_Pin */
   GPIO_InitStruct.Pin = BOOT_MODE_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(BOOT_MODE_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : BUZZER_IN_Pin */
+  GPIO_InitStruct.Pin = BUZZER_IN_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(BUZZER_IN_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : LED_BOARD_Pin */
   GPIO_InitStruct.Pin = LED_BOARD_Pin;

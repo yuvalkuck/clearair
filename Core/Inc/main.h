@@ -72,8 +72,6 @@ void Error_Handler(void);
 #define ZC_INPUT_EXTI_IRQn EXTI0_IRQn
 #define TRIAC_DIMMER_Pin GPIO_PIN_1
 #define TRIAC_DIMMER_GPIO_Port GPIOB
-#define MQ131_PREHEAT_Pin GPIO_PIN_12
-#define MQ131_PREHEAT_GPIO_Port GPIOB
 #define BOOT_MODE_Pin GPIO_PIN_14
 #define BOOT_MODE_GPIO_Port GPIOB
 #define BUZZER_IN_Pin GPIO_PIN_15

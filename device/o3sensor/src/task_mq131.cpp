@@ -10,19 +10,17 @@ extern ADC_HandleTypeDef hadc1;
 
 namespace {
 // MQ131 datasheet: preheat time over 48h on a genuine cold start;
-// 3 minutes is used as the settle time on a warm restart.
+// 30 minutes is an engineering estimate for the settle time on a warm restart (the datasheet gives no value).
 constexpr uint32_t MQ131_WARMUP_COLD_MS = 48UL * 3600UL * 1000UL;
-constexpr uint32_t MQ131_WARMUP_WARM_MS = 3UL * 60UL * 1000UL;
+constexpr uint32_t MQ131_WARMUP_WARM_MS = 30UL * 60UL * 1000UL;
 }
 
 bool SensorO3::configure(bool isColdBoot) {
     isColdBoot_ = isColdBoot;
     METHODTRACE
 
-    // PB12 drives the low-side MOSFET in the module's GND: HIGH powers the
-    // heater (and the whole module). It stays on from here; the warm-up in
+    // The heater is on whenever the board has power; the warm-up in
     // taskLoop() counts from this moment.
-    HAL_GPIO_WritePin(MQ131_PREHEAT_GPIO_Port, MQ131_PREHEAT_Pin, GPIO_PIN_SET);
     vTaskDelay(pdMS_TO_TICKS(100));
 
     uint32_t value = 0;
