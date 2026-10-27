@@ -859,27 +859,26 @@ Holes are `(column,row)`, row 1 at the top. **Top** holes (column 1 at the
 left) are for placing parts. **Back** holes are for the wires: the board
 turned over left to right, so back column = 25 - top column.
 
-## Config file (`wire_list.json`)
+## Part data in the schematic
 
-The script works on any board with no config: it takes the part with the most
-pins as the MCU module and uses AWG24 / AWG30 for the wires. Put a
-`wire_list.json` next to the board file (or give its path as the third
-argument) to describe your own parts. Every key is optional:
+The script reads the `.kicad_sch` next to the board file. No config file is
+needed: the part data are hidden fields on the schematic symbols. Without a
+schematic it takes the part with the most pins as the MCU module and uses
+AWG24 / AWG30 for the wires.
 
-| Key | Meaning | Default |
-| :--- | :--- | :--- |
-| `mcu` | Ref of the MCU module: hub of every net, no wire between its own pins | part with the most pins |
-| `female` | Refs that are female sockets (the module plugs in) | the `mcu` |
-| `headers` | Refs that are male headers but have no `PinHeader` footprint | none |
-| `posts` | Refs that are loose male pins (supply posts) | none |
-| `sensors` | Refs whose power and ground wires get the thick wire | none |
-| `high_current_prefixes` | Ref prefixes (`PS`, `M`, `BZ`) whose power and ground wires get the thick wire | none |
-| `transistor_pins` | Pin letters per transistor value, for example `{"2N7000": {"1": "S", "2": "G", "3": "D"}}` | pin numbers |
-| `net_names` | Readable names for unnamed nets, for example `{"Net-(A1-PA0)": "MQ131 out"}` | KiCad names |
-| `link_max_mm` | Longest wire between two boards | 300 |
-| `awg_thick`, `awg_thin` | The two wire gauges you have | `AWG24`, `AWG30` |
+| Field | Meaning |
+| :--- | :--- |
+| `Role` | Space-separated words. `mcu`: hub of every net, no wire between its own pins. `female`: a socket the module plugs into. `header`: male header without a `PinHeader` footprint. `post`: loose male pins (supply). `sensor`: power and ground wires get the thick wire. `heavy`: same, for fan, buzzer and supply parts |
+| `Net <pin>` | Readable name for the net KiCad names after that pin, for example `Net PA0` = `MQ131 out` names `Net-(A1-PA0)` |
 
-The ClearAir config is `hardware/WeAct-G474CE-Long/wire_list.json`.
+Transistor pin letters come from the symbol's pin names. The two gauges are
+defaults in the script (`AWG24`, `AWG30`), and the
+longest wire between two boards is `link_max_mm` (300).
+
+An optional `wire_list.json` next to the board (or its path as the third
+argument) still overrides any of these keys: `mcu`, `female`, `headers`,
+`posts`, `sensors`, `high_current_prefixes`, `transistor_pins`, `net_names`,
+`link_max_mm`, `awg_thick`, `awg_thin`. ClearAir does not use one.
 
 ## Wire gauge
 

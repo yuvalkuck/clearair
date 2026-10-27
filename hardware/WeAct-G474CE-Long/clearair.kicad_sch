@@ -16528,6 +16528,39 @@
 				)
 			)
 		)
+		(property "Role" "sensor"
+			(at 299.72 304.8 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Net Pin_3" "MiCS CO"
+			(at 299.72 304.8 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Net Pin_4" "MiCS NO2"
+			(at 299.72 304.8 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "b50f5855-dcdc-480e-99ef-c85901a14c63")
 		)
@@ -16932,6 +16965,17 @@
 		)
 		(property "ki_fp_filters" "TO?92*"
 			(at 419.1 243.84 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Net D" "Display RX"
+			(at 419.1 243.84 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -18287,6 +18331,17 @@
 				)
 			)
 		)
+		(property "Net D" "Display TX"
+			(at 419.1 215.9 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "2f35e7b6-6e66-5cfb-8632-f3f3fd9b847b")
 		)
@@ -18652,6 +18707,17 @@
 				)
 			)
 		)
+		(property "Role" "heavy"
+			(at 510.54 66.04 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "0cfcfa44-74d6-5139-ab14-6517c114e3e1")
 		)
@@ -18835,6 +18901,193 @@
 			)
 		)
 		(property "ki_keywords" "STM32G474 STM32G474CEU6 WeAct CoreBoard Long STM32"
+			(at 299.72 200.66 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Role" "mcu female"
+			(at 299.72 200.66 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Net PA0" "MQ131 out"
+			(at 299.72 200.66 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Net PA1" "MiCS CO"
+			(at 299.72 200.66 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Net PA7" "MiCS NO2"
+			(at 299.72 200.66 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Net PA15" "I2C SCL"
+			(at 299.72 200.66 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Net PB7" "I2C SDA"
+			(at 299.72 200.66 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Net PB0" "ZC in"
+			(at 299.72 200.66 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Net PB1" "TRIAC gate"
+			(at 299.72 200.66 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Net PB14" "Cold-boot button"
+			(at 299.72 200.66 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Net NRST" "Reset button"
+			(at 299.72 200.66 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Net PB15" "Buzzer drive"
+			(at 299.72 200.66 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Net PA8" "Front fan PWM"
+			(at 299.72 200.66 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Net PA9" "Rear fan PWM"
+			(at 299.72 200.66 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Net PA5" "Front fan tach"
+			(at 299.72 200.66 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Net PB3" "Rear fan tach"
+			(at 299.72 200.66 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Net PB10" "Display TX"
+			(at 299.72 200.66 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Net PB11" "Display RX"
 			(at 299.72 200.66 0)
 			(hide yes)
 			(show_name no)
@@ -19219,6 +19472,17 @@
 				)
 			)
 		)
+		(property "Net B" "Buzzer base"
+			(at 182.88 76.2 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "f6e42f6d-b20e-5460-903c-1f6182da7d39")
 		)
@@ -19402,6 +19666,17 @@
 				)
 			)
 		)
+		(property "Role" "sensor"
+			(at 215.9 180.34 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "478fe83a-33ef-4109-93ff-eaa5a702578e")
 		)
@@ -19502,6 +19777,28 @@
 			)
 		)
 		(property "ki_fp_filters" "*Buzzer*"
+			(at 213.36 63.5 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Role" "heavy"
+			(at 213.36 63.5 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Net -" "Buzzer GND"
 			(at 213.36 63.5 0)
 			(hide yes)
 			(show_name no)
@@ -19728,6 +20025,28 @@
 				)
 			)
 		)
+		(property "Role" "heavy"
+			(at 288.29 76.2 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Net Pin_4" "Rear fan PWM"
+			(at 288.29 76.2 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "f6a943a8-509d-4bab-a511-d73bc907640d")
 		)
@@ -19803,6 +20122,28 @@
 			)
 		)
 		(property "Description" ""
+			(at 457.2 66.04 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Role" "header"
+			(at 457.2 66.04 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Net Z-C" "ZC out"
 			(at 457.2 66.04 0)
 			(hide yes)
 			(show_name no)
@@ -19897,6 +20238,28 @@
 			)
 		)
 		(property "Description" "Wire header to the off-board sensor module Pins: 1 VCC, 2 GND, 3 DO nc, 4 AO"
+			(at 396.24 180.34 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Role" "sensor"
+			(at 396.24 180.34 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Net Pin_4" "MQ131 out"
 			(at 396.24 180.34 0)
 			(hide yes)
 			(show_name no)
@@ -20388,6 +20751,17 @@
 				)
 			)
 		)
+		(property "Role" "post heavy"
+			(at 391.16 68.58 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "dc7227f4-4031-5780-807e-6ff8f62c22bd")
 		)
@@ -20668,6 +21042,28 @@
 			)
 		)
 		(property "Description" "12V 4-pin fan: 1 GND, 2 +12V, 3 TACH, 4 PWM"
+			(at 261.62 76.2 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Role" "heavy"
+			(at 261.62 76.2 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Net Pin_4" "Front fan PWM"
 			(at 261.62 76.2 0)
 			(hide yes)
 			(show_name no)

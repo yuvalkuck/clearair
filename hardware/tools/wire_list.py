@@ -15,6 +15,29 @@ CFG_PATH = sys.argv[3] if len(sys.argv) > 3 else os.path.join(os.path.dirname(os
 CFG = dict(net_names={}, mcu=None, female=None, posts=[], sensors=[], high_current_prefixes=[], transistor_pins={},
            headers=[], header_footprints=['PinHeader'], link_max_mm=300, awg_thick='AWG24', awg_thin='AWG30')
 if os.path.exists(CFG_PATH): CFG.update(json.load(open(CFG_PATH)))
+
+# Part data lives in the schematic next to the board: field "Role" (words: mcu, female, header, post, sensor, heavy),
+# fields "Net <pin>" (readable net name), and the pin names of the transistor symbols.
+SCH = os.path.splitext(PCB)[0] + '.kicad_sch'
+SCH_NETS = {}                      # (ref, pin) -> readable net name
+if os.path.exists(SCH):
+    st = open(SCH).read()
+    libpins = {}                   # lib_id -> {pad: pin name}
+    for lid in set(re.findall(r'\n\t\t\(lib_id "([^"]+)"', st)):
+        i = st.index(f'(symbol "{lid}"'); j = st.find('\n\t\t(symbol "', i + 10); j = j if j > 0 else st.index('\n\t)', i)
+        libpins[lid] = {n: nm for nm, n in re.findall(r'\(pin \w+ \w+.*?\(name "([^"]*)".*?\(number "([^"]*)"', st[i:j], re.S)}
+    for blk in st.split('\n\t(symbol\n')[1:]:
+        props = dict(re.findall(r'\(property "([^"]+)" "([^"]*)"', blk))
+        ref, lid = props.get('Reference'), re.search(r'\(lib_id "([^"]+)"', blk)[1]
+        words = props.get('Role', '').split()
+        for w, key in (('mcu', 'mcu'), ('female', 'female'), ('header', 'headers'), ('post', 'posts'), ('sensor', 'sensors')):
+            if w in words:
+                if key == 'mcu': CFG['mcu'] = ref
+                else: CFG[key] = list(CFG[key] or []) + [ref]
+        if 'heavy' in words: CFG['heavy'] = CFG.get('heavy', []) + [ref]
+        if lid in libpins and ref[0] == 'Q': CFG['transistor_pins'].setdefault(props['Value'], {}).update(libpins[lid])
+        for k, v in props.items():
+            if k.startswith('Net '): SCH_NETS[(ref, k[4:])] = v
 KIND = {'R': 'resistor', 'J': 'header', 'Q': 'transistor', 'A': 'MCU board', 'SW': 'push button',
         'BZ': 'buzzer', 'PS': 'power input', 'M': 'fan header', 'U': 'module'}
 t = open(PCB).read()
@@ -68,10 +91,11 @@ def lab(p):
     return f"{p['ref']}.{p['num']}" + (f"@{back(p)[0]},{back(p)[1]}" if len(same) > 1 else '')
 def where(p): return f"B{p['bd']['i']+1}({back(p)[0]},{back(p)[1]})"
 
-NETNAME = CFG['net_names']        # readable names for unnamed nets
+NETNAME = dict(CFG['net_names'])  # readable names for unnamed nets
+for (r_, pin_), nm_ in SCH_NETS.items(): NETNAME[f'Net-({r_}-{pin_})'] = nm_   # KiCad names an unnamed net after one of its pins
 LINK_MAX_MM = CFG['link_max_mm']  # longest wire between two boards
 SENSORS = CFG['sensors']          # refs with heaters or fans: thick wire on their power and ground
-HEAVY = CFG['high_current_prefixes']   # ref prefixes that carry fan, buzzer or supply current
+HEAVY = CFG['high_current_prefixes'] + sorted({prefix(r) for r in CFG.get('heavy', [])})   # ref prefixes that carry fan, buzzer or supply current (field Role = heavy)
 THICK, THIN = CFG['awg_thick'], CFG['awg_thin']
 def wire_kind(net, a, b, link=False):
     """(kind, AWG) of the wire between pads a and b of one net. Only AWG24 and AWG30 are stocked."""
