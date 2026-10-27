@@ -16,7 +16,7 @@ Checks, each independent of the numbers in wire_list.py:
   1. every through-hole pad is inside exactly one board, on its 2.54 mm grid
   2. no two pads share a hole
   3. the back-side holes in the check list (section 3) match the pad positions,
-     with the solder side mirrored left-right and a portrait board turned 90 deg clockwise
+     named column letter + row, A18 at the top right of the component side, a portrait board turned 90 deg clockwise
   4. the top-view holes (section 1) match the check list
   5. the board nets equal the schematic nets
   6. the wire table joins every net and never joins two nets
@@ -26,6 +26,22 @@ Exit code 0 when all checks pass, 1 when any fails.
 import argparse, collections, math, os, re, shlex, subprocess, sys, tempfile
 
 GRID = 2.54
+
+
+def cname(c):
+    """Column letter: 1 = A ... 24 = X, 27 = AA."""
+    s = ''
+    while c:
+        c, m = divmod(c - 1, 26)
+        s = chr(65 + m) + s
+    return s
+
+
+def cnum(s):
+    n = 0
+    for ch in s:
+        n = n * 26 + ord(ch) - 64
+    return n
 
 
 def load_board(path):
@@ -96,7 +112,6 @@ def main():
 
     rects, pads, nets = load_board(args.board)
     dims = [(round((r[2] - r[0]) / GRID) + 1, round((r[3] - r[1]) / GRID) + 1) for r in rects]
-    ncols = [max(d) if d[1] > d[0] else d[0] for d in dims]       # columns as shown: a portrait board is turned
     print('boards (columns x rows in the PCB):', dims)
     if not rects:
         bad('no Edge.Cuts rectangle: nothing to check')
@@ -130,12 +145,13 @@ def main():
             c, r = round((x - l) / GRID) + 1, round((y - tp) / GRID) + 1
             if H > W:
                 c, r = H + 1 - r, c                       # portrait board shown turned 90 deg clockwise
-            expected[ref][(num, b + 1, ncols[b] + 1 - c, r)] += 1    # solder side: mirrored left-right
+            nc, nr = (H, W) if H > W else (W, H)
+            expected[ref][(num, b + 1, nc + 1 - c, nr + 1 - r)] += 1   # A18 is top right of the component side; same name from both sides
     listed = {}
     sec3 = md[md.index('## 3.'):]
     for ref, line in re.findall(r'^\*\*(\w+)\*\*[^:]*: (.*)$', sec3, re.M):
-        listed[ref] = collections.Counter((n, int(b), int(c), int(r)) for n, b, c, r in
-                                          re.findall(r'(?:^|; )(\S+) (?:\S* )?B(\d)\((\d+),(\d+)\)', line))
+        listed[ref] = collections.Counter((n, int(b), cnum(c), int(r)) for n, b, c, r in
+                                          re.findall(r'(?:^|; )(\S+) (?:\S* )?B(\d):([A-Z]+)(\d+)', line))
         if listed[ref] != expected[ref]:
             bad('check-list holes differ from the board:', ref, sorted(set(listed[ref]) ^ set(expected[ref])))
     if set(listed) != set(placed):
@@ -143,10 +159,10 @@ def main():
     print('3.   check list matches the pad positions')
 
     # 4: top view (section 1) against the back holes
-    back = collections.defaultdict(set)
+    holes_of = collections.defaultdict(set)
     for ref, c in expected.items():
         for num, b, col, row in c:
-            back[(ref, b)].add((ncols[b - 1] + 1 - col, row))
+            holes_of[(ref, b)].add((col, row))
     cur = None
     for line in md[md.index('## 1.'):md.index('## 2.')].splitlines():
         m = re.match(r'### Board (\d)', line)
@@ -155,10 +171,10 @@ def main():
         m = re.match(r'\| (\w+) \| .*? \| (.*) \|$', line)
         if not m or m[1] == 'Part' or cur is None:
             continue
-        pts = {(int(a), int(b)) for a, b in re.findall(r'\((\d+),(\d+)\)', m[2])}
-        if not pts <= back[(m[1], cur)]:
-            bad('top-view hole not on the part:', m[1], sorted(pts - back[(m[1], cur)]))
-        if ' to ' not in m[2] and ',' in m[2] and pts != back[(m[1], cur)]:
+        pts = {(cnum(a), int(b)) for a, b in re.findall(r'(?<![\w#.:])([A-Z]{1,2})(\d+)(?![\w.])', re.sub(r'=\S+', '', m[2]))}
+        if not pts <= holes_of[(m[1], cur)]:
+            bad('top-view hole not on the part:', m[1], sorted(pts - holes_of[(m[1], cur)]))
+        if ' to ' not in m[2] and ',' in m[2] and pts != holes_of[(m[1], cur)]:
             bad('top-view holes differ from the part:', m[1])
     print('4.   top view matches the check list')
 
@@ -181,7 +197,7 @@ def main():
         while parent[x] != x:
             parent[x] = parent[parent[x]]; x = parent[x]
         return x
-    rows = re.findall(r'^\| W\d+ \|[^\n]*', md, re.M)
+    rows = re.findall(r'^\| #\d+ \|[^\n]*', md, re.M)
     for row in rows:
         c = [x.strip() for x in row.strip('|').split('|')]
         parent[find(re.sub(r'@.*', '', c[4]))] = find(re.sub(r'@.*', '', c[5]))

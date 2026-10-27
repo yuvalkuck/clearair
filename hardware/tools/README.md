@@ -840,7 +840,7 @@ board lies landscape.
 
 1. **Parts (top side).** One table per board: part, type (for example
    `1x06 male header`, `resistor 4k7`, `transistor 2N7000`) and the holes to
-   place it at, as `(column,row)`. Male headers are for everything that
+   place it at, as column letter + row number (`E7`). Male headers are for everything that
    connects from off the board with a wire or plug; the MCU module (`A1`)
    plugs into female sockets.
 2. **Wires (back side).** One row per wire: number, board, net, from pin and hole,
@@ -849,9 +849,14 @@ board lies landscape.
    net has one, else a connector pin. One wire per net joins the two boards.
 3. **Check list per part.** Every pin with the wire numbers that touch it.
 
-Holes are `(column,row)`, row 1 at the top. **Top** holes (column 1 at the
-left) are for placing parts. **Back** holes are for the wires: the board
-turned over left to right, so back column = 25 - top column.
+A hole is its column letter plus its row number, like `E7`. Columns are
+letters along the long side (A to X for 24 columns), rows are numbers along
+the short side. Looking at the component side with the long side
+horizontal, the corner A + last row is at the top right: column A is at the
+right and row 1 at the bottom. A hole has the same name from both sides:
+from the solder side the board is turned over left to right, so A is then
+at the left. Wires are numbered `#01`, `#02`, ... so they cannot be
+mistaken for holes like `W15`.
 
 ## Part data in the schematic
 
