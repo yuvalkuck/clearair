@@ -1,0 +1,210 @@
+#!/usr/bin/env python3
+"""Check a perfboard wiring file against the KiCad board and schematic it came from.
+
+    python3 verify_perfboard.py BOARD.kicad_pcb [WIRING.md] [--sch FILE] [--kicad-cli CMD] [--mcu REF]
+
+BOARD.kicad_pcb  the board with one Edge.Cuts rectangle per perfboard
+WIRING.md        written by wire_list.py (default: perfboard_wiring.md next to the board)
+--sch FILE       schematic to compare the nets with (default: the .kicad_sch next to the board)
+--kicad-cli CMD  command that runs kicad-cli, for the schematic netlist (default: kicad-cli on PATH).
+                 Without kicad-cli the net comparison is skipped.
+--mcu REF        part whose pins of one net are joined inside the module, so they need no wire
+                 (default: the part with Role = mcu in the schematic, else the part with most pads)
+
+It uses only the Python standard library, so plain python3 is enough. It does not run KiCad's Python.
+Checks, each independent of the numbers in wire_list.py:
+  1. every through-hole pad is inside exactly one board, on its 2.54 mm grid
+  2. no two pads share a hole
+  3. the back-side holes in the check list (section 3) match the pad positions,
+     with the solder side mirrored left-right and a portrait board turned 90 deg clockwise
+  4. the top-view holes (section 1) match the check list
+  5. the board nets equal the schematic nets
+  6. the wire table joins every net and never joins two nets
+
+Exit code 0 when all checks pass, 1 when any fails.
+"""
+import argparse, collections, math, os, re, shlex, subprocess, sys, tempfile
+
+GRID = 2.54
+
+
+def load_board(path):
+    text = open(path).read()
+    rects = [tuple(map(float, m)) for m in re.findall(
+        r'\(gr_rect\s*\(start ([-\d.]+) ([-\d.]+)\)\s*\(end ([-\d.]+) ([-\d.]+)\)(?:(?!gr_rect).)*?"Edge.Cuts"', text, re.S)]
+    pads = collections.defaultdict(list)       # ref -> [(number, x, y)]
+    nets = collections.defaultdict(set)        # net name -> {"REF.number"}
+    for fp in re.split(r'\n\t\(footprint ', text)[1:]:
+        m = re.search(r'\(at ([-\d.]+) ([-\d.]+)(?: ([-\d.]+))?\)', fp)
+        x0, y0, a = float(m[1]), float(m[2]), math.radians(float(m[3] or 0))
+        ref = re.search(r'"Reference"\s+"([^"]*)"', fp)[1]
+        for blk in re.split(r'\n\t\t\(pad ', fp)[1:]:
+            h = re.match(r'"([^"]*)" thru_hole', blk)
+            if not h:
+                continue
+            at = re.search(r'\(at ([-\d.]+) ([-\d.]+)', blk)
+            px, py = float(at[1]), float(at[2])
+            pads[ref].append((h[1], x0 + px * math.cos(a) + py * math.sin(a), y0 - px * math.sin(a) + py * math.cos(a)))
+            n = re.search(r'\(net "([^"]*)"', blk)
+            if n:
+                nets[n[1]].add(f'{ref}.{h[1]}')
+    return rects, pads, nets
+
+
+def schematic_nets(sch, kicad_cli):
+    """Return the set of frozenset({"REF.pin"}) per net, or None if kicad-cli is missing."""
+    with tempfile.TemporaryDirectory() as d:
+        out = os.path.join(d, 'n.net')
+        try:
+            subprocess.run(shlex.split(kicad_cli) + ['sch', 'export', 'netlist', '--format', 'kicadsexpr', '-o', out, sch],
+                           capture_output=True, check=True)
+        except (OSError, subprocess.CalledProcessError):
+            return None
+        text = open(out).read()
+    nets = set()
+    for blk in re.split(r'\n\t\t\(net\n', text[text.index('\t(nets'):])[1:]:
+        nets.add(frozenset(f'{r}.{p}' for r, p in re.findall(r'\(ref "([^"]+)"\)\s*\(pin "([^"]+)"\)', blk)))
+    return nets
+
+
+def mcu_ref(sch, pads):
+    if os.path.exists(sch):
+        for blk in open(sch).read().split('\n\t(symbol\n')[1:]:
+            props = dict(re.findall(r'\(property "([^"]+)" "([^"]*)"', blk))
+            if 'mcu' in props.get('Role', '').split():
+                return props['Reference']
+    return max(pads, key=lambda r: len(pads[r]))
+
+
+def main():
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument('board')
+    ap.add_argument('wiring', nargs='?')
+    ap.add_argument('--sch')
+    ap.add_argument('--kicad-cli', default='kicad-cli')
+    ap.add_argument('--mcu')
+    args = ap.parse_args()
+    base = os.path.splitext(args.board)[0]
+    wiring = args.wiring or os.path.join(os.path.dirname(os.path.abspath(args.board)), 'perfboard_wiring.md')
+    sch = args.sch or base + '.kicad_sch'
+    md = open(wiring).read()
+
+    errors = []
+    def bad(*what):
+        errors.append(' '.join(map(str, what)))
+        print('  ERROR', *what)
+
+    rects, pads, nets = load_board(args.board)
+    dims = [(round((r[2] - r[0]) / GRID) + 1, round((r[3] - r[1]) / GRID) + 1) for r in rects]
+    ncols = [max(d) if d[1] > d[0] else d[0] for d in dims]       # columns as shown: a portrait board is turned
+    print('boards (columns x rows in the PCB):', dims)
+    if not rects:
+        bad('no Edge.Cuts rectangle: nothing to check')
+        sys.exit(1)
+
+    # 1 + 2: pads inside one board, on the grid, one pad per hole
+    holes = collections.defaultdict(list)
+    placed = collections.defaultdict(list)     # ref -> [(number, board index, x, y)]
+    for ref, ps in pads.items():
+        for num, x, y in ps:
+            inside = [i for i, r in enumerate(rects) if r[0] - .01 <= x <= r[2] + .01 and r[1] - .01 <= y <= r[3] + .01]
+            if len(inside) != 1:
+                bad('pad in', len(inside), 'boards:', f'{ref}.{num}')
+                continue
+            l, tp = rects[inside[0]][:2]
+            if abs((x - l) / GRID - round((x - l) / GRID)) > .01 or abs((y - tp) / GRID - round((y - tp) / GRID)) > .01:
+                bad('pad off the grid:', f'{ref}.{num}')
+            placed[ref].append((num, inside[0], x, y))
+            holes[(inside[0], round(x / .1), round(y / .1))].append(f'{ref}.{num}')
+    for pads_in_hole in holes.values():
+        if len(pads_in_hole) > 1:
+            bad('pads share a hole:', pads_in_hole)
+    print(f'1-2. {sum(map(len, placed.values()))} pads on {len(placed)} parts: in a board, on the grid, one per hole')
+
+    # 3: check list (section 3) against the pad positions
+    expected = collections.defaultdict(collections.Counter)
+    for ref, ps in placed.items():
+        for num, b, x, y in ps:
+            l, tp = rects[b][:2]
+            W, H = dims[b]
+            c, r = round((x - l) / GRID) + 1, round((y - tp) / GRID) + 1
+            if H > W:
+                c, r = H + 1 - r, c                       # portrait board shown turned 90 deg clockwise
+            expected[ref][(num, b + 1, ncols[b] + 1 - c, r)] += 1    # solder side: mirrored left-right
+    listed = {}
+    sec3 = md[md.index('## 3.'):]
+    for ref, line in re.findall(r'^\*\*(\w+)\*\*[^:]*: (.*)$', sec3, re.M):
+        listed[ref] = collections.Counter((n, int(b), int(c), int(r)) for n, b, c, r in
+                                          re.findall(r'(?:^|; )(\S+) (?:\S* )?B(\d)\((\d+),(\d+)\)', line))
+        if listed[ref] != expected[ref]:
+            bad('check-list holes differ from the board:', ref, sorted(set(listed[ref]) ^ set(expected[ref])))
+    if set(listed) != set(placed):
+        bad('parts missing from the check list or the board:', sorted(set(listed) ^ set(placed)))
+    print('3.   check list matches the pad positions')
+
+    # 4: top view (section 1) against the back holes
+    back = collections.defaultdict(set)
+    for ref, c in expected.items():
+        for num, b, col, row in c:
+            back[(ref, b)].add((ncols[b - 1] + 1 - col, row))
+    cur = None
+    for line in md[md.index('## 1.'):md.index('## 2.')].splitlines():
+        m = re.match(r'### Board (\d)', line)
+        if m:
+            cur = int(m[1]); continue
+        m = re.match(r'\| (\w+) \| .*? \| (.*) \|$', line)
+        if not m or m[1] == 'Part' or cur is None:
+            continue
+        pts = {(int(a), int(b)) for a, b in re.findall(r'\((\d+),(\d+)\)', m[2])}
+        if not pts <= back[(m[1], cur)]:
+            bad('top-view hole not on the part:', m[1], sorted(pts - back[(m[1], cur)]))
+        if ' to ' not in m[2] and ',' in m[2] and pts != back[(m[1], cur)]:
+            bad('top-view holes differ from the part:', m[1])
+    print('4.   top view matches the check list')
+
+    # 5: board nets against the schematic
+    pcb_nets = {frozenset(v) for v in nets.values() if len(v) > 1}
+    sch_nets = schematic_nets(sch, args.kicad_cli) if os.path.exists(sch) else None
+    if sch_nets is None:
+        print('5.   skipped: no schematic or no kicad-cli')
+    else:
+        on_board = {f'{r}.{n}' for r, ps in pads.items() for n, *_ in ps}
+        sch_set = {k for k in (frozenset(n for n in net if n in on_board) for net in sch_nets) if len(k) > 1}
+        for k in sch_set ^ pcb_nets:
+            bad('net differs between schematic and board:', sorted(k))
+        print(f'5.   {len(sch_set)} schematic nets, {len(pcb_nets)} board nets')
+
+    # 6: wires join every net and never two nets
+    parent = {}
+    def find(x):
+        parent.setdefault(x, x)
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]; x = parent[x]
+        return x
+    rows = re.findall(r'^\| W\d+ \|[^\n]*', md, re.M)
+    for row in rows:
+        c = [x.strip() for x in row.strip('|').split('|')]
+        parent[find(re.sub(r'@.*', '', c[4]))] = find(re.sub(r'@.*', '', c[5]))
+    mcu = args.mcu or mcu_ref(sch, pads)
+    for net in pcb_nets:
+        own = sorted(n for n in net if n.startswith(mcu + '.'))
+        for n in own[1:]:
+            parent[find(n)] = find(own[0])           # the module joins its own pins of one net
+    for net in pcb_nets:
+        if len({find(n) for n in net}) > 1:
+            bad('net not fully wired:', sorted(net))
+    which = {n: name for name, v in nets.items() for n in v}
+    groups = collections.defaultdict(set)
+    for n in list(parent):
+        groups[find(n)].add(which.get(n))
+    for g in groups.values():
+        if len(g) > 1:
+            bad('wires join different nets:', g)
+    print(f'6.   {len(rows)} wires join every net (MCU {mcu}), no shorts')
+
+    print('PROBLEMS:', len(errors))
+    sys.exit(1 if errors else 0)
+
+
+if __name__ == '__main__':
+    main()

@@ -21,11 +21,11 @@ Board 2: 24 columns x 18 rows (back column = 25 - top column).
 | J5 | 1x04 male header MQ131 | (2,7) to (2,10) |
 | J6 | 1x05 male header MiCS-4514 | (8,7) to (8,11) |
 | J7 | 1x04 male header RTC PCF8563 | (22,7) to (22,10) |
-| Q1 | transistor 2N7000, flat side down | (1,15)=S (2,15)=G (3,15)=D |
-| Q2 | transistor 2N7000, flat side down | (9,15)=S (10,15)=G (11,15)=D |
-| Q3 | transistor 2N2222A, flat side down | (17,15)=E (18,15)=B (19,15)=C |
-| R1 | resistor 4k7 | (6,5), (6,2) |
-| R2 | resistor 4k7 | (8,5), (8,2) |
+| Q1 | transistor 2N7000, flat side right | (2,16)=S (2,15)=G (2,14)=D |
+| Q2 | transistor 2N7000, flat side right | (10,16)=S (10,15)=G (10,14)=D |
+| Q3 | transistor 2N2222A, flat side right | (18,16)=E (18,15)=B (18,14)=C |
+| R1 | resistor 4k7 | (4,5), (4,2) |
+| R2 | resistor 4k7 | (6,5), (6,2) |
 | R3 | resistor 1k8 | (4,10), (4,7) |
 | R4 | resistor 3k3 | (6,10), (6,7) |
 | R5 | resistor 1k8 | (10,10), (10,7) |
@@ -67,8 +67,8 @@ All holes are **back** holes. Star: every pin of a net gets one wire to the net'
 | W03 | B1 | AWG30 | +3V3 | J7.1 | J4.1 | (3,7) | (7,7) |  |
 | W04 | B1 | AWG30 | +3V3 | Q1.2 | J4.1 | (23,15) | (7,7) |  |
 | W05 | B1 | AWG30 | +3V3 | Q2.2 | J4.1 | (15,15) | (7,7) |  |
-| W06 | B1 | AWG30 | +3V3 | R1.1 | J4.1 | (19,5) | (7,7) |  |
-| W07 | B1 | AWG30 | +3V3 | R2.1 | J4.1 | (17,5) | (7,7) |  |
+| W06 | B1 | AWG30 | +3V3 | R1.1 | J4.1 | (21,5) | (7,7) |  |
+| W07 | B1 | AWG30 | +3V3 | R2.1 | J4.1 | (19,5) | (7,7) |  |
 | W08 | B1 | AWG30 | +3V3 | R10.1 | J4.1 | (20,17) | (7,7) |  |
 | W09 | B1 | AWG30 | +3V3 | R12.1 | J4.1 | (12,17) | (7,7) |  |
 | W10 | B1 | AWG24 | +5V | J5.1 | J3.1 | (23,7) | (5,7) |  |
@@ -87,7 +87,7 @@ All holes are **back** holes. Star: every pin of a net gets one wire to the net'
 | W23 | B1 | AWG24 | GND | J6.2 | J4.2 | (17,8) | (7,8) |  |
 | W24 | B1 | AWG24 | GND | J6.5 | J4.2 | (17,11) | (7,8) |  |
 | W25 | B1 | AWG30 | GND | J7.2 | J4.2 | (3,8) | (7,8) |  |
-| W26 | B1 | AWG30 | GND | Q3.1 | J4.2 | (8,15) | (7,8) |  |
+| W26 | B1 | AWG30 | GND | Q3.1 | J4.2 | (7,16) | (7,8) |  |
 | W27 | B1 | AWG30 | GND | R4.2 | J4.2 | (19,7) | (7,8) |  |
 | W28 | B1 | AWG30 | GND | R6.2 | J4.2 | (13,7) | (7,8) |  |
 | W29 | B1 | AWG30 | GND | R8.2 | J4.2 | (9,7) | (7,8) |  |
@@ -103,19 +103,19 @@ All holes are **back** holes. Star: every pin of a net gets one wire to the net'
 | W39 | B1 | AWG30 | MiCS CO | R5.1 | R6.1 | (15,10) | (13,10) |  |
 | W40 | B1 | AWG30 | I2C SCL | J3.3 | J4.3 | (5,9) | (7,9) |  |
 | W41 | B1 | AWG30 | I2C SCL | J7.4 | J4.3 | (3,10) | (7,9) |  |
-| W42 | B1 | AWG30 | I2C SCL | R1.2 | J4.3 | (19,2) | (7,9) |  |
+| W42 | B1 | AWG30 | I2C SCL | R1.2 | J4.3 | (21,2) | (7,9) |  |
 | W43 | B1 | AWG30 | MiCS NO2 | R8.1 | R7.2 | (9,10) | (11,7) |  |
-| W44 | B1 | AWG30 | Display TX | R10.2 | Q1.1 | (20,14) | (24,15) |  |
-| W45 | B1 | AWG30 | Display RX | R12.2 | Q2.1 | (12,14) | (16,15) |  |
+| W44 | B1 | AWG30 | Display TX | R10.2 | Q1.1 | (20,14) | (23,16) |  |
+| W45 | B1 | AWG30 | Display RX | R12.2 | Q2.1 | (12,14) | (15,16) |  |
 | W46 | B1 | AWG30 | I2C SDA | J3.2 | J4.4 | (5,8) | (7,10) |  |
 | W47 | B1 | AWG30 | I2C SDA | J7.3 | J4.4 | (3,9) | (7,10) |  |
-| W48 | B1 | AWG30 | I2C SDA | R2.2 | J4.4 | (17,2) | (7,10) |  |
-| W49 | B1 | AWG30 | Buzzer GND | Q3.3 | BZ1.2 | (6,15) | (2,16) |  |
+| W48 | B1 | AWG30 | I2C SDA | R2.2 | J4.4 | (19,2) | (7,10) |  |
+| W49 | B1 | AWG30 | Buzzer GND | Q3.3 | BZ1.2 | (7,14) | (2,16) |  |
 | W50 | B1 | AWG30 | MQ131 out | R3.1 | J5.4 | (21,10) | (23,10) |  |
 | W51 | B1 | AWG30 | MiCS CO | R5.2 | J6.3 | (15,7) | (17,9) |  |
 | W52 | B1 | AWG30 | MiCS NO2 | R7.1 | J6.4 | (11,10) | (17,10) |  |
-| W53 | B1 | AWG30 | Display TX | R11.2 | Q1.3 | (18,14) | (22,15) |  |
-| W54 | B1 | AWG30 | Display RX | R13.2 | Q2.3 | (10,14) | (14,15) |  |
+| W53 | B1 | AWG30 | Display TX | R11.2 | Q1.3 | (18,14) | (23,14) |  |
+| W54 | B1 | AWG30 | Display RX | R13.2 | Q2.3 | (10,14) | (15,14) |  |
 | W55 | B1 | AWG30 | Buzzer base | R9.2 | Q3.2 | (4,14) | (7,15) |  |
 | W56 | B2 | AWG30 | Reset button | SW1.2 | A1.24 | (9,13) | (21,8) |  |
 | W57 | B2 | AWG30 | Front fan tach | M2.3 | A1.30 | (16,17) | (15,8) |  |
@@ -139,8 +139,8 @@ All holes are **back** holes. Star: every pin of a net gets one wire to the net'
 | W75 | B1 ↔ B2 | AWG30 | MiCS CO | R6.1 | A1.26 | B1(13,10) | B2(19,8) | 300 |
 | W76 | B1 ↔ B2 | AWG30 | I2C SCL | J4.3 | A1.10 | B1(7,9) | B2(15,2) | 300 |
 | W77 | B1 ↔ B2 | AWG30 | MiCS NO2 | R7.2 | A1.32 | B1(11,7) | B2(13,8) | 300 |
-| W78 | B1 ↔ B2 | AWG30 | Display TX | Q1.1 | A1.38 | B1(24,15) | B2(7,8) | 300 |
-| W79 | B1 ↔ B2 | AWG30 | Display RX | Q2.1 | A1.39 | B1(16,15) | B2(6,8) | 300 |
+| W78 | B1 ↔ B2 | AWG30 | Display TX | Q1.1 | A1.38 | B1(23,16) | B2(7,8) | 300 |
+| W79 | B1 ↔ B2 | AWG30 | Display RX | Q2.1 | A1.39 | B1(15,16) | B2(6,8) | 300 |
 | W80 | B1 ↔ B2 | AWG30 | Buzzer drive | R9.1 | A1.17 | B1(4,17) | B2(8,2) | 300 |
 | W81 | B1 ↔ B2 | AWG30 | I2C SDA | J4.4 | A1.3 | B1(7,10) | B2(22,2) | 300 |
 
@@ -168,15 +168,15 @@ Every pin and the wire numbers that touch it. `--` means no wire.
 
 **PS1** AC-DC PSUs 12V 2A + 5V 2A (DC out): 3 Pin_3_3 B2(6,17) W14, W15, W70; 4 Pin_4_4 B2(3,17) W18; 5 Pin_5_5 B2(5,17) W32; 5 Pin_5_5 B2(2,17) W33
 
-**Q1** 2N7000: 1 B1(24,15) W44, W78; 2 B1(23,15) W04; 3 B1(22,15) W53
+**Q1** 2N7000: 1 B1(23,16) W44, W78; 2 B1(23,15) W04; 3 B1(23,14) W53
 
-**Q2** 2N7000: 1 B1(16,15) W45, W79; 2 B1(15,15) W05; 3 B1(14,15) W54
+**Q2** 2N7000: 1 B1(15,16) W45, W79; 2 B1(15,15) W05; 3 B1(15,14) W54
 
-**Q3** 2N2222A: 1 B1(8,15) W26; 2 B1(7,15) W55; 3 B1(6,15) W49
+**Q3** 2N2222A: 1 B1(7,16) W26; 2 B1(7,15) W55; 3 B1(7,14) W49
 
-**R1** 4k7: 1 B1(19,5) W06; 2 B1(19,2) W42
+**R1** 4k7: 1 B1(21,5) W06; 2 B1(21,2) W42
 
-**R2** 4k7: 1 B1(17,5) W07; 2 B1(17,2) W48
+**R2** 4k7: 1 B1(19,5) W07; 2 B1(19,2) W48
 
 **R3** 1k8: 1 B1(21,10) W50; 2 B1(21,7) W38, W74
 

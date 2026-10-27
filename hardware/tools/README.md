@@ -1,6 +1,6 @@
 # KiCad PCB tools
 
-Four scripts for any KiCad 10 board:
+Five scripts for any KiCad 10 board:
 
 - [`place_parts.py`](#place_partspy-group-placement): places footprints in
   groups, keeps the parts you moved by hand.
@@ -12,6 +12,9 @@ Four scripts for any KiCad 10 board:
 - [`wire_list.py`](#wire_listpy-perfboard-build-instructions): writes the
   build instructions for a hand-wired perfboard (where each part goes, which
   pin connects to which pin, with the wire gauge).
+- [`verify_perfboard.py`](#verify_perfboardpy-check-the-perfboard-instructions):
+  checks that build instructions match the board and the schematic, before
+  you solder.
 
 ## The whole sequence (best practice)
 
@@ -72,7 +75,14 @@ to it), it overwrites the script's result on its next save.
    cd hardware/WeAct-G474CE-Long && python3 ../tools/wire_list.py
    ```
 
-   See [wire_list.py](#wire_listpy-perfboard-build-instructions).
+   See [wire_list.py](#wire_listpy-perfboard-build-instructions). Then check
+   the result before you solder (needs only `python3`):
+
+   ```sh
+   python3 ../tools/verify_perfboard.py clearair.kicad_pcb --kicad-cli "$A kicad-cli"
+   ```
+
+   See [verify_perfboard.py](#verify_perfboardpy-check-the-perfboard-instructions).
 
    **Build the printable carrier (needs a 3D printer).** This routes a copy of the board (your
    board file is not changed) and cuts the grooves:
@@ -876,3 +886,37 @@ between boards. Everything else is thin (`awg_thin`). The rules are in
 If a pin is more than 0.35 mm off the 2.54 mm grid, the file starts with a
 warning listing the parts, and the holes are rounded. Fix the layout (see
 [Grid and header pins](#grid-and-header-pins)) and run it again.
+
+# verify_perfboard.py: check the perfboard instructions
+
+Run it after `wire_list.py` and before you solder. It reads the board, the
+schematic and `perfboard_wiring.md`, and recomputes every hole from the pad
+positions itself, so it catches mistakes in the instructions. It uses only
+the Python standard library.
+
+```sh
+cd hardware/WeAct-G474CE-Long
+python3 ../tools/verify_perfboard.py clearair.kicad_pcb --kicad-cli "$HOME/bin/kicad-10.0.5-x86_64.AppImage kicad-cli"
+```
+
+| Check | What fails it |
+| :--- | :--- |
+| 1. Pads | a pad outside every board or inside two, or off the 2.54 mm grid |
+| 2. Holes | two pads in one hole |
+| 3. Check list | a hole in section 3 that differs from the pad position (solder side mirrored left-right, portrait board turned 90° clockwise) |
+| 4. Top view | a hole in section 1 that is not on that part |
+| 5. Nets | a net that differs between the board and the schematic (skipped without a schematic or `kicad-cli`) |
+| 6. Wires | a net the wires do not join, or wires that join two nets |
+
+| Argument | Meaning | Default |
+| :--- | :--- | :--- |
+| `BOARD` | the `.kicad_pcb`, with one `Edge.Cuts` rectangle per perfboard | required |
+| `WIRING` | file written by `wire_list.py` | `perfboard_wiring.md` next to the board |
+| `--sch FILE` | schematic for check 5 | the `.kicad_sch` next to the board |
+| `--kicad-cli CMD` | command that runs `kicad-cli` | `kicad-cli` on `PATH` |
+| `--mcu REF` | part whose pins of one net are joined inside the module and need no wire | part with `Role` = `mcu`, else the part with most pads |
+
+Exit code 0 when all checks pass, 1 when any fails. It does not know your
+real parts: measure the module, the headers and the board before you
+solder.
+
