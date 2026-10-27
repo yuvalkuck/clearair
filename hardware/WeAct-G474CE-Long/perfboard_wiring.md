@@ -15,15 +15,15 @@ Board 2: 24 columns x 18 rows (back column = 25 - top column).
 
 | Part | Type | Holes (column,row) |
 |---|---|---|
-| BZ1 | 1x02 male header 12V buzzer | (22,15)=+ (22,16)=- |
+| BZ1 | 1x02 male header 12V buzzer | (23,15)=+ (23,16)=- |
 | J3 | 1x05 male header SPS30 | (20,7) to (20,11) |
 | J4 | 1x06 male header BME680 | (18,7) to (18,12) |
 | J5 | 1x04 male header MQ131 | (2,7) to (2,10) |
 | J6 | 1x05 male header MiCS-4514 | (8,7) to (8,11) |
 | J7 | 1x04 male header RTC PCF8563 | (22,7) to (22,10) |
-| Q1 | transistor 2N7000, flat side down | (2,15)=S (3,15)=G (4,15)=D |
+| Q1 | transistor 2N7000, flat side down | (1,15)=S (2,15)=G (3,15)=D |
 | Q2 | transistor 2N7000, flat side down | (9,15)=S (10,15)=G (11,15)=D |
-| Q3 | transistor 2N2222A, flat side down | (16,15)=E (17,15)=B (18,15)=C |
+| Q3 | transistor 2N2222A, flat side down | (17,15)=E (18,15)=B (19,15)=C |
 | R1 | resistor 4k7 | (6,5), (6,2) |
 | R2 | resistor 4k7 | (8,5), (8,2) |
 | R3 | resistor 1k8 | (4,10), (4,7) |
@@ -32,11 +32,11 @@ Board 2: 24 columns x 18 rows (back column = 25 - top column).
 | R6 | resistor 3k3 | (12,10), (12,7) |
 | R7 | resistor 1k8 | (14,10), (14,7) |
 | R8 | resistor 3k3 | (16,10), (16,7) |
-| R9 | resistor 1k | (20,17), (20,14) |
+| R9 | resistor 1k | (21,17), (21,14) |
 | R10 | resistor 10k | (5,17), (5,14) |
 | R11 | resistor 10k | (7,17), (7,14) |
 | R12 | resistor 10k | (13,17), (13,14) |
-| R13 | resistor 10k | (14,17), (14,14) |
+| R13 | resistor 10k | (15,17), (15,14) |
 
 ### Board 2
 
@@ -65,7 +65,7 @@ All holes are **back** holes. Star: every pin of a net gets one wire to the net'
 | W01 | B1 | AWG30 | +3V3 | J4.5 | J4.1 | (7,11) | (7,7) |  |
 | W02 | B1 | AWG30 | +3V3 | J4.6 | J4.1 | (7,12) | (7,7) |  |
 | W03 | B1 | AWG30 | +3V3 | J7.1 | J4.1 | (3,7) | (7,7) |  |
-| W04 | B1 | AWG30 | +3V3 | Q1.2 | J4.1 | (22,15) | (7,7) |  |
+| W04 | B1 | AWG30 | +3V3 | Q1.2 | J4.1 | (23,15) | (7,7) |  |
 | W05 | B1 | AWG30 | +3V3 | Q2.2 | J4.1 | (15,15) | (7,7) |  |
 | W06 | B1 | AWG30 | +3V3 | R1.1 | J4.1 | (19,5) | (7,7) |  |
 | W07 | B1 | AWG30 | +3V3 | R2.1 | J4.1 | (17,5) | (7,7) |  |
@@ -74,7 +74,7 @@ All holes are **back** holes. Star: every pin of a net gets one wire to the net'
 | W10 | B1 | AWG24 | +5V | J5.1 | J3.1 | (23,7) | (5,7) |  |
 | W11 | B1 | AWG24 | +5V | J6.1 | J3.1 | (17,7) | (5,7) |  |
 | W12 | B1 | AWG24 | +5V | R11.1 | J3.1 | (18,17) | (5,7) |  |
-| W13 | B1 | AWG24 | +5V | R13.1 | J3.1 | (11,17) | (5,7) |  |
+| W13 | B1 | AWG24 | +5V | R13.1 | J3.1 | (10,17) | (5,7) |  |
 | W14 | B2 | AWG24 | +12V | M2.2 | PS1.3 | (17,17) | (6,17) |  |
 | W15 | B2 | AWG24 | +12V | M3.2 | PS1.3 | (22,17) | (6,17) |  |
 | W16 | B2 | AWG30 | +3V3 | R21.1 | A1.37 | (15,13) | (8,8) |  |
@@ -87,7 +87,7 @@ All holes are **back** holes. Star: every pin of a net gets one wire to the net'
 | W23 | B1 | AWG24 | GND | J6.2 | J4.2 | (17,8) | (7,8) |  |
 | W24 | B1 | AWG24 | GND | J6.5 | J4.2 | (17,11) | (7,8) |  |
 | W25 | B1 | AWG30 | GND | J7.2 | J4.2 | (3,8) | (7,8) |  |
-| W26 | B1 | AWG30 | GND | Q3.1 | J4.2 | (9,15) | (7,8) |  |
+| W26 | B1 | AWG30 | GND | Q3.1 | J4.2 | (8,15) | (7,8) |  |
 | W27 | B1 | AWG30 | GND | R4.2 | J4.2 | (19,7) | (7,8) |  |
 | W28 | B1 | AWG30 | GND | R6.2 | J4.2 | (13,7) | (7,8) |  |
 | W29 | B1 | AWG30 | GND | R8.2 | J4.2 | (9,7) | (7,8) |  |
@@ -105,18 +105,18 @@ All holes are **back** holes. Star: every pin of a net gets one wire to the net'
 | W41 | B1 | AWG30 | I2C SCL | J7.4 | J4.3 | (3,10) | (7,9) |  |
 | W42 | B1 | AWG30 | I2C SCL | R1.2 | J4.3 | (19,2) | (7,9) |  |
 | W43 | B1 | AWG30 | MiCS NO2 | R8.1 | R7.2 | (9,10) | (11,7) |  |
-| W44 | B1 | AWG30 | Display TX | R10.2 | Q1.1 | (20,14) | (23,15) |  |
+| W44 | B1 | AWG30 | Display TX | R10.2 | Q1.1 | (20,14) | (24,15) |  |
 | W45 | B1 | AWG30 | Display RX | R12.2 | Q2.1 | (12,14) | (16,15) |  |
 | W46 | B1 | AWG30 | I2C SDA | J3.2 | J4.4 | (5,8) | (7,10) |  |
 | W47 | B1 | AWG30 | I2C SDA | J7.3 | J4.4 | (3,9) | (7,10) |  |
 | W48 | B1 | AWG30 | I2C SDA | R2.2 | J4.4 | (17,2) | (7,10) |  |
-| W49 | B1 | AWG30 | Buzzer GND | Q3.3 | BZ1.2 | (7,15) | (3,16) |  |
+| W49 | B1 | AWG30 | Buzzer GND | Q3.3 | BZ1.2 | (6,15) | (2,16) |  |
 | W50 | B1 | AWG30 | MQ131 out | R3.1 | J5.4 | (21,10) | (23,10) |  |
 | W51 | B1 | AWG30 | MiCS CO | R5.2 | J6.3 | (15,7) | (17,9) |  |
 | W52 | B1 | AWG30 | MiCS NO2 | R7.1 | J6.4 | (11,10) | (17,10) |  |
-| W53 | B1 | AWG30 | Display TX | R11.2 | Q1.3 | (18,14) | (21,15) |  |
-| W54 | B1 | AWG30 | Display RX | R13.2 | Q2.3 | (11,14) | (14,15) |  |
-| W55 | B1 | AWG30 | Buzzer base | R9.2 | Q3.2 | (5,14) | (8,15) |  |
+| W53 | B1 | AWG30 | Display TX | R11.2 | Q1.3 | (18,14) | (22,15) |  |
+| W54 | B1 | AWG30 | Display RX | R13.2 | Q2.3 | (10,14) | (14,15) |  |
+| W55 | B1 | AWG30 | Buzzer base | R9.2 | Q3.2 | (4,14) | (7,15) |  |
 | W56 | B2 | AWG30 | Reset button | SW1.2 | A1.24 | (9,13) | (21,8) |  |
 | W57 | B2 | AWG30 | Front fan tach | M2.3 | A1.30 | (16,17) | (15,8) |  |
 | W58 | B2 | AWG30 | Front fan tach | R21.2 | A1.30 | (18,13) | (15,8) |  |
@@ -131,7 +131,7 @@ All holes are **back** holes. Star: every pin of a net gets one wire to the net'
 | W67 | B2 | AWG30 | Front fan PWM | R19.1 | M2.4 | (15,15) | (15,17) |  |
 | W68 | B2 | AWG30 | Rear fan PWM | R20.1 | M3.4 | (20,15) | (20,17) |  |
 | W69 | B2 | AWG30 | ZC out | U5.3 | R14.2 | (10,17) | (15,10) |  |
-| W70 | B1 ↔ B2 | AWG24 | +12V | BZ1.1 | PS1.3 | B1(3,15) | B2(6,17) | 300 |
+| W70 | B1 ↔ B2 | AWG24 | +12V | BZ1.1 | PS1.3 | B1(2,15) | B2(6,17) | 300 |
 | W71 | B1 ↔ B2 | AWG30 | +3V3 | J4.1 | A1.37 | B1(7,7) | B2(8,8) | 300 |
 | W72 | B1 ↔ B2 | AWG24 | +5V | J3.1 | A1.43 | B1(5,7) | B2(3,2) | 300 |
 | W73 | B1 ↔ B2 | AWG24 | GND | J4.2 | A1.1 | B1(7,8) | B2(24,2) | 300 |
@@ -139,9 +139,9 @@ All holes are **back** holes. Star: every pin of a net gets one wire to the net'
 | W75 | B1 ↔ B2 | AWG30 | MiCS CO | R6.1 | A1.26 | B1(13,10) | B2(19,8) | 300 |
 | W76 | B1 ↔ B2 | AWG30 | I2C SCL | J4.3 | A1.10 | B1(7,9) | B2(15,2) | 300 |
 | W77 | B1 ↔ B2 | AWG30 | MiCS NO2 | R7.2 | A1.32 | B1(11,7) | B2(13,8) | 300 |
-| W78 | B1 ↔ B2 | AWG30 | Display TX | Q1.1 | A1.38 | B1(23,15) | B2(7,8) | 300 |
+| W78 | B1 ↔ B2 | AWG30 | Display TX | Q1.1 | A1.38 | B1(24,15) | B2(7,8) | 300 |
 | W79 | B1 ↔ B2 | AWG30 | Display RX | Q2.1 | A1.39 | B1(16,15) | B2(6,8) | 300 |
-| W80 | B1 ↔ B2 | AWG30 | Buzzer drive | R9.1 | A1.17 | B1(5,17) | B2(8,2) | 300 |
+| W80 | B1 ↔ B2 | AWG30 | Buzzer drive | R9.1 | A1.17 | B1(4,17) | B2(8,2) | 300 |
 | W81 | B1 ↔ B2 | AWG30 | I2C SDA | J4.4 | A1.3 | B1(7,10) | B2(22,2) | 300 |
 
 ## 3. Check list per part
@@ -150,15 +150,15 @@ Every pin and the wire numbers that touch it. `--` means no wire.
 
 **A1** WeAct STM32G474CEU6 Core Board (Long): 1 GND_1 B2(24,2) W30, W31, W32, W33, W34, W35, W36, W37, W73; 2 PB9_2 B2(23,2) --; 3 PB7_3 B2(22,2) W81; 4 PB6_4 B2(21,2) --; 5 PB5_5 B2(20,2) --; 6 PB4_6 B2(19,2) --; 7 PB3_7 B2(18,2) W65, W66; 8 PC11_8 B2(17,2) --; 9 PC10_9 B2(16,2) --; 10 PA15_10 B2(15,2) W76; 11 PA12_11 B2(14,2) --; 12 PA11_12 B2(13,2) --; 13 PA10_13 B2(12,2) --; 14 PA9_14 B2(11,2) W60; 15 PA8_15 B2(10,2) W59; 16 PC6_16 B2(9,2) --; 17 PB15_17 B2(8,2) W80; 18 PB14_18 B2(7,2) W64; 19 PB13_19 B2(6,2) --; 20 PB12_20 B2(5,2) --; 21 GND_21 B2(24,8) --; 22 VB_22 B2(23,8) --; 23 PC13_23 B2(22,8) --; 24 NRST_24 B2(21,8) W56; 25 PA0_25 B2(20,8) W74; 26 PA1_26 B2(19,8) W75; 27 PA2_27 B2(18,8) --; 28 PA3_28 B2(17,8) --; 29 PA4_29 B2(16,8) --; 30 PA5_30 B2(15,8) W57, W58; 31 PA6_31 B2(14,8) --; 32 PA7_32 B2(13,8) W77; 33 PC4_33 B2(12,8) --; 34 PB0_34 B2(11,8) W61, W62; 35 PB1_35 B2(10,8) W63; 36 PB2_36 B2(9,8) --; 37 VREF+_37 B2(8,8) W16, W17, W71; 38 PB10_38 B2(7,8) W78; 39 PB11_39 B2(6,8) W79; 40 NC_40 B2(5,8) --; 41 GND_41 B2(1,2) --; 42 GND_42 B2(2,2) --; 43 VDD5V_43 B2(3,2) W18, W19, W72; 44 VDD5V_44 B2(4,2) --; 45 GND_45 B2(1,8) --; 46 GND_46 B2(2,8) --; 47 3V3_47 B2(3,8) --; 48 3V3_48 B2(4,8) --
 
-**BZ1** 12V buzzer: 1 +_1 B1(3,15) W70; 2 -_2 B1(3,16) W49
+**BZ1** 12V buzzer: 1 +_1 B1(2,15) W70; 2 -_2 B1(2,16) W49
 
-**J3** SPS30 wire header (1 VDD, 2 SDA, 3 SCL, 4 SEL, 5 GND): 1 Pin_1_1 B1(5,7) W10, W11, W12, W13, W72; 2 Pin_2_2 B1(5,8) W46; 3 Pin_3_3 B1(5,9) W40; 4 Pin_4_4 B1(5,10) W20; 5 Pin_5_5 B1(5,11) W21
+**J3** SPS30: 1 Pin_1_1 B1(5,7) W10, W11, W12, W13, W72; 2 Pin_2_2 B1(5,8) W46; 3 Pin_3_3 B1(5,9) W40; 4 Pin_4_4 B1(5,10) W20; 5 Pin_5_5 B1(5,11) W21
 
-**J4** BME680 wire header (1 VCC, 2 GND, 3 SCL, 4 SDA, 5 SDO, 6 CS): 1 Pin_1_1 B1(7,7) W01, W02, W03, W04, W05, W06, W07, W08, W09, W71; 2 Pin_2_2 B1(7,8) W20, W21, W22, W23, W24, W25, W26, W27, W28, W29, W73; 3 Pin_3_3 B1(7,9) W40, W41, W42, W76; 4 Pin_4_4 B1(7,10) W46, W47, W48, W81; 5 Pin_5_5 B1(7,11) W01; 6 Pin_6_6 B1(7,12) W02
+**J4** BME680: 1 Pin_1_1 B1(7,7) W01, W02, W03, W04, W05, W06, W07, W08, W09, W71; 2 Pin_2_2 B1(7,8) W20, W21, W22, W23, W24, W25, W26, W27, W28, W29, W73; 3 Pin_3_3 B1(7,9) W40, W41, W42, W76; 4 Pin_4_4 B1(7,10) W46, W47, W48, W81; 5 Pin_5_5 B1(7,11) W01; 6 Pin_6_6 B1(7,12) W02
 
-**J5** MQ131 wire header (1 VCC, 2 GND, 3 DO nc, 4 AO): 1 Pin_1_1 B1(23,7) W10; 2 Pin_2_2 B1(23,8) W22; 3 Pin_3_3 B1(23,9) --; 4 Pin_4_4 B1(23,10) W50
+**J5** MQ131: 1 Pin_1_1 B1(23,7) W10; 2 Pin_2_2 B1(23,8) W22; 3 Pin_3_3 B1(23,9) --; 4 Pin_4_4 B1(23,10) W50
 
-**J6** MiCS-4514 wire header (1 VCC, 2 GND, 3 RED, 4 NOX, 5 PRE): 1 Pin_1_1 B1(17,7) W11; 2 Pin_2_2 B1(17,8) W23; 3 Pin_3_3 B1(17,9) W51; 4 Pin_4_4 B1(17,10) W52; 5 Pin_5_5 B1(17,11) W24
+**J6** MiCS-4514: 1 Pin_1_1 B1(17,7) W11; 2 Pin_2_2 B1(17,8) W23; 3 Pin_3_3 B1(17,9) W51; 4 Pin_4_4 B1(17,10) W52; 5 Pin_5_5 B1(17,11) W24
 
 **J7** RTC PCF8563: 1 Pin_1_1 B1(3,7) W03; 2 Pin_2_2 B1(3,8) W25; 3 Pin_3_3 B1(3,9) W47; 4 Pin_4_4 B1(3,10) W41
 
@@ -168,11 +168,11 @@ Every pin and the wire numbers that touch it. `--` means no wire.
 
 **PS1** AC-DC PSUs 12V 2A + 5V 2A (DC out): 3 Pin_3_3 B2(6,17) W14, W15, W70; 4 Pin_4_4 B2(3,17) W18; 5 Pin_5_5 B2(5,17) W32; 5 Pin_5_5 B2(2,17) W33
 
-**Q1** 2N7000: 1 B1(23,15) W44, W78; 2 B1(22,15) W04; 3 B1(21,15) W53
+**Q1** 2N7000: 1 B1(24,15) W44, W78; 2 B1(23,15) W04; 3 B1(22,15) W53
 
 **Q2** 2N7000: 1 B1(16,15) W45, W79; 2 B1(15,15) W05; 3 B1(14,15) W54
 
-**Q3** 2N2222A: 1 B1(9,15) W26; 2 B1(8,15) W55; 3 B1(7,15) W49
+**Q3** 2N2222A: 1 B1(8,15) W26; 2 B1(7,15) W55; 3 B1(6,15) W49
 
 **R1** 4k7: 1 B1(19,5) W06; 2 B1(19,2) W42
 
@@ -190,7 +190,7 @@ Every pin and the wire numbers that touch it. `--` means no wire.
 
 **R8** 3k3: 1 B1(9,10) W43; 2 B1(9,7) W29
 
-**R9** 1k: 1 B1(5,17) W80; 2 B1(5,14) W55
+**R9** 1k: 1 B1(4,17) W80; 2 B1(4,14) W55
 
 **R10** 10k: 1 B1(20,17) W08; 2 B1(20,14) W44
 
@@ -198,7 +198,7 @@ Every pin and the wire numbers that touch it. `--` means no wire.
 
 **R12** 10k: 1 B1(12,17) W09; 2 B1(12,14) W45
 
-**R13** 10k: 1 B1(11,17) W13; 2 B1(11,14) W54
+**R13** 10k: 1 B1(10,17) W13; 2 B1(10,14) W54
 
 **R14** 1k8: 1 B2(18,10) W61; 2 B2(15,10) W69
 

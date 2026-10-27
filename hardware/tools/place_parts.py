@@ -529,6 +529,8 @@ def main():
     mode.add_argument("--list", action="store_true", help="list footprints with size, position, pads and nets, then exit")
     mode.add_argument("--check", action="store_true",
                       help="report courtyard overlaps and numbered pins off --grid, then exit")
+    mode.add_argument("--snap", action="store_true",
+                      help="move every part so its pin 1 is on the --grid, keeping the board as it is (no layout file)")
     mode.add_argument("--only", action="append", metavar="GROUP", help="place only this group (repeatable)")
 
     out = parser.add_argument_group("output")
@@ -568,8 +570,8 @@ def main():
 
     if args.layout and args.auto:
         parser.error("--layout and --auto cannot be used together")
-    if not args.layout and not args.auto and args.outline is None:
-        parser.error("give --auto, --layout and/or --outline (or --list)")
+    if not args.layout and not args.auto and not args.snap and args.outline is None:
+        parser.error("give --auto, --layout, --snap and/or --outline (or --list)")
     if not args.dry_run and not args.output and not args.in_place and not args.capture and not (args.save_layout and not args.outline):
         parser.error("give -o OUTPUT, --in-place, or --dry-run")
     if args.output and args.in_place:
@@ -591,6 +593,13 @@ def main():
         # A reference must name one part; parts that share one stay where they are.
         print(f"warning: reference {ref} is used by more than one footprint; those parts are not moved")
         del footprints[ref]
+    if args.snap:
+        for ref, fp in sorted(footprints.items()):
+            before = fp.GetPosition()
+            snap_to_grid(fp, args.grid)
+            after = fp.GetPosition()
+            if after != before:
+                print(f"snap: {ref} moved {to_mm(after.x - before.x):+.2f}, {to_mm(after.y - before.y):+.2f} mm")
     layout = None
     if args.layout:
         with open(args.layout) as fh:
