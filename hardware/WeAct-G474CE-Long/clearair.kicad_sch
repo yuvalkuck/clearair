@@ -10519,7 +10519,7 @@
 					)
 				)
 			)
-			(property "Description" "Push button switch, generic, two pins"
+			(property "Description" "Tactile push button 6 x 3.5 x 2.5 mm, 2 legs"
 				(at 0 0 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -16485,7 +16485,7 @@
 				)
 			)
 		)
-		(property "Value" "MiCS-4514 wire header (1 VCC, 2 GND, 3 RED, 4 NOX, 5 PRE)"
+		(property "Value" "MiCS-4514"
 			(at 299.72 315.15 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -16517,7 +16517,7 @@
 				)
 			)
 		)
-		(property "Description" "Wire header to the off-board sensor module"
+		(property "Description" "Wire header to the off-board sensor module Pins: 1 VCC, 2 GND, 3 RED, 4 NOX, 5 PRE"
 			(at 299.72 304.8 0)
 			(hide yes)
 			(show_name no)
@@ -17081,7 +17081,7 @@
 				)
 			)
 		)
-		(property "Value" "BME680 wire header (1 VCC, 2 GND, 3 SCL, 4 SDA, 5 SDO, 6 CS)"
+		(property "Value" "BME680"
 			(at 215.9 226.25 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -17113,7 +17113,7 @@
 				)
 			)
 		)
-		(property "Description" "Wire header to the off-board sensor module"
+		(property "Description" "Wire header to the off-board sensor module Pins: 1 VCC, 2 GND, 3 SCL, 4 SDA, 5 SDO, 6 CS"
 			(at 215.9 214.63 0)
 			(hide yes)
 			(show_name no)
@@ -17260,7 +17260,7 @@
 				)
 			)
 		)
-		(property "Value" "COLD_BOOT"
+		(property "Value" "COLD_BOOT white"
 			(at 256.54 240.284 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -17270,7 +17270,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Button_Switch_THT:SW_PUSH_6mm"
+		(property "Footprint" "libraries:SW_Tactile_3x6_2pin"
 			(at 256.54 233.68 0)
 			(hide yes)
 			(show_name no)
@@ -17292,7 +17292,7 @@
 				)
 			)
 		)
-		(property "Description" "Push button switch, generic, two pins"
+		(property "Description" "Tactile push button 6 x 3.5 x 2.5 mm, 2 legs"
 			(at 256.54 238.76 0)
 			(hide yes)
 			(show_name no)
@@ -17653,7 +17653,7 @@
 				)
 			)
 		)
-		(property "Value" "RESET"
+		(property "Value" "RESET red"
 			(at 340.36 174.244 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -17663,7 +17663,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Button_Switch_THT:SW_PUSH_6mm"
+		(property "Footprint" "libraries:SW_Tactile_3x6_2pin"
 			(at 340.36 167.64 0)
 			(hide yes)
 			(show_name no)
@@ -17685,7 +17685,7 @@
 				)
 			)
 		)
-		(property "Description" "Push button switch, generic, two pins"
+		(property "Description" "Tactile push button 6 x 3.5 x 2.5 mm, 2 legs"
 			(at 340.36 172.72 0)
 			(hide yes)
 			(show_name no)
@@ -19359,7 +19359,7 @@
 				)
 			)
 		)
-		(property "Value" "SPS30 wire header (1 VDD, 2 SDA, 3 SCL, 4 SEL, 5 GND)"
+		(property "Value" "SPS30"
 			(at 215.9 190.69 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -19391,7 +19391,7 @@
 				)
 			)
 		)
-		(property "Description" "Wire header to the off-board sensor module"
+		(property "Description" "Wire header to the off-board sensor module Pins: 1 VDD, 2 SDA, 3 SCL, 4 SEL, 5 GND"
 			(at 215.9 180.34 0)
 			(hide yes)
 			(show_name no)
@@ -19864,7 +19864,7 @@
 				)
 			)
 		)
-		(property "Value" "MQ131 wire header (1 VCC, 2 GND, 3 DO nc, 4 AO)"
+		(property "Value" "MQ131"
 			(at 396.24 189.42 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -19896,7 +19896,7 @@
 				)
 			)
 		)
-		(property "Description" "Wire header to the off-board sensor module"
+		(property "Description" "Wire header to the off-board sensor module Pins: 1 VCC, 2 GND, 3 DO nc, 4 AO"
 			(at 396.24 180.34 0)
 			(hide yes)
 			(show_name no)

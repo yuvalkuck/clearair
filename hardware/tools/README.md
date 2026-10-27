@@ -859,21 +859,34 @@ Holes are `(column,row)`, row 1 at the top. **Top** holes (column 1 at the
 left) are for placing parts. **Back** holes are for the wires: the board
 turned over left to right, so back column = 25 - top column.
 
+## Config file (`wire_list.json`)
+
+The script works on any board with no config: it takes the part with the most
+pins as the MCU module and uses AWG24 / AWG30 for the wires. Put a
+`wire_list.json` next to the board file (or give its path as the third
+argument) to describe your own parts. Every key is optional:
+
+| Key | Meaning | Default |
+| :--- | :--- | :--- |
+| `mcu` | Ref of the MCU module: hub of every net, no wire between its own pins | part with the most pins |
+| `female` | Refs that are female sockets (the module plugs in) | the `mcu` |
+| `headers` | Refs that are male headers but have no `PinHeader` footprint | none |
+| `posts` | Refs that are loose male pins (supply posts) | none |
+| `sensors` | Refs whose power and ground wires get the thick wire | none |
+| `high_current_prefixes` | Ref prefixes (`PS`, `M`, `BZ`) whose power and ground wires get the thick wire | none |
+| `transistor_pins` | Pin letters per transistor value, for example `{"2N7000": {"1": "S", "2": "G", "3": "D"}}` | pin numbers |
+| `net_names` | Readable names for unnamed nets, for example `{"Net-(A1-PA0)": "MQ131 out"}` | KiCad names |
+| `link_max_mm` | Longest wire between two boards | 300 |
+| `awg_thick`, `awg_thin` | The two wire gauges you have | `AWG24`, `AWG30` |
+
+The ClearAir config is `hardware/WeAct-G474CE-Long/wire_list.json`.
+
 ## Wire gauge
 
-Only AWG24 and AWG30 are used. Set in `wire_kind()`, from the current budget
-in the main README:
-
-| Wires | AWG |
-| :--- | :--- |
-| `+12V`, ground at the supply, fans and buzzer, ground link between boards | 24 |
-| `+5V` supply to the MCU module | 24 |
-| `+5V` and ground to the SPS30, MQ131 and MiCS headers (`J3`, `J5`, `J6`) | 24 |
-| everything else: `+3V3`, signals, pull-ups, other grounds | 30 |
-
-Change `SENSORS`, `HEAVY` or the numbers in `wire_kind()` if your budget or
-your wire stock changes. Pins of the MCU module that sit on the same net need
-no wire between them.
+Power and ground wires are thick (`awg_thick`) when they feed the supply, the
+MCU module, a high-current part or a `sensors` part, and for the ground wire
+between boards. Everything else is thin (`awg_thin`). The rules are in
+`wire_kind()` in the script.
 
 ## Check the layout first
 
