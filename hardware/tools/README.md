@@ -845,8 +845,10 @@ board lies landscape.
 ## What is in the file
 
 1. **Parts (top side).** One table per board: part, type (for example
-   `1x06 socket`, `resistor 4k7`, `transistor 2N7000`) and the holes to
-   place it at, as `(column,row)`.
+   `1x06 male header`, `resistor 4k7`, `transistor 2N7000`) and the holes to
+   place it at, as `(column,row)`. Male headers are for everything that
+   connects from off the board with a wire or plug; the MCU module (`A1`)
+   plugs into female sockets.
 2. **Wires (back side).** One row per wire: number, board, net, from pin and hole,
    to pin and hole, **AWG** and max length. Every pin of a net gets one
    wire to the net's hub pin (a star). The hub is the MCU module pin if the

@@ -8,16 +8,18 @@ Hole = `(column,row)`, row 1 at the top. **Top** = component side, column 1 at t
 
 ## 1. Place the parts (top side)
 
+**Male** = pin header: everything that connects with a wire or a plug from off the board (sensors, fans, buzzer, RTC, dimmer, supply). **Female** = socket: the WeAct G4 board, which plugs into the perfboard.
+
 ### Board 1
 
 | Part | Type | Holes (column,row) |
 |---|---|---|
-| BZ1 | 1x02 socket | (22,15)=+ (22,17)=- |
-| J3 | 1x05 socket | (20,7) to (20,11) |
-| J4 | 1x06 socket | (18,7) to (18,12) |
-| J5 | 1x04 socket | (2,7) to (2,10) |
-| J6 | 1x05 socket | (8,7) to (8,11) |
-| J7 | 1x04 socket | (22,7) to (22,10) |
+| BZ1 | 1x02 male header | (22,15)=+ (22,17)=- |
+| J3 | 1x05 male header | (20,7) to (20,11) |
+| J4 | 1x06 male header | (18,7) to (18,12) |
+| J5 | 1x04 male header | (2,7) to (2,10) |
+| J6 | 1x05 male header | (8,7) to (8,11) |
+| J7 | 1x04 male header | (22,7) to (22,10) |
 | Q1 | transistor 2N7000, flat side down | (2,15)=S (3,15)=G (4,15)=D |
 | Q2 | transistor 2N7000, flat side down | (9,15)=S (10,15)=G (11,15)=D |
 | Q3 | transistor 2N2222A, flat side down | (15,15)=E (16,15)=B (17,15)=C |
@@ -39,10 +41,10 @@ Hole = `(column,row)`, row 1 at the top. **Top** = component side, column 1 at t
 
 | Part | Type | Holes (column,row) |
 |---|---|---|
-| A1 | 2 x 1x24 socket | (1,2) to (24,2); (1,8) to (24,8) |
-| M2 | 1x04 socket | (7,17) to (10,17) |
-| M3 | 1x04 socket | (2,17) to (5,17) |
-| PS1 | 4 solder posts | (19,17); (22,17); (20,17); (23,17) |
+| A1 | 2 x 1x24 female socket | (1,2) to (24,2); (1,8) to (24,8) |
+| M2 | 1x04 male header | (7,17) to (10,17) |
+| M3 | 1x04 male header | (2,17) to (5,17) |
+| PS1 | 4 male pins | (19,17); (22,17); (20,17); (23,17) |
 | R14 | resistor 1k8 | (7,10), (10,10) |
 | R15 | resistor 3k3 | (2,10), (5,10) |
 | R19 | resistor 1k | (10,15), (7,15) |
@@ -51,7 +53,7 @@ Hole = `(column,row)`, row 1 at the top. **Top** = component side, column 1 at t
 | R22 | resistor 10k | (5,13), (2,13) |
 | SW1 | push button RESET | (16,10), (16,12), (14,10), (14,12) |
 | SW2 | push button COLD_BOOT | (23,10), (23,12), (21,10), (21,12) |
-| U5 | 1x04 socket | (13,17) to (16,17) |
+| U5 | 1x04 male header | (13,17) to (16,17) |
 
 ## 2. Solder the wires (back side, pin to pin)
 
