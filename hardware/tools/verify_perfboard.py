@@ -200,7 +200,7 @@ def main():
     rows = re.findall(r'^\| #\d+ \|[^\n]*', md, re.M)
     for row in rows:
         c = [x.strip() for x in row.strip('|').split('|')]
-        parent[find(re.sub(r'@.*', '', c[4]))] = find(re.sub(r'@.*', '', c[5]))
+        parent[find(re.sub(r'@.*', '', c[5]))] = find(re.sub(r'@.*', '', c[6]))
     mcu = args.mcu or mcu_ref(sch, pads)
     for net in pcb_nets:
         own = sorted(n for n in net if n.startswith(mcu + '.'))

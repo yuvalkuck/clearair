@@ -201,7 +201,7 @@ for bd in boards:
         else: where_ = ', '.join(h(p) for p in ps)
         typ = short_type(r, pt, len(ps)) + (f", flat side {flat_side(pt, bd)}" if prefix(r) == 'Q' else '')
         o.append(f"| {r} | {typ} | {where_} |\n")
-o.append("\n## 2. Solder the wires (back side, pin to pin)\n\nSolder on the **back** side. Star: every pin of a net gets one wire to the net's **hub** pin (the `To pin` column). Max length is only set where it matters: wires between the boards (`B1 ↔ B2`) are limited to 300 mm. The other wires have no limit. Do `power` first, then `ground`, then `signal`.\n")
+o.append("\n## 2. Solder the wires (back side, pin to pin)\n\nSolder on the **back** side. Star: every pin of a net gets one wire to the net's **hub** pin (the `To pin` column). Max length is only set where it matters: wires between the boards (`B1 ↔ B2`) are limited to 300 mm. The other wires have no limit. Three tables: board 1, board 2, and the wires between the boards. Each is sorted by thick wire (AWG24) before thin, then by net: voltage rails first (highest voltage on top), then ground, then signals. Work from the top down.\n")
 order = {'power': 0, 'ground': 1, 'signal': 2}
 wires = []
 for n in sorted(nets):
@@ -219,13 +219,26 @@ for n in sorted(nets):
     if (n, 0) in hub and (n, 1) in hub:
         a, b = hub[(n, 0)], hub[(n, 1)]; kd, aw = wire_kind(n, a, b, link=True)
         wires.append((order.get(kd.split()[0].rstrip(','), 2), n, 2, a, b, kd, aw, str(LINK_MAX_MM)))
-wires.sort(key=lambda w: (w[2] == 2, w[0], w[2], w[1], part_sort(w[3]['ref'])))
+def net_rank(n):
+    """Voltage rails first (highest voltage on top), then ground, then signals by name."""
+    name = NETNAME.get(n, n)
+    v = re.fullmatch(r'\+?(\d+)V(\d*)', name)
+    if v: return (0, -float(f"{v[1]}.{v[2] or 0}"), '')
+    if re.fullmatch(r'(GND|AGND|DGND|VSS)', name, re.I): return (1, 0, '')
+    return (2, 0, name)
+wires.sort(key=lambda w: (w[2] == 2, w[2], w[6] != THICK, net_rank(w[1]), part_sort(w[3]['ref'])))   # board (links last), thick wire first, then net
+def wire_table(title, bi_want):
+    link = bi_want == 2
+    o.append(f"\n### {title}\n\n| # | AWG | Net | From hole | To hole | From pin | To pin |" + (" Max length (mm) |" if link else "") + "\n|---|---|---|---|---|---|---|" + ("---|" if link else "") + "\n")
+    for i, (_, n, bi, a, b, kd, aw, ln) in enumerate(wires, 1):
+        if bi != bi_want: continue
+        fh, th = (where(a), where(b)) if link else (hn(a), hn(b))
+        o.append(f"| #{i:02d} | {aw} | {NETNAME.get(n, n)} | {fh} | {th} | {lab(a)} | {lab(b)} |" + (f" {ln} |" if link else "") + "\n")
 wid = {}
-o.append("\n| # | Board | AWG | Net | From pin | To pin | From hole | To hole | Max length (mm) |\n|---|---|---|---|---|---|---|---|---|\n")
 for i, (_, n, bi, a, b, kd, aw, ln) in enumerate(wires, 1):
     wid.setdefault(id(a), []).append(i); wid.setdefault(id(b), []).append(i)
-    board = 'B1 ↔ B2' if bi == 2 else f"B{bi+1}"
-    o.append(f"| #{i:02d} | {board} | {aw} | {NETNAME.get(n, n)} | {lab(a)} | {lab(b)} | {hn(a) if bi!=2 else where(a)} | {hn(b) if bi!=2 else where(b)} | {ln} |\n")
+for bd in boards: wire_table(f"Wires on board {bd['i']+1}", bd['i'])
+wire_table("Wires between the boards (B1 ↔ B2)", 2)
 o.append("\n## 3. Check list per part\n\nEvery pin and the wire numbers that touch it. `--` means no wire.\n")
 for r in sorted(parts, key=part_sort):
     ps = [p for p in parts[r]['pads'] if p['bd']]
