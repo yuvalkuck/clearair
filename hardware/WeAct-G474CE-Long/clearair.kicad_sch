@@ -2454,6 +2454,164 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "Connector_Generic:Conn_01x02"
+			(pin_names
+				(offset 1.016)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "J"
+				(at 0 2.54 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "Conn_01x02"
+				(at 0 -5.08 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "connector"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_fp_filters" "Connector*:*_1x??_*"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "Conn_01x02_1_1"
+				(rectangle
+					(start -1.27 1.27)
+					(end 1.27 -3.81)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+				(rectangle
+					(start -1.27 0.127)
+					(end 0 -0.127)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start -1.27 -2.413)
+					(end 0 -2.667)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(pin passive line
+					(at -5.08 0 0)
+					(length 3.81)
+					(name "Pin_1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -5.08 -2.54 0)
+					(length 3.81)
+					(name "Pin_2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "Connector_Generic:Conn_01x04"
 			(pin_names
 				(offset 1.016)
@@ -18479,17 +18637,6 @@
 				)
 			)
 		)
-		(property "Optional" "RTC, planned"
-			(at 238.76 195.58 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
 		(pin "1"
 			(uuid "80d85dd1-816d-476e-accc-25a0ac4468d1")
 		)
@@ -18510,6 +18657,137 @@
 				)
 			)
 		)
+	)
+	(symbol
+		(lib_id "Connector_Generic:Conn_01x02")
+		(at 452.12 223.52 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "77aea686-35bf-4473-b49b-78a1f505fbfd")
+		(property "Reference" "J8"
+			(at 456.2 221.0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "Arduino"
+			(at 456.2 226.0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical"
+			(at 452.12 223.52 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 452.12 223.52 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Header to the future Arduino display (Nano A2): 1 Display TX (to Arduino RX, 5V side of Q1), 2 Display RX (from Arduino TX, 5V side of Q2). The Arduino gets 5V and GND directly from the power supply."
+			(at 452.12 223.52 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "dcb92619-e028-48ee-a9a9-4932b9ae1d98")
+		)
+		(pin "2"
+			(uuid "d87d69b2-1986-4ffa-a345-58e375c7bf5f")
+		)
+		(instances
+			(project "clearair"
+				(path "/953560a5-36cf-5251-8f8d-509802d70a69"
+					(reference "J8")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 447.04 223.52) (xy 444.5 223.52)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "0b6646e7-2a71-492b-b424-1ea1da929d5a")
+	)
+	(wire
+		(pts
+			(xy 444.5 223.52) (xy 444.5 218.44)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "4d74eead-0460-41bd-abf3-a6a728d6359c")
+	)
+	(junction
+		(at 444.5 218.44)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "daff5c07-cc25-4d07-ae02-8ab5539501ab")
+	)
+	(wire
+		(pts
+			(xy 447.04 226.06) (xy 441.96 226.06)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e916c875-5f7a-4c9f-a447-3c48d1caa99c")
+	)
+	(wire
+		(pts
+			(xy 441.96 226.06) (xy 441.96 238.76)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e5fd6959-1ab7-49e8-a83c-ffbb812525ab")
+	)
+	(junction
+		(at 441.96 238.76)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "1db8098d-fcfd-4be9-a5ca-f6dbb5843faa")
 	)
 	(symbol
 		(lib_id "power:PWR_FLAG")
