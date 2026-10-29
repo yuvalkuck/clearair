@@ -848,7 +848,9 @@ board lies landscape.
    already connected, so no hole gets more than 3 wire ends (`max_wires_per_hole`).
    Voltage and ground nets with at least `bus_min_pads` (4) connections, counting
    the board link, get a bus strip instead: a free row of holes (between the
-   socket rows of the MCU module if the board has one, else next to the parts
+   socket rows of the MCU module, but not in the rows right next to the sockets,
+   if the board has one; short strips share a row with one hole of gap, and strips
+   in neighbouring rows do not run over the same columns; else next to the parts
    with `Role` = `bus`) joined by one bare wire, with one short wire from each
    pin to its own hole of the strip.
    The pins of the MCU module are joined inside it, so each is a start point.

@@ -153,7 +153,7 @@ BUS = {}                       # (net, board) -> dict(ref, row, pads, assign {id
 busnr = 0
 if CFG['bus_min_pads']:
     used = {bd['i']: {p['hole'] for p in allpads if p['bd'] is bd and 'hole' in p} for bd in boards}
-    busrows = {bd['i']: set() for bd in boards}
+    spans = {bd['i']: [] for bd in boards}          # (row, first column, last column) of the strips
     for n in sorted(nets, key=net_rank):
         if net_rank(n)[0] > 1: continue
         for bd in boards:
@@ -168,19 +168,25 @@ if CFG['bus_min_pads']:
             near = [p for p in allpads if p['bd'] is bd and p['ref'] in CFG['bus_near']] or loc      # strips go next to the parts with Role = bus
             mean_r = sum(p['hole'][1] for p in near) / len(near); mean_c = sum(p['hole'][0] for p in near) / len(near)
             between = [r for r in range(1, nrow + 1) if len(mrows) > 1 and mrows[0] < r < mrows[-1]]
+            between = [r for r in between if r not in (mrows[0] + 1, mrows[-1] - 1)] or between      # not right next to the socket rows of the module
+            between = sorted(between, key=lambda r: abs(r - mean_r))
+            between = between[0::2] + between[1::2]                                                  # every other row first: bare wires 2 rows apart
             rest = sorted((r for r in range(1, nrow + 1) if r not in between), key=lambda r: abs(r - mean_r))
+            def fits(r, w):                                                                          # no strip in the next row over the same columns
+                return not any(abs(r2 - r) == 1 and not (w[-1] < a - 1 or w[0] > b + 1) for r2, a, b in spans[bd['i']])
             pick = None
-            for r in sorted(between, key=lambda r: abs(r - mean_r)) + rest:
-                if r in busrows[bd['i']]: continue
-                free = [c for c in range(1, ncol + 1) if (c, r) not in used[bd['i']]]
-                runs_, cur_ = [], []
-                for c in free:
-                    if cur_ and c != cur_[-1] + 1: runs_.append(cur_); cur_ = []
-                    cur_.append(c)
-                if cur_: runs_.append(cur_)
-                wins = [run[s:s + k] for run in runs_ for s in range(len(run) - k + 1)]
-                if wins:
-                    pick = (r, min(wins, key=lambda w: abs(sum(w) / k - mean_c))); break
+            for strict in (True, False):
+                for r in between + rest:
+                    free = [c for c in range(1, ncol + 1) if (c, r) not in used[bd['i']]]
+                    runs_, cur_ = [], []
+                    for c in free:
+                        if cur_ and c != cur_[-1] + 1: runs_.append(cur_); cur_ = []
+                        cur_.append(c)
+                    if cur_: runs_.append(cur_)
+                    wins = [run[s:s + k] for run in runs_ for s in range(len(run) - k + 1) if not strict or fits(r, run[s:s + k])]
+                    if wins:
+                        pick = (r, min(wins, key=lambda w: abs(sum(w) / k - mean_c))); break
+                if pick: break
             if not pick: continue
             r, cols = pick
             busnr += 1; ref = f"BUS{busnr}"
@@ -191,7 +197,7 @@ if CFG['bus_min_pads']:
                 items.append(min(mcu, key=lambda p: abs(p['hole'][0] - mid))); items.sort(key=lambda p: p['hole'])
             assign = {id(p): bpads[i] for i, p in enumerate(items)}
             link = bpads[-1] if linked else None
-            busrows[bd['i']].add(r); used[bd['i']] |= {(c, r) for c in cols}
+            spans[bd['i']].append((r, cols[0], cols[-1])); used[bd['i']] |= {(c, r) for c in range(cols[0] - 1, cols[-1] + 2)}      # one hole of gap either side
             BUS[(n, bd['i'])] = dict(ref=ref, row=r, pads=bpads, assign=assign, link=link)
             parts[ref] = dict(ref=ref, val=f"{NETNAME.get(n, n)} bus", pads=bpads, rot=0, fp='bus', bus=n)
 
