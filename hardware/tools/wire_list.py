@@ -268,7 +268,7 @@ for bd in boards:
         else: where_ = ', '.join(h(p) for p in ps)
         typ = short_type(r, pt, len(ps)) + (f", flat side {flat_side(pt, bd)}" if prefix(r) == 'Q' else '')
         o.append(f"| {r} | {typ} | {where_} |\n")
-o.append("\n## 2. Solder the wires (back side, pin to pin)\n\nSolder on the **back** side. **Bus strips** (`BUSn` in the check list): do them first. Lay one bare wire along the holes of a strip on the back and solder it in every hole; each pin of that voltage or ground then gets its own short wire to one hole of the strip (the `BUSn.k` pin). Nets without a strip: every pin of a net is wired to the nearest pin of the same net that is already connected, so no hole gets more than 3 wire ends (the MCU module's own pins of a net count as one connection). A wire carries the current of everything behind it, so it is thick if any wire behind it is thick. Max length is only set where it matters: wires between the boards (`B1 ↔ B2`) are limited to 300 mm. The other wires have no limit. Three tables: board 1, board 2, and the wires between the boards. Each is sorted by thick wire (AWG24) before thin, then by net: voltage rails first (highest voltage on top), then ground, then signals. Work from the top down.\n")
+o.append("\n## 2. Solder the wires (back side, pin to pin)\n\nSolder on the **back** side. **Bus strips** (`BUSn`, the first rows of each table): do them first. Lay one bare wire from the first to the last hole of a strip (on either side of the board) and solder it in every hole; each pin of that voltage or ground then gets its own short wire to one hole of the strip (the `BUSn.k` pin). Nets without a strip: every pin of a net is wired to the nearest pin of the same net that is already connected, so no hole gets more than 3 wire ends (the MCU module's own pins of a net count as one connection). A wire carries the current of everything behind it, so it is thick if any wire behind it is thick. Max length is only set where it matters: wires between the boards (`B1 ↔ B2`) are limited to 300 mm. The other wires have no limit. Three tables: board 1, board 2, and the wires between the boards. Each is sorted by thick wire (AWG24) before thin, then by net: voltage rails first (highest voltage on top), then ground, then signals. Work from the top down.\n")
 order = {'power': 0, 'ground': 1, 'signal': 2}
 wires = []
 CAP = CFG['max_wires_per_hole']    # wire ends in one hole: more do not fit on the solder pad
@@ -317,6 +317,10 @@ wires.sort(key=lambda w: (w[2] == 2, w[2], w[6] != THICK, net_rank(w[1]), part_s
 def wire_table(title, bi_want):
     link = bi_want == 2
     o.append(f"\n### {title}\n\n| # | AWG | Net | From hole | To hole | From pin | To pin |" + (" Max length (mm) |" if link else "") + "\n|---|---|---|---|---|---|---|" + ("---|" if link else "") + "\n")
+    if not link:                                                # the bare wire of each bus strip first: it is a part of the board
+        for ref in sorted((r for r in parts if parts[r].get('bus') and parts[r]['pads'][0]['bd']['i'] == bi_want), key=lambda r: (net_rank(parts[r]['bus']), part_sort(r))):
+            ps_ = parts[ref]['pads']
+            o.append(f"| {ref} | {THICK} bare | {NETNAME.get(parts[ref]['bus'], parts[ref]['bus'])} | {hn(ps_[0])} | {hn(ps_[-1])} | {ref}.{ps_[0]['num']} | {ref}.{ps_[-1]['num']} |\n")
     for i, (_, n, bi, a, b, kd, aw, ln) in enumerate(wires, 1):
         if bi != bi_want: continue
         fh, th = (where(a), where(b)) if link else (hn(a), hn(b))

@@ -217,6 +217,7 @@ def main():
             parent[x] = parent[parent[x]]; x = parent[x]
         return x
     rows = []                                    # (board of the table or None, cells)
+    seen_bus_rows = set()
     section = None
     for line in md[md.index('## 2.'):md.index('## 3.')].splitlines():
         m = re.match(r'### Wires on board (\d)', line)
@@ -226,6 +227,17 @@ def main():
             section = None; continue
         if re.match(r'\| #\d+ \|', line):
             rows.append((section, [x.strip() for x in line.strip('|').split('|')]))
+    for line in md[md.index('## 2.'):md.index('## 3.')].splitlines():     # the bare wire of a strip runs from its first to its last hole
+        m = re.match(r'\| (BUS\d+) \| [^|]*\| [^|]*\| ([A-Z]+\d+) \| ([A-Z]+\d+) \|', line)
+        if m:
+            seen_bus_rows.add(m[1])
+            bb = buses.get(m[1])
+            ends = sorted((cnum(re.match(r'[A-Z]+', h)[0]), int(re.search(r'\d+$', h)[0])) for h in (m[2], m[3]))
+            if not bb or ends != [(bb[2], bb[1]), (bb[3], bb[1])]:
+                bad('bus wire row does not match its strip:', m[1])
+    for ref in buses:
+        if ref not in seen_bus_rows:
+            bad('bus strip has no bare-wire row in the wire tables:', ref)
     for section, c in rows:
         parent[find(re.sub(r'@.*', '', c[5]))] = find(re.sub(r'@.*', '', c[6]))
         for hole, pin in ((c[3], c[5]), (c[4], c[6])):

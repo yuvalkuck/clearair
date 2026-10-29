@@ -65,12 +65,15 @@ Board 2: 24 columns (A to X) x 18 rows.
 
 ## 2. Solder the wires (back side, pin to pin)
 
-Solder on the **back** side. **Bus strips** (`BUSn` in the check list): do them first. Lay one bare wire along the holes of a strip on the back and solder it in every hole; each pin of that voltage or ground then gets its own short wire to one hole of the strip (the `BUSn.k` pin). Nets without a strip: every pin of a net is wired to the nearest pin of the same net that is already connected, so no hole gets more than 3 wire ends (the MCU module's own pins of a net count as one connection). A wire carries the current of everything behind it, so it is thick if any wire behind it is thick. Max length is only set where it matters: wires between the boards (`B1 ↔ B2`) are limited to 300 mm. The other wires have no limit. Three tables: board 1, board 2, and the wires between the boards. Each is sorted by thick wire (AWG24) before thin, then by net: voltage rails first (highest voltage on top), then ground, then signals. Work from the top down.
+Solder on the **back** side. **Bus strips** (`BUSn`, the first rows of each table): do them first. Lay one bare wire from the first to the last hole of a strip (on either side of the board) and solder it in every hole; each pin of that voltage or ground then gets its own short wire to one hole of the strip (the `BUSn.k` pin). Nets without a strip: every pin of a net is wired to the nearest pin of the same net that is already connected, so no hole gets more than 3 wire ends (the MCU module's own pins of a net count as one connection). A wire carries the current of everything behind it, so it is thick if any wire behind it is thick. Max length is only set where it matters: wires between the boards (`B1 ↔ B2`) are limited to 300 mm. The other wires have no limit. Three tables: board 1, board 2, and the wires between the boards. Each is sorted by thick wire (AWG24) before thin, then by net: voltage rails first (highest voltage on top), then ground, then signals. Work from the top down.
 
 ### Wires on board 1
 
 | # | AWG | Net | From hole | To hole | From pin | To pin |
 |---|---|---|---|---|---|---|
+| BUS2 | AWG24 bare | +5V | W16 | R16 | BUS2.1 | BUS2.6 |
+| BUS4 | AWG24 bare | +3V3 | P16 | F16 | BUS4.1 | BUS4.11 |
+| BUS6 | AWG24 bare | GND | R14 | G14 | BUS6.1 | BUS6.12 |
 | #01 | AWG24 | +5V | E12 | S16 | J3.1 | BUS2.5 |
 | #02 | AWG24 | +5V | W12 | W16 | J5.1 | BUS2.1 |
 | #03 | AWG24 | +5V | Q12 | U16 | J6.1 | BUS2.3 |
@@ -120,6 +123,10 @@ Solder on the **back** side. **Bus strips** (`BUSn` in the check list): do them 
 
 | # | AWG | Net | From hole | To hole | From pin | To pin |
 |---|---|---|---|---|---|---|
+| BUS1 | AWG24 bare | +12V | Q13 | N13 | BUS1.1 | BUS1.4 |
+| BUS3 | AWG24 bare | +5V | G13 | D13 | BUS3.1 | BUS3.4 |
+| BUS5 | AWG24 bare | +3V3 | L13 | I13 | BUS5.1 | BUS5.4 |
+| BUS7 | AWG24 bare | GND | O15 | F15 | BUS7.1 | BUS7.10 |
 | #45 | AWG24 | +12V | Q2 | P13 | M2.2 | BUS1.2 |
 | #46 | AWG24 | +12V | V2 | Q13 | M3.2 | BUS1.1 |
 | #47 | AWG24 | +12V | F2 | O13 | PS1.3 | BUS1.3 |
