@@ -25,8 +25,8 @@ Board 2: 24 columns (A to X) x 18 rows.
 | J6 | 1x05 male header MiCS-4514 | Q12 to Q8 |
 | J7 | 1x04 male header RTC PCF8563 | C12 to C9 |
 | J8 | 1x02 male header Arduino | U7 to T7 |
-| Q1 | transistor 2N7000, flat side right (optional: Arduino display link, future) | W3=S W4=G W5=D |
-| Q2 | transistor 2N7000, flat side right (optional: Arduino display link, future) | O3=S O4=G O5=D |
+| Q1 | transistor 2N7000, flat side right | W3=S W4=G W5=D |
+| Q2 | transistor 2N7000, flat side right | O3=S O4=G O5=D |
 | Q3 | transistor 2N2222A, flat side right | G3=E G4=B G5=C |
 | R1 | resistor 4k7 | U14, U17 |
 | R2 | resistor 4k7 | S14, S17 |
@@ -37,10 +37,10 @@ Board 2: 24 columns (A to X) x 18 rows.
 | R7 | resistor 1k8 | K9, K12 |
 | R8 | resistor 3k3 | I9, I12 |
 | R9 | resistor 1k | D2, D5 |
-| R10 | resistor 10k (optional: Arduino display link, future) | T2, T5 |
-| R11 | resistor 10k (optional: Arduino display link, future) | R2, R5 |
-| R12 | resistor 10k (optional: Arduino display link, future) | L2, L5 |
-| R13 | resistor 10k (optional: Arduino display link, future) | J2, J5 |
+| R10 | resistor 10k | T2, T5 |
+| R11 | resistor 10k | R2, R5 |
+| R12 | resistor 10k | L2, L5 |
+| R13 | resistor 10k | J2, J5 |
 
 ### Board 2
 
@@ -66,120 +66,120 @@ Board 2: 24 columns (A to X) x 18 rows.
 
 ## 2. Solder the wires (back side, pin to pin)
 
-Solder on the **back** side. **Bus strips** (`BUSn`, the first rows of each table): do them first. Lay one bare wire from the first to the last hole of a strip (on either side of the board) and solder it in every hole; each pin of that voltage or ground then gets its own short wire to one hole of the strip (the `BUSn.k` pin). Nets without a strip: every pin of a net is wired to the nearest pin of the same net that is already connected, so no hole gets more than 3 wire ends (the MCU module's own pins of a net count as one connection). A wire carries the current of everything behind it, so it is thick if any wire behind it is thick. Max length is only set where it matters: wires between the boards (`B1 ↔ B2`) are limited to 300 mm. The other wires have no limit. Three tables: board 1, board 2, and the wires between the boards. Each is sorted by thick wire (AWG24) before thin, then by net: voltage rails first (highest voltage on top), then ground, then signals. Work from the top down.
+Solder on the **back** side. **Bus strips** (`BUSn`, the first of the thick AWG24 rows in each table): lay them before the wires that go to them. Lay one bare wire from the first to the last hole of a strip (on either side of the board) and solder it in every hole; each pin of that voltage or ground then gets its own short wire to one hole of the strip (the `BUSn.k` pin). Nets without a strip: every pin of a net is wired to the nearest pin of the same net that is already connected, so no hole gets more than 3 wire ends (the MCU module's own pins of a net count as one connection). A wire carries the current of everything behind it, so it is thick if any wire behind it is thick. Max length is only set where it matters: wires between the boards (`B1 ↔ B2`) are limited to 300 mm. The other wires have no limit. Three tables: board 1, board 2, and the wires between the boards. Each is sorted by AWG number from high to low (thin AWG30 before thick AWG24), then by net: voltage rails first (highest voltage on top), then ground, then signals. Work from the top down.
 
 ### Wires on board 1
 
 | # | AWG | Net | From hole | To hole | From pin | To pin | Note |
 |---|---|---|---|---|---|---|---|
+| #01 | AWG30 | +3V3 | G12 | K14 | J4.1 | BUS4.7 | |
+| #02 | AWG30 | +3V3 | G8 | J14 | J4.5 | BUS4.8 | |
+| #03 | AWG30 | +3V3 | G7 | I14 | J4.6 | BUS4.9 | |
+| #04 | AWG30 | +3V3 | C12 | H14 | J7.1 | BUS4.10 | |
+| #05 | AWG30 | +3V3 | W4 | Q14 | Q1.2 | BUS4.1 | |
+| #06 | AWG30 | +3V3 | O4 | M14 | Q2.2 | BUS4.5 | |
+| #07 | AWG30 | +3V3 | U14 | P14 | R1.1 | BUS4.2 | |
+| #08 | AWG30 | +3V3 | S14 | N14 | R2.1 | BUS4.4 | |
+| #09 | AWG30 | +3V3 | T2 | O14 | R10.1 | BUS4.3 | |
+| #10 | AWG30 | +3V3 | L2 | L14 | R12.1 | BUS4.6 | |
+| #11 | AWG30 | GND | G11 | K18 | J4.2 | BUS6.7 | |
+| #12 | AWG30 | GND | C11 | G18 | J7.2 | BUS6.11 | |
+| #13 | AWG30 | GND | G3 | J18 | Q3.1 | BUS6.8 | |
+| #14 | AWG30 | GND | S12 | P18 | R4.2 | BUS6.2 | |
+| #15 | AWG30 | GND | M12 | M18 | R6.2 | BUS6.5 | |
+| #16 | AWG30 | GND | I12 | L18 | R8.2 | BUS6.6 | |
+| #17 | AWG30 | Buzzer GND | G5 | B3 | Q3.3 | BZ1.2 | |
+| #18 | AWG30 | Buzzer base | D5 | G4 | R9.2 | Q3.2 | |
+| #19 | AWG30 | Display RX | O5 | T7 | Q2.3 | J8.2 | |
+| #20 | AWG30 | Display RX | L5 | O3 | R12.2 | Q2.1 | |
+| #21 | AWG30 | Display RX | J5 | O5 | R13.2 | Q2.3 | |
+| #22 | AWG30 | Display TX | W5 | U7 | Q1.3 | J8.1 | |
+| #23 | AWG30 | Display TX | T5 | W3 | R10.2 | Q1.1 | |
+| #24 | AWG30 | Display TX | R5 | U7 | R11.2 | J8.1 | |
+| #25 | AWG30 | I2C SCL | E10 | G10 | J3.3 | J4.3 | |
+| #26 | AWG30 | I2C SCL | C9 | E10 | J7.4 | J3.3 | |
+| #27 | AWG30 | I2C SCL | U17 | G10 | R1.2 | J4.3 | |
+| #28 | AWG30 | I2C SDA | E11 | G9 | J3.2 | J4.4 | |
+| #29 | AWG30 | I2C SDA | C10 | E11 | J7.3 | J3.2 | |
+| #30 | AWG30 | I2C SDA | S17 | G9 | R2.2 | J4.4 | |
+| #31 | AWG30 | MQ131 out | U9 | W9 | R3.1 | J5.4 | |
+| #32 | AWG30 | MQ131 out | S9 | U12 | R4.1 | R3.2 | |
+| #33 | AWG30 | MiCS CO | O9 | M9 | R5.1 | R6.1 | |
+| #34 | AWG30 | MiCS CO | O12 | Q10 | R5.2 | J6.3 | |
+| #35 | AWG30 | MiCS NO2 | K9 | Q9 | R7.1 | J6.4 | |
+| #36 | AWG30 | MiCS NO2 | I9 | K12 | R8.1 | R7.2 | |
 | BUS2 | AWG24 bare | +5V | Q16 | L16 | BUS2.1 | BUS2.6 | | |
 | BUS4 | AWG24 bare | +3V3 | Q14 | G14 | BUS4.1 | BUS4.11 | | |
 | BUS6 | AWG24 bare | GND | Q18 | F18 | BUS6.1 | BUS6.12 | | |
-| #01 | AWG24 | +5V | E12 | M16 | J3.1 | BUS2.5 | |
-| #02 | AWG24 | +5V | W12 | Q16 | J5.1 | BUS2.1 | |
-| #03 | AWG24 | +5V | Q12 | O16 | J6.1 | BUS2.3 | |
-| #04 | AWG24 | GND | E9 | I18 | J3.4 | BUS6.9 | |
-| #05 | AWG24 | GND | E8 | H18 | J3.5 | BUS6.10 | |
-| #06 | AWG24 | GND | W11 | Q18 | J5.2 | BUS6.1 | |
-| #07 | AWG24 | GND | Q11 | O18 | J6.2 | BUS6.3 | |
-| #08 | AWG24 | GND | Q8 | N18 | J6.5 | BUS6.4 | |
-| #09 | AWG30 | +3V3 | G12 | K14 | J4.1 | BUS4.7 | |
-| #10 | AWG30 | +3V3 | G8 | J14 | J4.5 | BUS4.8 | |
-| #11 | AWG30 | +3V3 | G7 | I14 | J4.6 | BUS4.9 | |
-| #12 | AWG30 | +3V3 | C12 | H14 | J7.1 | BUS4.10 | |
-| #13 | AWG30 | +3V3 | U14 | P14 | R1.1 | BUS4.2 | |
-| #14 | AWG30 | +3V3 | S14 | N14 | R2.1 | BUS4.4 | |
-| #15 | AWG30 | GND | G11 | K18 | J4.2 | BUS6.7 | |
-| #16 | AWG30 | GND | C11 | G18 | J7.2 | BUS6.11 | |
-| #17 | AWG30 | GND | G3 | J18 | Q3.1 | BUS6.8 | |
-| #18 | AWG30 | GND | S12 | P18 | R4.2 | BUS6.2 | |
-| #19 | AWG30 | GND | M12 | M18 | R6.2 | BUS6.5 | |
-| #20 | AWG30 | GND | I12 | L18 | R8.2 | BUS6.6 | |
-| #21 | AWG30 | Buzzer GND | G5 | B3 | Q3.3 | BZ1.2 | |
-| #22 | AWG30 | Buzzer base | D5 | G4 | R9.2 | Q3.2 | |
-| #23 | AWG30 | I2C SCL | E10 | G10 | J3.3 | J4.3 | |
-| #24 | AWG30 | I2C SCL | C9 | E10 | J7.4 | J3.3 | |
-| #25 | AWG30 | I2C SCL | U17 | G10 | R1.2 | J4.3 | |
-| #26 | AWG30 | I2C SDA | E11 | G9 | J3.2 | J4.4 | |
-| #27 | AWG30 | I2C SDA | C10 | E11 | J7.3 | J3.2 | |
-| #28 | AWG30 | I2C SDA | S17 | G9 | R2.2 | J4.4 | |
-| #29 | AWG30 | MQ131 out | U9 | W9 | R3.1 | J5.4 | |
-| #30 | AWG30 | MQ131 out | S9 | U12 | R4.1 | R3.2 | |
-| #31 | AWG30 | MiCS CO | O9 | M9 | R5.1 | R6.1 | |
-| #32 | AWG30 | MiCS CO | O12 | Q10 | R5.2 | J6.3 | |
-| #33 | AWG30 | MiCS NO2 | K9 | Q9 | R7.1 | J6.4 | |
-| #34 | AWG30 | MiCS NO2 | I9 | K12 | R8.1 | R7.2 | |
-| #35 | AWG24 | +5V | R2 | P16 | R11.1 | BUS2.2 | optional: Arduino display link, future |
-| #36 | AWG24 | +5V | J2 | N16 | R13.1 | BUS2.4 | optional: Arduino display link, future |
-| #37 | AWG30 | +3V3 | W4 | Q14 | Q1.2 | BUS4.1 | optional: Arduino display link, future |
-| #38 | AWG30 | +3V3 | O4 | M14 | Q2.2 | BUS4.5 | optional: Arduino display link, future |
-| #39 | AWG30 | +3V3 | T2 | O14 | R10.1 | BUS4.3 | optional: Arduino display link, future |
-| #40 | AWG30 | +3V3 | L2 | L14 | R12.1 | BUS4.6 | optional: Arduino display link, future |
-| #41 | AWG30 | Display RX | O5 | T7 | Q2.3 | J8.2 | optional: Arduino display link, future |
-| #42 | AWG30 | Display RX | L5 | O3 | R12.2 | Q2.1 | optional: Arduino display link, future |
-| #43 | AWG30 | Display RX | J5 | O5 | R13.2 | Q2.3 | optional: Arduino display link, future |
-| #44 | AWG30 | Display TX | W5 | U7 | Q1.3 | J8.1 | optional: Arduino display link, future |
-| #45 | AWG30 | Display TX | T5 | W3 | R10.2 | Q1.1 | optional: Arduino display link, future |
-| #46 | AWG30 | Display TX | R5 | U7 | R11.2 | J8.1 | optional: Arduino display link, future |
+| #37 | AWG24 | +5V | E12 | M16 | J3.1 | BUS2.5 | |
+| #38 | AWG24 | +5V | W12 | Q16 | J5.1 | BUS2.1 | |
+| #39 | AWG24 | +5V | Q12 | O16 | J6.1 | BUS2.3 | |
+| #40 | AWG24 | +5V | R2 | P16 | R11.1 | BUS2.2 | |
+| #41 | AWG24 | +5V | J2 | N16 | R13.1 | BUS2.4 | |
+| #42 | AWG24 | GND | E9 | I18 | J3.4 | BUS6.9 | |
+| #43 | AWG24 | GND | E8 | H18 | J3.5 | BUS6.10 | |
+| #44 | AWG24 | GND | W11 | Q18 | J5.2 | BUS6.1 | |
+| #45 | AWG24 | GND | Q11 | O18 | J6.2 | BUS6.3 | |
+| #46 | AWG24 | GND | Q8 | N18 | J6.5 | BUS6.4 | |
 
 ### Wires on board 2
 
 | # | AWG | Net | From hole | To hole | From pin | To pin | Note |
 |---|---|---|---|---|---|---|---|
+| #47 | AWG30 | +3V3 | H11 | U13 | A1.37 | BUS5.3 | |
+| #48 | AWG30 | +3V3 | D11 | T13 | A1.48 | BUS5.4 | |
+| #49 | AWG30 | +3V3 | O6 | V13 | R21.1 | BUS5.2 | |
+| #50 | AWG30 | +3V3 | T6 | W13 | R22.1 | BUS5.1 | |
+| #51 | AWG30 | GND | B17 | H15 | A1.42 | BUS7.8 | |
+| #52 | AWG30 | GND | T9 | N15 | R15.2 | BUS7.2 | |
+| #53 | AWG30 | GND | I9 | K15 | SW1.1 | BUS7.5 | |
+| #54 | AWG30 | GND | F9 | J15 | SW2.1 | BUS7.6 | |
+| #55 | AWG30 | GND | K2 | L15 | U5.2 | BUS7.4 | |
+| #56 | AWG30 | Cold-boot button | F6 | G17 | SW2.2 | A1.18 | |
+| #57 | AWG30 | Front fan PWM | R4 | J17 | R19.2 | A1.15 | |
+| #58 | AWG30 | Front fan PWM | O4 | O2 | R19.1 | M2.4 | |
+| #59 | AWG30 | Front fan tach | P2 | R6 | M2.3 | R21.2 | |
+| #60 | AWG30 | Front fan tach | R6 | O11 | R21.2 | A1.30 | |
+| #61 | AWG30 | Rear fan PWM | W4 | K17 | R20.2 | A1.14 | |
+| #62 | AWG30 | Rear fan PWM | T4 | T2 | R20.1 | M3.4 | |
+| #63 | AWG30 | Rear fan tach | U2 | W6 | M3.3 | R22.2 | |
+| #64 | AWG30 | Rear fan tach | W6 | R17 | R22.2 | A1.7 | |
+| #65 | AWG30 | Reset button | I6 | U11 | SW1.2 | A1.24 | |
+| #66 | AWG30 | TRIAC gate | I2 | J11 | U5.4 | A1.35 | |
+| #67 | AWG30 | ZC in | R9 | K11 | R14.1 | A1.34 | |
+| #68 | AWG30 | ZC in | W9 | R9 | R15.1 | R14.1 | |
+| #69 | AWG30 | ZC out | J2 | O9 | U5.3 | R14.2 | |
 | BUS1 | AWG24 bare | +12V | Q13 | N13 | BUS1.1 | BUS1.4 | | |
 | BUS3 | AWG24 bare | +5V | G13 | D13 | BUS3.1 | BUS3.4 | | |
 | BUS5 | AWG24 bare | +3V3 | W13 | S13 | BUS5.1 | BUS5.5 | | |
 | BUS7 | AWG24 bare | GND | O15 | F15 | BUS7.1 | BUS7.10 | | |
-| #47 | AWG24 | +12V | Q2 | P13 | M2.2 | BUS1.2 | |
-| #48 | AWG24 | +12V | V2 | Q13 | M3.2 | BUS1.1 | |
-| #49 | AWG24 | +12V | F2 | O13 | PS1.3 | BUS1.3 | |
-| #50 | AWG24 | +5V | D17 | F13 | A1.44 | BUS3.2 | |
-| #51 | AWG24 | +5V | C2 | E13 | PS1.4 | BUS3.3 | |
-| #52 | AWG24 | +5V | L2 | G13 | U5.1 | BUS3.1 | |
-| #53 | AWG24 | GND | R2 | M15 | M2.1 | BUS7.3 | |
-| #54 | AWG24 | GND | W2 | O15 | M3.1 | BUS7.1 | |
-| #55 | AWG24 | GND | E2 | I15 | PS1.5@E2 | BUS7.7 | |
-| #56 | AWG24 | GND | B2 | G15 | PS1.5@B2 | BUS7.9 | |
-| #57 | AWG30 | +3V3 | H11 | U13 | A1.37 | BUS5.3 | |
-| #58 | AWG30 | +3V3 | D11 | T13 | A1.48 | BUS5.4 | |
-| #59 | AWG30 | +3V3 | O6 | V13 | R21.1 | BUS5.2 | |
-| #60 | AWG30 | +3V3 | T6 | W13 | R22.1 | BUS5.1 | |
-| #61 | AWG30 | GND | B17 | H15 | A1.42 | BUS7.8 | |
-| #62 | AWG30 | GND | T9 | N15 | R15.2 | BUS7.2 | |
-| #63 | AWG30 | GND | I9 | K15 | SW1.1 | BUS7.5 | |
-| #64 | AWG30 | GND | F9 | J15 | SW2.1 | BUS7.6 | |
-| #65 | AWG30 | GND | K2 | L15 | U5.2 | BUS7.4 | |
-| #66 | AWG30 | Cold-boot button | F6 | G17 | SW2.2 | A1.18 | |
-| #67 | AWG30 | Front fan PWM | R4 | J17 | R19.2 | A1.15 | |
-| #68 | AWG30 | Front fan PWM | O4 | O2 | R19.1 | M2.4 | |
-| #69 | AWG30 | Front fan tach | P2 | R6 | M2.3 | R21.2 | |
-| #70 | AWG30 | Front fan tach | R6 | O11 | R21.2 | A1.30 | |
-| #71 | AWG30 | Rear fan PWM | W4 | K17 | R20.2 | A1.14 | |
-| #72 | AWG30 | Rear fan PWM | T4 | T2 | R20.1 | M3.4 | |
-| #73 | AWG30 | Rear fan tach | U2 | W6 | M3.3 | R22.2 | |
-| #74 | AWG30 | Rear fan tach | W6 | R17 | R22.2 | A1.7 | |
-| #75 | AWG30 | Reset button | I6 | U11 | SW1.2 | A1.24 | |
-| #76 | AWG30 | TRIAC gate | I2 | J11 | U5.4 | A1.35 | |
-| #77 | AWG30 | ZC in | R9 | K11 | R14.1 | A1.34 | |
-| #78 | AWG30 | ZC in | W9 | R9 | R15.1 | R14.1 | |
-| #79 | AWG30 | ZC out | J2 | O9 | U5.3 | R14.2 | |
+| #70 | AWG24 | +12V | Q2 | P13 | M2.2 | BUS1.2 | |
+| #71 | AWG24 | +12V | V2 | Q13 | M3.2 | BUS1.1 | |
+| #72 | AWG24 | +12V | F2 | O13 | PS1.3 | BUS1.3 | |
+| #73 | AWG24 | +5V | D17 | F13 | A1.44 | BUS3.2 | |
+| #74 | AWG24 | +5V | C2 | E13 | PS1.4 | BUS3.3 | |
+| #75 | AWG24 | +5V | L2 | G13 | U5.1 | BUS3.1 | |
+| #76 | AWG24 | GND | R2 | M15 | M2.1 | BUS7.3 | |
+| #77 | AWG24 | GND | W2 | O15 | M3.1 | BUS7.1 | |
+| #78 | AWG24 | GND | E2 | I15 | PS1.5@E2 | BUS7.7 | |
+| #79 | AWG24 | GND | B2 | G15 | PS1.5@B2 | BUS7.9 | |
 
 ### Wires between the boards (B1 ↔ B2)
 
 | # | AWG | Net | From hole | To hole | From pin | To pin | Max length (mm) | Note |
 |---|---|---|---|---|---|---|---|---|
-| #80 | AWG24 | +12V | B1:B4 | B2:N13 | BZ1.1 | BUS1.4 | 300 | |
-| #81 | AWG24 | +5V | B1:L16 | B2:D13 | BUS2.6 | BUS3.4 | 300 | |
-| #82 | AWG24 | GND | B1:F18 | B2:F15 | BUS6.12 | BUS7.10 | 300 | |
-| #83 | AWG30 | +3V3 | B1:G14 | B2:S13 | BUS4.11 | BUS5.5 | 300 | |
-| #84 | AWG30 | Buzzer drive | B1:D2 | B2:H17 | R9.1 | A1.17 | 300 | |
-| #85 | AWG30 | I2C SCL | B1:G10 | B2:O17 | J4.3 | A1.10 | 300 | |
-| #86 | AWG30 | I2C SDA | B1:G9 | B2:V17 | J4.4 | A1.3 | 300 | |
-| #87 | AWG30 | MQ131 out | B1:U12 | B2:T11 | R3.2 | A1.25 | 300 | |
-| #88 | AWG30 | MiCS CO | B1:M9 | B2:S11 | R6.1 | A1.26 | 300 | |
-| #89 | AWG30 | MiCS NO2 | B1:K12 | B2:M11 | R7.2 | A1.32 | 300 | |
-| #90 | AWG30 | Display RX | B1:O3 | B2:F11 | Q2.1 | A1.39 | 300 | optional: Arduino display link, future |
-| #91 | AWG30 | Display TX | B1:W3 | B2:G11 | Q1.1 | A1.38 | 300 | optional: Arduino display link, future |
+| #80 | AWG30 | +3V3 | B1:G14 | B2:S13 | BUS4.11 | BUS5.5 | 300 | |
+| #81 | AWG30 | Buzzer drive | B1:D2 | B2:H17 | R9.1 | A1.17 | 300 | |
+| #82 | AWG30 | Display RX | B1:O3 | B2:F11 | Q2.1 | A1.39 | 300 | |
+| #83 | AWG30 | Display TX | B1:W3 | B2:G11 | Q1.1 | A1.38 | 300 | |
+| #84 | AWG30 | I2C SCL | B1:G10 | B2:O17 | J4.3 | A1.10 | 300 | |
+| #85 | AWG30 | I2C SDA | B1:G9 | B2:V17 | J4.4 | A1.3 | 300 | |
+| #86 | AWG30 | MQ131 out | B1:U12 | B2:T11 | R3.2 | A1.25 | 300 | |
+| #87 | AWG30 | MiCS CO | B1:M9 | B2:S11 | R6.1 | A1.26 | 300 | |
+| #88 | AWG30 | MiCS NO2 | B1:K12 | B2:M11 | R7.2 | A1.32 | 300 | |
+| #89 | AWG24 | +12V | B1:B4 | B2:N13 | BZ1.1 | BUS1.4 | 300 | |
+| #90 | AWG24 | +5V | B1:L16 | B2:D13 | BUS2.6 | BUS3.4 | 300 | |
+| #91 | AWG24 | GND | B1:F18 | B2:F15 | BUS6.12 | BUS7.10 | 300 | |
 
 ## 3. Check list per part
 
@@ -191,406 +191,406 @@ One table per part: every pin with its hole and the wire numbers that touch it. 
 |---|---|---|---|---|
 | 1 | GND_1 | GND | B2:X17 | -- |
 | 2 | PB9_2 |  | B2:W17 | -- |
-| 3 | PB7_3 | I2C SDA | B2:V17 | #86 |
+| 3 | PB7_3 | I2C SDA | B2:V17 | #85 |
 | 4 | PB6_4 |  | B2:U17 | -- |
 | 5 | PB5_5 |  | B2:T17 | -- |
 | 6 | PB4_6 |  | B2:S17 | -- |
-| 7 | PB3_7 | Rear fan tach | B2:R17 | #74 |
+| 7 | PB3_7 | Rear fan tach | B2:R17 | #64 |
 | 8 | PC11_8 |  | B2:Q17 | -- |
 | 9 | PC10_9 |  | B2:P17 | -- |
-| 10 | PA15_10 | I2C SCL | B2:O17 | #85 |
+| 10 | PA15_10 | I2C SCL | B2:O17 | #84 |
 | 11 | PA12_11 |  | B2:N17 | -- |
 | 12 | PA11_12 |  | B2:M17 | -- |
 | 13 | PA10_13 |  | B2:L17 | -- |
-| 14 | PA9_14 | Rear fan PWM | B2:K17 | #71 |
-| 15 | PA8_15 | Front fan PWM | B2:J17 | #67 |
+| 14 | PA9_14 | Rear fan PWM | B2:K17 | #61 |
+| 15 | PA8_15 | Front fan PWM | B2:J17 | #57 |
 | 16 | PC6_16 |  | B2:I17 | -- |
-| 17 | PB15_17 | Buzzer drive | B2:H17 | #84 |
-| 18 | PB14_18 | Cold-boot button | B2:G17 | #66 |
+| 17 | PB15_17 | Buzzer drive | B2:H17 | #81 |
+| 18 | PB14_18 | Cold-boot button | B2:G17 | #56 |
 | 19 | PB13_19 |  | B2:F17 | -- |
 | 20 | PB12_20 |  | B2:E17 | -- |
 | 21 | GND_21 | GND | B2:X11 | -- |
 | 22 | VB_22 |  | B2:W11 | -- |
 | 23 | PC13_23 |  | B2:V11 | -- |
-| 24 | NRST_24 | Reset button | B2:U11 | #75 |
-| 25 | PA0_25 | MQ131 out | B2:T11 | #87 |
-| 26 | PA1_26 | MiCS CO | B2:S11 | #88 |
+| 24 | NRST_24 | Reset button | B2:U11 | #65 |
+| 25 | PA0_25 | MQ131 out | B2:T11 | #86 |
+| 26 | PA1_26 | MiCS CO | B2:S11 | #87 |
 | 27 | PA2_27 | Net-(A1-PA2) | B2:R11 | -- |
 | 28 | PA3_28 | Net-(A1-PA3) | B2:Q11 | -- |
 | 29 | PA4_29 |  | B2:P11 | -- |
-| 30 | PA5_30 | Front fan tach | B2:O11 | #70 |
+| 30 | PA5_30 | Front fan tach | B2:O11 | #60 |
 | 31 | PA6_31 |  | B2:N11 | -- |
-| 32 | PA7_32 | MiCS NO2 | B2:M11 | #89 |
+| 32 | PA7_32 | MiCS NO2 | B2:M11 | #88 |
 | 33 | PC4_33 |  | B2:L11 | -- |
-| 34 | PB0_34 | ZC in | B2:K11 | #77 |
-| 35 | PB1_35 | TRIAC gate | B2:J11 | #76 |
+| 34 | PB0_34 | ZC in | B2:K11 | #67 |
+| 35 | PB1_35 | TRIAC gate | B2:J11 | #66 |
 | 36 | PB2_36 |  | B2:I11 | -- |
-| 37 | VREF+_37 | +3V3 | B2:H11 | #57 |
-| 38 | PB10_38 | Display TX | B2:G11 | #91 |
-| 39 | PB11_39 | Display RX | B2:F11 | #90 |
+| 37 | VREF+_37 | +3V3 | B2:H11 | #47 |
+| 38 | PB10_38 | Display TX | B2:G11 | #83 |
+| 39 | PB11_39 | Display RX | B2:F11 | #82 |
 | 40 | NC_40 |  | B2:E11 | -- |
 | 41 | GND_41 | GND | B2:A17 | -- |
-| 42 | GND_42 | GND | B2:B17 | #61 |
+| 42 | GND_42 | GND | B2:B17 | #51 |
 | 43 | VDD5V_43 | +5V | B2:C17 | -- |
-| 44 | VDD5V_44 | +5V | B2:D17 | #50 |
+| 44 | VDD5V_44 | +5V | B2:D17 | #73 |
 | 45 | GND_45 | GND | B2:A11 | -- |
 | 46 | GND_46 | GND | B2:B11 | -- |
 | 47 | 3V3_47 | +3V3 | B2:C11 | -- |
-| 48 | 3V3_48 | +3V3 | B2:D11 | #58 |
+| 48 | 3V3_48 | +3V3 | B2:D11 | #48 |
 
 **BUS1** +12V bus
 
 | Pin | Name | Net | Hole | Wires |
 |---|---|---|---|---|
-| 1 |  | +12V | B2:Q13 | #48 |
-| 2 |  | +12V | B2:P13 | #47 |
-| 3 |  | +12V | B2:O13 | #49 |
-| 4 |  | +12V | B2:N13 | #80 |
+| 1 |  | +12V | B2:Q13 | #71 |
+| 2 |  | +12V | B2:P13 | #70 |
+| 3 |  | +12V | B2:O13 | #72 |
+| 4 |  | +12V | B2:N13 | #89 |
 
 **BUS2** +5V bus
 
 | Pin | Name | Net | Hole | Wires |
 |---|---|---|---|---|
-| 1 |  | +5V | B1:Q16 | #02 |
-| 2 |  | +5V | B1:P16 | #35 |
-| 3 |  | +5V | B1:O16 | #03 |
-| 4 |  | +5V | B1:N16 | #36 |
-| 5 |  | +5V | B1:M16 | #01 |
-| 6 |  | +5V | B1:L16 | #81 |
+| 1 |  | +5V | B1:Q16 | #38 |
+| 2 |  | +5V | B1:P16 | #40 |
+| 3 |  | +5V | B1:O16 | #39 |
+| 4 |  | +5V | B1:N16 | #41 |
+| 5 |  | +5V | B1:M16 | #37 |
+| 6 |  | +5V | B1:L16 | #90 |
 
 **BUS3** +5V bus
 
 | Pin | Name | Net | Hole | Wires |
 |---|---|---|---|---|
-| 1 |  | +5V | B2:G13 | #52 |
-| 2 |  | +5V | B2:F13 | #50 |
-| 3 |  | +5V | B2:E13 | #51 |
-| 4 |  | +5V | B2:D13 | #81 |
+| 1 |  | +5V | B2:G13 | #75 |
+| 2 |  | +5V | B2:F13 | #73 |
+| 3 |  | +5V | B2:E13 | #74 |
+| 4 |  | +5V | B2:D13 | #90 |
 
 **BUS4** +3V3 bus
 
 | Pin | Name | Net | Hole | Wires |
 |---|---|---|---|---|
-| 1 |  | +3V3 | B1:Q14 | #37 |
-| 2 |  | +3V3 | B1:P14 | #13 |
-| 3 |  | +3V3 | B1:O14 | #39 |
-| 4 |  | +3V3 | B1:N14 | #14 |
-| 5 |  | +3V3 | B1:M14 | #38 |
-| 6 |  | +3V3 | B1:L14 | #40 |
-| 7 |  | +3V3 | B1:K14 | #09 |
-| 8 |  | +3V3 | B1:J14 | #10 |
-| 9 |  | +3V3 | B1:I14 | #11 |
-| 10 |  | +3V3 | B1:H14 | #12 |
-| 11 |  | +3V3 | B1:G14 | #83 |
+| 1 |  | +3V3 | B1:Q14 | #05 |
+| 2 |  | +3V3 | B1:P14 | #07 |
+| 3 |  | +3V3 | B1:O14 | #09 |
+| 4 |  | +3V3 | B1:N14 | #08 |
+| 5 |  | +3V3 | B1:M14 | #06 |
+| 6 |  | +3V3 | B1:L14 | #10 |
+| 7 |  | +3V3 | B1:K14 | #01 |
+| 8 |  | +3V3 | B1:J14 | #02 |
+| 9 |  | +3V3 | B1:I14 | #03 |
+| 10 |  | +3V3 | B1:H14 | #04 |
+| 11 |  | +3V3 | B1:G14 | #80 |
 
 **BUS5** +3V3 bus
 
 | Pin | Name | Net | Hole | Wires |
 |---|---|---|---|---|
-| 1 |  | +3V3 | B2:W13 | #60 |
-| 2 |  | +3V3 | B2:V13 | #59 |
-| 3 |  | +3V3 | B2:U13 | #57 |
-| 4 |  | +3V3 | B2:T13 | #58 |
-| 5 |  | +3V3 | B2:S13 | #83 |
+| 1 |  | +3V3 | B2:W13 | #50 |
+| 2 |  | +3V3 | B2:V13 | #49 |
+| 3 |  | +3V3 | B2:U13 | #47 |
+| 4 |  | +3V3 | B2:T13 | #48 |
+| 5 |  | +3V3 | B2:S13 | #80 |
 
 **BUS6** GND bus
 
 | Pin | Name | Net | Hole | Wires |
 |---|---|---|---|---|
-| 1 |  | GND | B1:Q18 | #06 |
-| 2 |  | GND | B1:P18 | #18 |
-| 3 |  | GND | B1:O18 | #07 |
-| 4 |  | GND | B1:N18 | #08 |
-| 5 |  | GND | B1:M18 | #19 |
-| 6 |  | GND | B1:L18 | #20 |
-| 7 |  | GND | B1:K18 | #15 |
-| 8 |  | GND | B1:J18 | #17 |
-| 9 |  | GND | B1:I18 | #04 |
-| 10 |  | GND | B1:H18 | #05 |
-| 11 |  | GND | B1:G18 | #16 |
-| 12 |  | GND | B1:F18 | #82 |
+| 1 |  | GND | B1:Q18 | #44 |
+| 2 |  | GND | B1:P18 | #14 |
+| 3 |  | GND | B1:O18 | #45 |
+| 4 |  | GND | B1:N18 | #46 |
+| 5 |  | GND | B1:M18 | #15 |
+| 6 |  | GND | B1:L18 | #16 |
+| 7 |  | GND | B1:K18 | #11 |
+| 8 |  | GND | B1:J18 | #13 |
+| 9 |  | GND | B1:I18 | #42 |
+| 10 |  | GND | B1:H18 | #43 |
+| 11 |  | GND | B1:G18 | #12 |
+| 12 |  | GND | B1:F18 | #91 |
 
 **BUS7** GND bus
 
 | Pin | Name | Net | Hole | Wires |
 |---|---|---|---|---|
-| 1 |  | GND | B2:O15 | #54 |
-| 2 |  | GND | B2:N15 | #62 |
-| 3 |  | GND | B2:M15 | #53 |
-| 4 |  | GND | B2:L15 | #65 |
-| 5 |  | GND | B2:K15 | #63 |
-| 6 |  | GND | B2:J15 | #64 |
-| 7 |  | GND | B2:I15 | #55 |
-| 8 |  | GND | B2:H15 | #61 |
-| 9 |  | GND | B2:G15 | #56 |
-| 10 |  | GND | B2:F15 | #82 |
+| 1 |  | GND | B2:O15 | #77 |
+| 2 |  | GND | B2:N15 | #52 |
+| 3 |  | GND | B2:M15 | #76 |
+| 4 |  | GND | B2:L15 | #55 |
+| 5 |  | GND | B2:K15 | #53 |
+| 6 |  | GND | B2:J15 | #54 |
+| 7 |  | GND | B2:I15 | #78 |
+| 8 |  | GND | B2:H15 | #51 |
+| 9 |  | GND | B2:G15 | #79 |
+| 10 |  | GND | B2:F15 | #91 |
 
 **BZ1** 12V buzzer
 
 | Pin | Name | Net | Hole | Wires |
 |---|---|---|---|---|
-| 1 | +_1 | +12V | B1:B4 | #80 |
-| 2 | -_2 | Buzzer GND | B1:B3 | #21 |
+| 1 | +_1 | +12V | B1:B4 | #89 |
+| 2 | -_2 | Buzzer GND | B1:B3 | #17 |
 
 **J3** SPS30
 
 | Pin | Name | Net | Hole | Wires |
 |---|---|---|---|---|
-| 1 |  | +5V | B1:E12 | #01 |
-| 2 |  | I2C SDA | B1:E11 | #26, #27 |
-| 3 |  | I2C SCL | B1:E10 | #23, #24 |
-| 4 |  | GND | B1:E9 | #04 |
-| 5 |  | GND | B1:E8 | #05 |
+| 1 |  | +5V | B1:E12 | #37 |
+| 2 |  | I2C SDA | B1:E11 | #28, #29 |
+| 3 |  | I2C SCL | B1:E10 | #25, #26 |
+| 4 |  | GND | B1:E9 | #42 |
+| 5 |  | GND | B1:E8 | #43 |
 
 **J4** BME680
 
 | Pin | Name | Net | Hole | Wires |
 |---|---|---|---|---|
-| 1 |  | +3V3 | B1:G12 | #09 |
-| 2 |  | GND | B1:G11 | #15 |
-| 3 |  | I2C SCL | B1:G10 | #23, #25, #85 |
-| 4 |  | I2C SDA | B1:G9 | #26, #28, #86 |
-| 5 |  | +3V3 | B1:G8 | #10 |
-| 6 |  | +3V3 | B1:G7 | #11 |
+| 1 |  | +3V3 | B1:G12 | #01 |
+| 2 |  | GND | B1:G11 | #11 |
+| 3 |  | I2C SCL | B1:G10 | #25, #27, #84 |
+| 4 |  | I2C SDA | B1:G9 | #28, #30, #85 |
+| 5 |  | +3V3 | B1:G8 | #02 |
+| 6 |  | +3V3 | B1:G7 | #03 |
 
 **J5** MQ131
 
 | Pin | Name | Net | Hole | Wires |
 |---|---|---|---|---|
-| 1 |  | +5V | B1:W12 | #02 |
-| 2 |  | GND | B1:W11 | #06 |
+| 1 |  | +5V | B1:W12 | #38 |
+| 2 |  | GND | B1:W11 | #44 |
 | 3 |  |  | B1:W10 | -- |
-| 4 |  | MQ131 out | B1:W9 | #29 |
+| 4 |  | MQ131 out | B1:W9 | #31 |
 
 **J6** MiCS-4514
 
 | Pin | Name | Net | Hole | Wires |
 |---|---|---|---|---|
-| 1 |  | +5V | B1:Q12 | #03 |
-| 2 |  | GND | B1:Q11 | #07 |
-| 3 |  | MiCS CO | B1:Q10 | #32 |
-| 4 |  | MiCS NO2 | B1:Q9 | #33 |
-| 5 |  | GND | B1:Q8 | #08 |
+| 1 |  | +5V | B1:Q12 | #39 |
+| 2 |  | GND | B1:Q11 | #45 |
+| 3 |  | MiCS CO | B1:Q10 | #34 |
+| 4 |  | MiCS NO2 | B1:Q9 | #35 |
+| 5 |  | GND | B1:Q8 | #46 |
 
 **J7** RTC PCF8563
 
 | Pin | Name | Net | Hole | Wires |
 |---|---|---|---|---|
-| 1 |  | +3V3 | B1:C12 | #12 |
-| 2 |  | GND | B1:C11 | #16 |
-| 3 |  | I2C SDA | B1:C10 | #27 |
-| 4 |  | I2C SCL | B1:C9 | #24 |
+| 1 |  | +3V3 | B1:C12 | #04 |
+| 2 |  | GND | B1:C11 | #12 |
+| 3 |  | I2C SDA | B1:C10 | #29 |
+| 4 |  | I2C SCL | B1:C9 | #26 |
 
 **J8** Arduino
 
 | Pin | Name | Net | Hole | Wires |
 |---|---|---|---|---|
-| 1 |  | Display TX | B1:U7 | #44, #46 |
-| 2 |  | Display RX | B1:T7 | #41 |
+| 1 |  | Display TX | B1:U7 | #22, #24 |
+| 2 |  | Display RX | B1:T7 | #19 |
 
 **M2** 80mm fan front
 
 | Pin | Name | Net | Hole | Wires |
 |---|---|---|---|---|
-| 1 |  | GND | B2:R2 | #53 |
-| 2 |  | +12V | B2:Q2 | #47 |
-| 3 |  | Front fan tach | B2:P2 | #69 |
-| 4 |  | Front fan PWM | B2:O2 | #68 |
+| 1 |  | GND | B2:R2 | #76 |
+| 2 |  | +12V | B2:Q2 | #70 |
+| 3 |  | Front fan tach | B2:P2 | #59 |
+| 4 |  | Front fan PWM | B2:O2 | #58 |
 
 **M3** 80mm fan rear
 
 | Pin | Name | Net | Hole | Wires |
 |---|---|---|---|---|
-| 1 |  | GND | B2:W2 | #54 |
-| 2 |  | +12V | B2:V2 | #48 |
-| 3 |  | Rear fan tach | B2:U2 | #73 |
-| 4 |  | Rear fan PWM | B2:T2 | #72 |
+| 1 |  | GND | B2:W2 | #77 |
+| 2 |  | +12V | B2:V2 | #71 |
+| 3 |  | Rear fan tach | B2:U2 | #63 |
+| 4 |  | Rear fan PWM | B2:T2 | #62 |
 
 **PS1** AC-DC PSUs 12V 2A + 5V 2A (DC out)
 
 | Pin | Name | Net | Hole | Wires |
 |---|---|---|---|---|
-| 3 |  | +12V | B2:F2 | #49 |
-| 4 |  | +5V | B2:C2 | #51 |
-| 5 |  | GND | B2:E2 | #55 |
-| 5 |  | GND | B2:B2 | #56 |
+| 3 |  | +12V | B2:F2 | #72 |
+| 4 |  | +5V | B2:C2 | #74 |
+| 5 |  | GND | B2:E2 | #78 |
+| 5 |  | GND | B2:B2 | #79 |
 
-**Q1** 2N7000 (optional: Arduino display link, future)
-
-| Pin | Name | Net | Hole | Wires |
-|---|---|---|---|---|
-| 1 | S | Display TX | B1:W3 | #45, #91 |
-| 2 | G | +3V3 | B1:W4 | #37 |
-| 3 | D | Display TX | B1:W5 | #44 |
-
-**Q2** 2N7000 (optional: Arduino display link, future)
+**Q1** 2N7000
 
 | Pin | Name | Net | Hole | Wires |
 |---|---|---|---|---|
-| 1 | S | Display RX | B1:O3 | #42, #90 |
-| 2 | G | +3V3 | B1:O4 | #38 |
-| 3 | D | Display RX | B1:O5 | #41, #43 |
+| 1 | S | Display TX | B1:W3 | #23, #83 |
+| 2 | G | +3V3 | B1:W4 | #05 |
+| 3 | D | Display TX | B1:W5 | #22 |
+
+**Q2** 2N7000
+
+| Pin | Name | Net | Hole | Wires |
+|---|---|---|---|---|
+| 1 | S | Display RX | B1:O3 | #20, #82 |
+| 2 | G | +3V3 | B1:O4 | #06 |
+| 3 | D | Display RX | B1:O5 | #19, #21 |
 
 **Q3** 2N2222A
 
 | Pin | Name | Net | Hole | Wires |
 |---|---|---|---|---|
-| 1 | E | GND | B1:G3 | #17 |
-| 2 | B | Buzzer base | B1:G4 | #22 |
-| 3 | C | Buzzer GND | B1:G5 | #21 |
+| 1 | E | GND | B1:G3 | #13 |
+| 2 | B | Buzzer base | B1:G4 | #18 |
+| 3 | C | Buzzer GND | B1:G5 | #17 |
 
 **R1** 4k7
 
 | Pin | Name | Net | Hole | Wires |
 |---|---|---|---|---|
-| 1 |  | +3V3 | B1:U14 | #13 |
-| 2 |  | I2C SCL | B1:U17 | #25 |
+| 1 |  | +3V3 | B1:U14 | #07 |
+| 2 |  | I2C SCL | B1:U17 | #27 |
 
 **R2** 4k7
 
 | Pin | Name | Net | Hole | Wires |
 |---|---|---|---|---|
-| 1 |  | +3V3 | B1:S14 | #14 |
-| 2 |  | I2C SDA | B1:S17 | #28 |
+| 1 |  | +3V3 | B1:S14 | #08 |
+| 2 |  | I2C SDA | B1:S17 | #30 |
 
 **R3** 1k8
 
 | Pin | Name | Net | Hole | Wires |
 |---|---|---|---|---|
-| 1 |  | MQ131 out | B1:U9 | #29 |
-| 2 |  | MQ131 out | B1:U12 | #30, #87 |
+| 1 |  | MQ131 out | B1:U9 | #31 |
+| 2 |  | MQ131 out | B1:U12 | #32, #86 |
 
 **R4** 3k3
 
 | Pin | Name | Net | Hole | Wires |
 |---|---|---|---|---|
-| 1 |  | MQ131 out | B1:S9 | #30 |
-| 2 |  | GND | B1:S12 | #18 |
+| 1 |  | MQ131 out | B1:S9 | #32 |
+| 2 |  | GND | B1:S12 | #14 |
 
 **R5** 1k8
 
 | Pin | Name | Net | Hole | Wires |
 |---|---|---|---|---|
-| 1 |  | MiCS CO | B1:O9 | #31 |
-| 2 |  | MiCS CO | B1:O12 | #32 |
+| 1 |  | MiCS CO | B1:O9 | #33 |
+| 2 |  | MiCS CO | B1:O12 | #34 |
 
 **R6** 3k3
 
 | Pin | Name | Net | Hole | Wires |
 |---|---|---|---|---|
-| 1 |  | MiCS CO | B1:M9 | #31, #88 |
-| 2 |  | GND | B1:M12 | #19 |
+| 1 |  | MiCS CO | B1:M9 | #33, #87 |
+| 2 |  | GND | B1:M12 | #15 |
 
 **R7** 1k8
 
 | Pin | Name | Net | Hole | Wires |
 |---|---|---|---|---|
-| 1 |  | MiCS NO2 | B1:K9 | #33 |
-| 2 |  | MiCS NO2 | B1:K12 | #34, #89 |
+| 1 |  | MiCS NO2 | B1:K9 | #35 |
+| 2 |  | MiCS NO2 | B1:K12 | #36, #88 |
 
 **R8** 3k3
 
 | Pin | Name | Net | Hole | Wires |
 |---|---|---|---|---|
-| 1 |  | MiCS NO2 | B1:I9 | #34 |
-| 2 |  | GND | B1:I12 | #20 |
+| 1 |  | MiCS NO2 | B1:I9 | #36 |
+| 2 |  | GND | B1:I12 | #16 |
 
 **R9** 1k
 
 | Pin | Name | Net | Hole | Wires |
 |---|---|---|---|---|
-| 1 |  | Buzzer drive | B1:D2 | #84 |
-| 2 |  | Buzzer base | B1:D5 | #22 |
+| 1 |  | Buzzer drive | B1:D2 | #81 |
+| 2 |  | Buzzer base | B1:D5 | #18 |
 
-**R10** 10k (optional: Arduino display link, future)
-
-| Pin | Name | Net | Hole | Wires |
-|---|---|---|---|---|
-| 1 |  | +3V3 | B1:T2 | #39 |
-| 2 |  | Display TX | B1:T5 | #45 |
-
-**R11** 10k (optional: Arduino display link, future)
+**R10** 10k
 
 | Pin | Name | Net | Hole | Wires |
 |---|---|---|---|---|
-| 1 |  | +5V | B1:R2 | #35 |
-| 2 |  | Display TX | B1:R5 | #46 |
+| 1 |  | +3V3 | B1:T2 | #09 |
+| 2 |  | Display TX | B1:T5 | #23 |
 
-**R12** 10k (optional: Arduino display link, future)
-
-| Pin | Name | Net | Hole | Wires |
-|---|---|---|---|---|
-| 1 |  | +3V3 | B1:L2 | #40 |
-| 2 |  | Display RX | B1:L5 | #42 |
-
-**R13** 10k (optional: Arduino display link, future)
+**R11** 10k
 
 | Pin | Name | Net | Hole | Wires |
 |---|---|---|---|---|
-| 1 |  | +5V | B1:J2 | #36 |
-| 2 |  | Display RX | B1:J5 | #43 |
+| 1 |  | +5V | B1:R2 | #40 |
+| 2 |  | Display TX | B1:R5 | #24 |
+
+**R12** 10k
+
+| Pin | Name | Net | Hole | Wires |
+|---|---|---|---|---|
+| 1 |  | +3V3 | B1:L2 | #10 |
+| 2 |  | Display RX | B1:L5 | #20 |
+
+**R13** 10k
+
+| Pin | Name | Net | Hole | Wires |
+|---|---|---|---|---|
+| 1 |  | +5V | B1:J2 | #41 |
+| 2 |  | Display RX | B1:J5 | #21 |
 
 **R14** 1k8
 
 | Pin | Name | Net | Hole | Wires |
 |---|---|---|---|---|
-| 1 |  | ZC in | B2:R9 | #77, #78 |
-| 2 |  | ZC out | B2:O9 | #79 |
+| 1 |  | ZC in | B2:R9 | #67, #68 |
+| 2 |  | ZC out | B2:O9 | #69 |
 
 **R15** 3k3
 
 | Pin | Name | Net | Hole | Wires |
 |---|---|---|---|---|
-| 1 |  | ZC in | B2:W9 | #78 |
-| 2 |  | GND | B2:T9 | #62 |
+| 1 |  | ZC in | B2:W9 | #68 |
+| 2 |  | GND | B2:T9 | #52 |
 
 **R19** 1k
 
 | Pin | Name | Net | Hole | Wires |
 |---|---|---|---|---|
-| 1 |  | Front fan PWM | B2:O4 | #68 |
-| 2 |  | Front fan PWM | B2:R4 | #67 |
+| 1 |  | Front fan PWM | B2:O4 | #58 |
+| 2 |  | Front fan PWM | B2:R4 | #57 |
 
 **R20** 1k
 
 | Pin | Name | Net | Hole | Wires |
 |---|---|---|---|---|
-| 1 |  | Rear fan PWM | B2:T4 | #72 |
-| 2 |  | Rear fan PWM | B2:W4 | #71 |
+| 1 |  | Rear fan PWM | B2:T4 | #62 |
+| 2 |  | Rear fan PWM | B2:W4 | #61 |
 
 **R21** 10k
 
 | Pin | Name | Net | Hole | Wires |
 |---|---|---|---|---|
-| 1 |  | +3V3 | B2:O6 | #59 |
-| 2 |  | Front fan tach | B2:R6 | #69, #70 |
+| 1 |  | +3V3 | B2:O6 | #49 |
+| 2 |  | Front fan tach | B2:R6 | #59, #60 |
 
 **R22** 10k
 
 | Pin | Name | Net | Hole | Wires |
 |---|---|---|---|---|
-| 1 |  | +3V3 | B2:T6 | #60 |
-| 2 |  | Rear fan tach | B2:W6 | #73, #74 |
+| 1 |  | +3V3 | B2:T6 | #50 |
+| 2 |  | Rear fan tach | B2:W6 | #63, #64 |
 
 **SW1** RESET red
 
 | Pin | Name | Net | Hole | Wires |
 |---|---|---|---|---|
-| 1 |  | GND | B2:I9 | #63 |
-| 2 |  | Reset button | B2:I6 | #75 |
+| 1 |  | GND | B2:I9 | #53 |
+| 2 |  | Reset button | B2:I6 | #65 |
 
 **SW2** COLD_BOOT white
 
 | Pin | Name | Net | Hole | Wires |
 |---|---|---|---|---|
-| 1 |  | GND | B2:F9 | #64 |
-| 2 |  | Cold-boot button | B2:F6 | #66 |
+| 1 |  | GND | B2:F9 | #54 |
+| 2 |  | Cold-boot button | B2:F6 | #56 |
 
 **U5** RobotDyn AC dimmer
 
 | Pin | Name | Net | Hole | Wires |
 |---|---|---|---|---|
-| 1 | VCC_1 | +5V | B2:L2 | #52 |
-| 2 | GND_2 | GND | B2:K2 | #65 |
-| 3 | Z-C_3 | ZC out | B2:J2 | #79 |
-| 4 | PSM_4 | TRIAC gate | B2:I2 | #76 |
+| 1 | VCC_1 | +5V | B2:L2 | #75 |
+| 2 | GND_2 | GND | B2:K2 | #55 |
+| 3 | Z-C_3 | ZC out | B2:J2 | #69 |
+| 4 | PSM_4 | TRIAC gate | B2:I2 | #66 |

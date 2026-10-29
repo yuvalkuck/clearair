@@ -843,7 +843,7 @@ board lies landscape.
    place it at, as column letter + row number (`E7`). Male headers are for everything that
    connects from off the board with a wire or plug; the MCU module (`A1`)
    plugs into female sockets.
-2. **Wires (back side).** Three tables (board 1, board 2, wires between the boards), each sorted by AWG (thick first), then net (voltage rails first, then ground, then signals). One row per wire: number, board, net, from pin and hole,
+2. **Wires (back side).** Three tables (board 1, board 2, wires between the boards), each sorted by AWG number from high to low (thin first; the bare bus-strip wires are listed with the thick AWG24 wires), then net (voltage rails first, then ground, then signals). One row per wire: number, board, net, from pin and hole,
    to pin and hole, **AWG** and max length. Every pin of a net is wired to the nearest pin of the same net that is
    already connected, so no hole gets more than 3 wire ends (`max_wires_per_hole`).
    Voltage and ground nets with at least `bus_min_pads` (4) connections, counting

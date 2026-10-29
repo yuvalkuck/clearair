@@ -17031,17 +17031,6 @@
 				)
 			)
 		)
-		(property "Optional" "Arduino display link, future"
-			(at 406.4 205.74 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
 		(pin "1"
 			(uuid "63a49f10-48b2-52f4-b7d9-751004dd2b47")
 		)
@@ -17154,17 +17143,6 @@
 				)
 			)
 		)
-		(property "Optional" "Arduino display link, future"
-			(at 419.1 243.84 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
 		(pin "1"
 			(uuid "ae9973af-d773-5816-8ba2-16692ffe3700")
 		)
@@ -17259,17 +17237,6 @@
 			)
 		)
 		(property "ki_fp_filters" "R_*"
-			(at 431.8 205.74 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Optional" "Arduino display link, future"
 			(at 431.8 205.74 0)
 			(hide yes)
 			(show_name no)
@@ -17741,17 +17708,6 @@
 			)
 		)
 		(property "ki_fp_filters" "R_*"
-			(at 406.4 233.68 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Optional" "Arduino display link, future"
 			(at 406.4 233.68 0)
 			(hide yes)
 			(show_name no)
@@ -18534,17 +18490,6 @@
 			)
 		)
 		(property "Net D" "Display TX"
-			(at 419.1 215.9 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Optional" "Arduino display link, future"
 			(at 419.1 215.9 0)
 			(hide yes)
 			(show_name no)
@@ -19921,17 +19866,6 @@
 			)
 		)
 		(property "ki_fp_filters" "R_*"
-			(at 431.8 233.68 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Optional" "Arduino display link, future"
 			(at 431.8 233.68 0)
 			(hide yes)
 			(show_name no)
