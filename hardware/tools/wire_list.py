@@ -164,8 +164,9 @@ if CFG['bus_min_pads']:
         if net_rank(n)[0] > 1: continue
         for bd in boards:
             loc = [p for p in nets[n] if p['bd'] is bd]
-            mcu = [p for p in loc if p['ref'] == MCU]
-            others = [p for p in loc if p['ref'] != MCU]
+            vref = [p for p in loc if p['ref'] == MCU and p['fn'].startswith('VREF')]      # VREF pins are not fed from the supply pins inside the module: own wire, and never the supply path
+            mcu = [p for p in loc if p['ref'] == MCU and p not in vref]
+            others = [p for p in loc if p['ref'] != MCU] + vref
             linked = len({q['bd']['i'] for q in nets[n]}) > 1
             k = len(others) + bool(mcu) + linked
             if k < CFG['bus_min_pads']: continue
