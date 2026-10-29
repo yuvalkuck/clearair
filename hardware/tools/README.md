@@ -844,10 +844,16 @@ board lies landscape.
    connects from off the board with a wire or plug; the MCU module (`A1`)
    plugs into female sockets.
 2. **Wires (back side).** Three tables (board 1, board 2, wires between the boards), each sorted by AWG (thick first), then net (voltage rails first, then ground, then signals). One row per wire: number, board, net, from pin and hole,
-   to pin and hole, **AWG** and max length. Every pin of a net gets one
-   wire to the net's hub pin (a star). The hub is the MCU module pin if the
-   net has one, else a connector pin. One wire per net joins the two boards.
-3. **Check list per part.** Every pin with the wire numbers that touch it.
+   to pin and hole, **AWG** and max length. Every pin of a net is wired to the nearest pin of the same net that is
+   already connected, so no hole gets more than 3 wire ends (`max_wires_per_hole`).
+   Voltage and ground nets with at least `bus_min_pads` (4) connections, counting
+   the board link, get a bus strip instead: a free row of holes (between the
+   socket rows of the MCU module if the board has one, else next to the parts
+   with `Role` = `bus`) joined by one bare wire, with one short wire from each
+   pin to its own hole of the strip.
+   The pins of the MCU module are joined inside it, so each is a start point.
+   A wire is thick when any wire behind it is thick. One wire per net joins the two boards.
+3. **Check list per part.** One table per part: every pin with its name, net, hole and the wire numbers that touch it.
 
 A hole is its column letter plus its row number, like `E7`. Columns are
 letters along the long side (A to X for 24 columns), rows are numbers along
@@ -867,17 +873,17 @@ AWG24 / AWG30 for the wires.
 
 | Field | Meaning |
 | :--- | :--- |
-| `Role` | Space-separated words. `mcu`: hub of every net, no wire between its own pins. `female`: a socket the module plugs into. `header`: male header without a `PinHeader` footprint. `post`: loose male pins (supply). `sensor`: power and ground wires get the thick wire. `heavy`: same, for fan, buzzer and supply parts |
+| `Role` | Space-separated words. `mcu`: start of every net, no wire between its own pins. `female`: a socket the module plugs into. `header`: male header without a `PinHeader` footprint. `post`: loose male pins (supply). `bus`: bus strips are placed next to this part (boards without an MCU module). `sensor`: power and ground wires get the thick wire. `heavy`: same, for fan, buzzer and supply parts |
 | `Net <pin>` | Readable name for the net KiCad names after that pin, for example `Net PA0` = `MQ131 out` names `Net-(A1-PA0)` |
 
 Transistor pin letters come from the symbol's pin names. The two gauges are
 defaults in the script (`AWG24`, `AWG30`), and the
-longest wire between two boards is `link_max_mm` (300).
+longest wire between two boards is `link_max_mm` (300), and the most wire ends in one hole is `max_wires_per_hole` (3).
 
 An optional `wire_list.json` next to the board (or its path as the third
 argument) still overrides any of these keys: `mcu`, `female`, `headers`,
 `posts`, `sensors`, `high_current_prefixes`, `transistor_pins`, `net_names`,
-`link_max_mm`, `awg_thick`, `awg_thin`. ClearAir does not use one.
+`link_max_mm`, `max_wires_per_hole`, `bus_min_pads` (0 = no strips), `bus_near`, `awg_thick`, `awg_thin`. ClearAir does not use one.
 
 ## Wire gauge
 
@@ -909,9 +915,10 @@ python3 ../tools/verify_perfboard.py clearair.kicad_pcb --kicad-cli "$HOME/bin/k
 | 1. Pads | a pad outside every board or inside two, or off the 2.54 mm grid |
 | 2. Holes | two pads in one hole |
 | 3. Check list | a hole in section 3 that differs from the pad position (solder side mirrored left-right, portrait board turned 90° clockwise) |
-| 4. Top view | a hole in section 1 that is not on that part |
+| 4. Top view | a hole in section 1 that is not on that part, or a bus strip that is not one row of free holes |
 | 5. Nets | a net that differs between the board and the schematic (skipped without a schematic or `kicad-cli`) |
-| 6. Wires | a net the wires do not join, or wires that join two nets |
+| 6. Wires | a net the wires do not join, wires that join two nets, or a bus wire that is not on its strip |
+| 7. Wire ends | more than 3 wire ends in one hole (`--max-per-hole`) |
 
 | Argument | Meaning | Default |
 | :--- | :--- | :--- |

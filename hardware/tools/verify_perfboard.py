@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Check a perfboard wiring file against the KiCad board and schematic it came from.
 
-    python3 verify_perfboard.py BOARD.kicad_pcb [WIRING.md] [--sch FILE] [--kicad-cli CMD] [--mcu REF]
+    python3 verify_perfboard.py BOARD.kicad_pcb [WIRING.md] [--sch FILE] [--kicad-cli CMD] [--mcu REF] [--max-per-hole N]
 
 BOARD.kicad_pcb  the board with one Edge.Cuts rectangle per perfboard
 WIRING.md        written by wire_list.py (default: perfboard_wiring.md next to the board)
@@ -20,6 +20,7 @@ Checks, each independent of the numbers in wire_list.py:
   4. the top-view holes (section 1) match the check list
   5. the board nets equal the schematic nets
   6. the wire table joins every net and never joins two nets
+  7. no hole has more than --max-per-hole wire ends (default 3)
 
 Exit code 0 when all checks pass, 1 when any fails.
 """
@@ -99,6 +100,7 @@ def main():
     ap.add_argument('--sch')
     ap.add_argument('--kicad-cli', default='kicad-cli')
     ap.add_argument('--mcu')
+    ap.add_argument('--max-per-hole', type=int, default=3)
     args = ap.parse_args()
     base = os.path.splitext(args.board)[0]
     wiring = args.wiring or os.path.join(os.path.dirname(os.path.abspath(args.board)), 'perfboard_wiring.md')
@@ -149,11 +151,12 @@ def main():
             expected[ref][(num, b + 1, nc + 1 - c, nr + 1 - r)] += 1   # A18 is top right of the component side; same name from both sides
     listed = {}
     sec3 = md[md.index('## 3.'):]
-    for ref, line in re.findall(r'^\*\*(\w+)\*\*[^:]*: (.*)$', sec3, re.M):
-        listed[ref] = collections.Counter((n, int(b), cnum(c), int(r)) for n, b, c, r in
-                                          re.findall(r'(?:^|; )(\S+) (?:\S* )?B(\d):([A-Z]+)(\d+)', line))
-        if listed[ref] != expected[ref]:
+    for ref, body in re.findall(r'^\*\*(\w+)\*\*[^\n]*\n\n\| Pin[^\n]*\n\|[-|]*\n((?:\|[^\n]*\n)+)', sec3, re.M):
+        listed[ref] = collections.Counter((row[0], int(row[3][1]), cnum(re.match(r'B\d:([A-Z]+)', row[3])[1]), int(re.match(r'B\d:[A-Z]+(\d+)', row[3])[1]))
+                                          for row in ([x.strip() for x in line.strip().strip('|').split('|')] for line in body.splitlines()))
+        if not ref.startswith('BUS') and listed[ref] != expected[ref]:
             bad('check-list holes differ from the board:', ref, sorted(set(listed[ref]) ^ set(expected[ref])))
+    listed = {r: v for r, v in listed.items() if not r.startswith('BUS')}
     if set(listed) != set(placed):
         bad('parts missing from the check list or the board:', sorted(set(listed) ^ set(placed)))
     print('3.   check list matches the pad positions')
@@ -164,6 +167,7 @@ def main():
         for num, b, col, row in c:
             holes_of[(ref, b)].add((col, row))
     cur = None
+    buses = {}                                   # BUSn -> (board, row, first column, last column)
     for line in md[md.index('## 1.'):md.index('## 2.')].splitlines():
         m = re.match(r'### Board (\d)', line)
         if m:
@@ -171,12 +175,27 @@ def main():
         m = re.match(r'\| (\w+) \| .*? \| (.*) \|$', line)
         if not m or m[1] == 'Part' or cur is None:
             continue
+        if m[1].startswith('BUS'):
+            a = re.fullmatch(r'([A-Z]+)(\d+) to ([A-Z]+)(\d+)', m[2].strip())
+            if not a or a[2] != a[4]:
+                bad('bus is not one row of holes:', m[1], m[2]); continue
+            c1, c2 = sorted((cnum(a[1]), cnum(a[3])))
+            buses[m[1]] = (cur, int(a[2]), c1, c2)
+            continue
         pts = {(cnum(a), int(b)) for a, b in re.findall(r'(?<![\w#.:])([A-Z]{1,2})(\d+)(?![\w.])', re.sub(r'=\S+', '', m[2]))}
         if not pts <= holes_of[(m[1], cur)]:
             bad('top-view hole not on the part:', m[1], sorted(pts - holes_of[(m[1], cur)]))
         if ' to ' not in m[2] and ',' in m[2] and pts != holes_of[(m[1], cur)]:
             bad('top-view holes differ from the part:', m[1])
-    print('4.   top view matches the check list')
+    all_holes = {(b, c, r) for c0 in expected.values() for (_, b, c, r) in c0}
+    for ref, (b, r, c1, c2) in buses.items():
+        nc, nr = (dims[b - 1][1], dims[b - 1][0]) if dims[b - 1][1] > dims[b - 1][0] else dims[b - 1]
+        if not (1 <= c1 and c2 <= nc and 1 <= r <= nr):
+            bad('bus outside the board:', ref)
+        for c in range(c1, c2 + 1):
+            if (b, c, r) in all_holes:
+                bad('bus hole is used by a part:', ref, f'{cname(c)}{r}')
+    print(f'4.   top view matches the check list ({len(buses)} bus strips on free holes)')
 
     # 5: board nets against the schematic
     pcb_nets = {frozenset(v) for v in nets.values() if len(v) > 1}
@@ -197,10 +216,26 @@ def main():
         while parent[x] != x:
             parent[x] = parent[parent[x]]; x = parent[x]
         return x
-    rows = re.findall(r'^\| #\d+ \|[^\n]*', md, re.M)
-    for row in rows:
-        c = [x.strip() for x in row.strip('|').split('|')]
+    rows = []                                    # (board of the table or None, cells)
+    section = None
+    for line in md[md.index('## 2.'):md.index('## 3.')].splitlines():
+        m = re.match(r'### Wires on board (\d)', line)
+        if m:
+            section = int(m[1]); continue
+        if line.startswith('### Wires between'):
+            section = None; continue
+        if re.match(r'\| #\d+ \|', line):
+            rows.append((section, [x.strip() for x in line.strip('|').split('|')]))
+    for section, c in rows:
         parent[find(re.sub(r'@.*', '', c[5]))] = find(re.sub(r'@.*', '', c[6]))
+        for hole, pin in ((c[3], c[5]), (c[4], c[6])):
+            if pin.startswith('BUS'):
+                parent[find(pin)] = find(pin.split('.')[0])          # all holes of one strip are one conductor
+                b, cell = (int(hole[1]), hole[3:]) if ':' in hole else (section, hole)
+                col, row = cnum(re.match(r'[A-Z]+', cell)[0]), int(re.search(r'\d+$', cell)[0])
+                bb = buses.get(pin.split('.')[0])
+                if not bb or bb[0] != b or bb[1] != row or not bb[2] <= col <= bb[3]:
+                    bad('bus wire not on its strip:', pin, hole)
     mcu = args.mcu or mcu_ref(sch, pads)
     for net in pcb_nets:
         own = sorted(n for n in net if n.startswith(mcu + '.'))
@@ -214,9 +249,20 @@ def main():
     for n in list(parent):
         groups[find(n)].add(which.get(n))
     for g in groups.values():
+        g.discard(None)                          # bus holes are not pads
         if len(g) > 1:
             bad('wires join different nets:', g)
     print(f'6.   {len(rows)} wires join every net (MCU {mcu}), no shorts')
+
+    # 7: wire ends per hole
+    ends = collections.Counter()
+    for section, c in rows:
+        for h in c[3:5]:
+            ends[h if ':' in h else f'B{section}:{h}'] += 1
+    for h, n in sorted(ends.items()):
+        if n > args.max_per_hole:
+            bad(f'{n} wire ends in hole {h} (max {args.max_per_hole})')
+    print(f'7.   at most {max(ends.values())} wire ends in one hole (max {args.max_per_hole})')
 
     print('PROBLEMS:', len(errors))
     sys.exit(1 if errors else 0)
