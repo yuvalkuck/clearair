@@ -13,7 +13,7 @@ PCB = sys.argv[1] if len(sys.argv) > 1 else (glob.glob('*.kicad_pcb') or ['board
 OUT = sys.argv[2] if len(sys.argv) > 2 else 'perfboard_wiring.md'
 CFG_PATH = sys.argv[3] if len(sys.argv) > 3 else os.path.join(os.path.dirname(os.path.abspath(PCB)), 'wire_list.json')
 CFG = dict(net_names={}, mcu=None, female=None, posts=[], sensors=[], high_current_prefixes=[], transistor_pins={},
-           headers=[], header_footprints=['PinHeader'], link_max_mm=300, max_wires_per_hole=3, bus_min_pads=4, bus_near=[], bus_area={}, awg_thick='AWG24', awg_thin='AWG30')
+           headers=[], header_footprints=['PinHeader'], link_max_mm=300, max_wires_per_hole=3, bus_min_pads=4, bus_near=[], bus_area={}, optional={}, awg_thick='AWG24', awg_thin='AWG30')
 if os.path.exists(CFG_PATH): CFG.update(json.load(open(CFG_PATH)))
 
 # Part data lives in the schematic next to the board: field "Role" (words: mcu, female, header, post, sensor, heavy),
@@ -35,6 +35,7 @@ if os.path.exists(SCH):
                 if key == 'mcu': CFG['mcu'] = ref
                 else: CFG[key] = list(CFG[key] or []) + [ref]
         if 'bus' in words: CFG['bus_near'] = list(CFG['bus_near']) + [ref]
+        if props.get('Optional'): CFG['optional'] = dict(CFG['optional'], **{ref: props['Optional']})       # hardware for a later stage: wires to it can be left out
         if props.get('Bus area'): CFG['bus_area'] = dict(CFG['bus_area'], **{ref: props['Bus area']})      # e.g. A14:Q18, hole names of two corners
         if 'heavy' in words: CFG['heavy'] = CFG.get('heavy', []) + [ref]
         if lid in libpins and ref[0] == 'Q': CFG['transistor_pins'].setdefault(props['Value'], {}).update(libpins[lid])
@@ -278,7 +279,7 @@ for bd in boards:
         elif len(ps) == 3: where_ = f"{h(ps[0])} to {h(ps[-1])}"
         else: where_ = ', '.join(h(p) for p in ps)
         typ = short_type(r, pt, len(ps)) + (f", flat side {flat_side(pt, bd)}" if prefix(r) == 'Q' else '')
-        o.append(f"| {r} | {typ} | {where_} |\n")
+        o.append(f"| {r} | {typ}" + (f" (optional: {CFG['optional'][r]})" if r in CFG['optional'] else "") + f" | {where_} |\n")
 o.append("\n## 2. Solder the wires (back side, pin to pin)\n\nSolder on the **back** side. **Bus strips** (`BUSn`, the first rows of each table): do them first. Lay one bare wire from the first to the last hole of a strip (on either side of the board) and solder it in every hole; each pin of that voltage or ground then gets its own short wire to one hole of the strip (the `BUSn.k` pin). Nets without a strip: every pin of a net is wired to the nearest pin of the same net that is already connected, so no hole gets more than 3 wire ends (the MCU module's own pins of a net count as one connection). A wire carries the current of everything behind it, so it is thick if any wire behind it is thick. Max length is only set where it matters: wires between the boards (`B1 ↔ B2`) are limited to 300 mm. The other wires have no limit. Three tables: board 1, board 2, and the wires between the boards. Each is sorted by thick wire (AWG24) before thin, then by net: voltage rails first (highest voltage on top), then ground, then signals. Work from the top down.\n")
 order = {'power': 0, 'ground': 1, 'signal': 2}
 wires = []
@@ -324,18 +325,20 @@ for n in sorted(nets):
         b = BUS[(n, 1)]['link'] if (n, 1) in BUS else hub[(n, 1)]
         kd, aw = wire_kind(n, a, b, link=True)
         wires.append((order.get(kd.split()[0].rstrip(','), 2), n, 2, a, b, kd, aw, str(LINK_MAX_MM)))
-wires.sort(key=lambda w: (w[2] == 2, w[2], w[6] != THICK, net_rank(w[1]), part_sort(w[3]['ref'])))   # board (links last), thick wire first, then net
+def optional_of(w): return next((CFG['optional'][p['ref']] for p in (w[3], w[4]) if p['ref'] in CFG['optional']), '')
+wires.sort(key=lambda w: (w[2] == 2, w[2], bool(optional_of(w)), w[6] != THICK, net_rank(w[1]), part_sort(w[3]['ref'])))   # board (links last), thick wire first, then net
 def wire_table(title, bi_want):
     link = bi_want == 2
-    o.append(f"\n### {title}\n\n| # | AWG | Net | From hole | To hole | From pin | To pin |" + (" Max length (mm) |" if link else "") + "\n|---|---|---|---|---|---|---|" + ("---|" if link else "") + "\n")
+    o.append(f"\n### {title}\n\n| # | AWG | Net | From hole | To hole | From pin | To pin |" + (" Max length (mm) |" if link else "") + " Note |\n|---|---|---|---|---|---|---|" + ("---|" if link else "") + "---|\n")
     if not link:                                                # the bare wire of each bus strip first: it is a part of the board
         for ref in sorted((r for r in parts if parts[r].get('bus') and parts[r]['pads'][0]['bd']['i'] == bi_want), key=lambda r: (net_rank(parts[r]['bus']), part_sort(r))):
             ps_ = parts[ref]['pads']
-            o.append(f"| {ref} | {THICK} bare | {NETNAME.get(parts[ref]['bus'], parts[ref]['bus'])} | {hn(ps_[0])} | {hn(ps_[-1])} | {ref}.{ps_[0]['num']} | {ref}.{ps_[-1]['num']} |\n")
-    for i, (_, n, bi, a, b, kd, aw, ln) in enumerate(wires, 1):
+            o.append(f"| {ref} | {THICK} bare | {NETNAME.get(parts[ref]['bus'], parts[ref]['bus'])} | {hn(ps_[0])} | {hn(ps_[-1])} | {ref}.{ps_[0]['num']} | {ref}.{ps_[-1]['num']} |" + (" |" if not link else "") + " |\n")
+    for i, w in enumerate(wires, 1):
+        _, n, bi, a, b, kd, aw, ln = w
         if bi != bi_want: continue
         fh, th = (where(a), where(b)) if link else (hn(a), hn(b))
-        o.append(f"| #{i:02d} | {aw} | {NETNAME.get(n, n)} | {fh} | {th} | {lab(a)} | {lab(b)} |" + (f" {ln} |" if link else "") + "\n")
+        o.append(f"| #{i:02d} | {aw} | {NETNAME.get(n, n)} | {fh} | {th} | {lab(a)} | {lab(b)} |" + (f" {ln} |" if link else "") + (f" optional: {optional_of(w)} |" if optional_of(w) else " |") + "\n")
 wid = {}
 for i, (_, n, bi, a, b, kd, aw, ln) in enumerate(wires, 1):
     wid.setdefault(id(a), []).append(i); wid.setdefault(id(b), []).append(i)
@@ -348,7 +351,7 @@ def pin_name(pt, p):
 for r in sorted(parts, key=part_sort):
     ps = [p for p in parts[r]['pads'] if p['bd']]
     if not ps: continue
-    o.append(f"\n**{r}** {parts[r]['val']}\n\n| Pin | Name | Net | Hole | Wires |\n|---|---|---|---|---|\n")
+    o.append(f"\n**{r}** {parts[r]['val']}" + (f" (optional: {CFG['optional'][r]})" if r in CFG['optional'] else "") + "\n\n| Pin | Name | Net | Hole | Wires |\n|---|---|---|---|---|\n")
     for p in sorted(ps, key=lambda p: (len(p['num']), p['num'], p['hole'])):
         o.append(f"| {p['num']} | {pin_name(parts[r], p)} | {NETNAME.get(p['net'], p['net']) or ''} | {where(p)} | {', '.join(f'#{w:02d}' for w in wid.get(id(p), [])) or '--'} |\n")
 open(OUT, 'w').write(''.join(o))
