@@ -15,9 +15,9 @@ Board 2: 24 columns (A to X) x 18 rows.
 
 | Part | Type | Holes |
 |---|---|---|
-| BUS2 | bus strip +5V: one bare wire (AWG24) along the holes on the back, soldered in every hole | W16 to R16 |
-| BUS4 | bus strip +3V3: one bare wire (AWG24) along the holes on the back, soldered in every hole | P16 to F16 |
-| BUS6 | bus strip GND: one bare wire (AWG24) along the holes on the back, soldered in every hole | R14 to G14 |
+| BUS2 | bus strip +5V: one bare wire (AWG24) along the holes on the back, soldered in every hole | Q16 to L16 |
+| BUS4 | bus strip +3V3: one bare wire (AWG24) along the holes on the back, soldered in every hole | Q14 to G14 |
+| BUS6 | bus strip GND: one bare wire (AWG24) along the holes on the back, soldered in every hole | Q18 to F18 |
 | BZ1 | 1x02 male header 12V buzzer | B4=+ B3=- |
 | J3 | 1x05 male header SPS30 | E12 to E8 |
 | J4 | 1x06 male header BME680 | G12 to G7 |
@@ -71,35 +71,35 @@ Solder on the **back** side. **Bus strips** (`BUSn`, the first rows of each tabl
 
 | # | AWG | Net | From hole | To hole | From pin | To pin |
 |---|---|---|---|---|---|---|
-| BUS2 | AWG24 bare | +5V | W16 | R16 | BUS2.1 | BUS2.6 |
-| BUS4 | AWG24 bare | +3V3 | P16 | F16 | BUS4.1 | BUS4.11 |
-| BUS6 | AWG24 bare | GND | R14 | G14 | BUS6.1 | BUS6.12 |
-| #01 | AWG24 | +5V | E12 | S16 | J3.1 | BUS2.5 |
-| #02 | AWG24 | +5V | W12 | W16 | J5.1 | BUS2.1 |
-| #03 | AWG24 | +5V | Q12 | U16 | J6.1 | BUS2.3 |
-| #04 | AWG24 | +5V | R2 | V16 | R11.1 | BUS2.2 |
-| #05 | AWG24 | +5V | J2 | T16 | R13.1 | BUS2.4 |
-| #06 | AWG24 | GND | E9 | J14 | J3.4 | BUS6.9 |
-| #07 | AWG24 | GND | E8 | I14 | J3.5 | BUS6.10 |
-| #08 | AWG24 | GND | W11 | R14 | J5.2 | BUS6.1 |
-| #09 | AWG24 | GND | Q11 | P14 | J6.2 | BUS6.3 |
-| #10 | AWG24 | GND | Q8 | O14 | J6.5 | BUS6.4 |
-| #11 | AWG30 | +3V3 | G12 | J16 | J4.1 | BUS4.7 |
-| #12 | AWG30 | +3V3 | G8 | I16 | J4.5 | BUS4.8 |
-| #13 | AWG30 | +3V3 | G7 | H16 | J4.6 | BUS4.9 |
-| #14 | AWG30 | +3V3 | C12 | G16 | J7.1 | BUS4.10 |
-| #15 | AWG30 | +3V3 | W4 | P16 | Q1.2 | BUS4.1 |
-| #16 | AWG30 | +3V3 | O4 | L16 | Q2.2 | BUS4.5 |
-| #17 | AWG30 | +3V3 | U14 | O16 | R1.1 | BUS4.2 |
-| #18 | AWG30 | +3V3 | S14 | M16 | R2.1 | BUS4.4 |
-| #19 | AWG30 | +3V3 | T2 | N16 | R10.1 | BUS4.3 |
-| #20 | AWG30 | +3V3 | L2 | K16 | R12.1 | BUS4.6 |
-| #21 | AWG30 | GND | G11 | L14 | J4.2 | BUS6.7 |
-| #22 | AWG30 | GND | C11 | H14 | J7.2 | BUS6.11 |
-| #23 | AWG30 | GND | G3 | K14 | Q3.1 | BUS6.8 |
-| #24 | AWG30 | GND | S12 | Q14 | R4.2 | BUS6.2 |
-| #25 | AWG30 | GND | M12 | N14 | R6.2 | BUS6.5 |
-| #26 | AWG30 | GND | I12 | M14 | R8.2 | BUS6.6 |
+| BUS2 | AWG24 bare | +5V | Q16 | L16 | BUS2.1 | BUS2.6 |
+| BUS4 | AWG24 bare | +3V3 | Q14 | G14 | BUS4.1 | BUS4.11 |
+| BUS6 | AWG24 bare | GND | Q18 | F18 | BUS6.1 | BUS6.12 |
+| #01 | AWG24 | +5V | E12 | M16 | J3.1 | BUS2.5 |
+| #02 | AWG24 | +5V | W12 | Q16 | J5.1 | BUS2.1 |
+| #03 | AWG24 | +5V | Q12 | O16 | J6.1 | BUS2.3 |
+| #04 | AWG24 | +5V | R2 | P16 | R11.1 | BUS2.2 |
+| #05 | AWG24 | +5V | J2 | N16 | R13.1 | BUS2.4 |
+| #06 | AWG24 | GND | E9 | I18 | J3.4 | BUS6.9 |
+| #07 | AWG24 | GND | E8 | H18 | J3.5 | BUS6.10 |
+| #08 | AWG24 | GND | W11 | Q18 | J5.2 | BUS6.1 |
+| #09 | AWG24 | GND | Q11 | O18 | J6.2 | BUS6.3 |
+| #10 | AWG24 | GND | Q8 | N18 | J6.5 | BUS6.4 |
+| #11 | AWG30 | +3V3 | G12 | K14 | J4.1 | BUS4.7 |
+| #12 | AWG30 | +3V3 | G8 | J14 | J4.5 | BUS4.8 |
+| #13 | AWG30 | +3V3 | G7 | I14 | J4.6 | BUS4.9 |
+| #14 | AWG30 | +3V3 | C12 | H14 | J7.1 | BUS4.10 |
+| #15 | AWG30 | +3V3 | W4 | Q14 | Q1.2 | BUS4.1 |
+| #16 | AWG30 | +3V3 | O4 | M14 | Q2.2 | BUS4.5 |
+| #17 | AWG30 | +3V3 | U14 | P14 | R1.1 | BUS4.2 |
+| #18 | AWG30 | +3V3 | S14 | N14 | R2.1 | BUS4.4 |
+| #19 | AWG30 | +3V3 | T2 | O14 | R10.1 | BUS4.3 |
+| #20 | AWG30 | +3V3 | L2 | L14 | R12.1 | BUS4.6 |
+| #21 | AWG30 | GND | G11 | K18 | J4.2 | BUS6.7 |
+| #22 | AWG30 | GND | C11 | G18 | J7.2 | BUS6.11 |
+| #23 | AWG30 | GND | G3 | J18 | Q3.1 | BUS6.8 |
+| #24 | AWG30 | GND | S12 | P18 | R4.2 | BUS6.2 |
+| #25 | AWG30 | GND | M12 | M18 | R6.2 | BUS6.5 |
+| #26 | AWG30 | GND | I12 | L18 | R8.2 | BUS6.6 |
 | #27 | AWG30 | Buzzer GND | G5 | B3 | Q3.3 | BZ1.2 |
 | #28 | AWG30 | Buzzer base | D5 | G4 | R9.2 | Q3.2 |
 | #29 | AWG30 | Display RX | L5 | O3 | R12.2 | Q2.1 |
@@ -165,9 +165,9 @@ Solder on the **back** side. **Bus strips** (`BUSn`, the first rows of each tabl
 | # | AWG | Net | From hole | To hole | From pin | To pin | Max length (mm) |
 |---|---|---|---|---|---|---|---|
 | #77 | AWG24 | +12V | B1:B4 | B2:N13 | BZ1.1 | BUS1.4 | 300 |
-| #78 | AWG24 | +5V | B1:R16 | B2:D13 | BUS2.6 | BUS3.4 | 300 |
-| #79 | AWG24 | GND | B1:G14 | B2:F15 | BUS6.12 | BUS7.10 | 300 |
-| #80 | AWG30 | +3V3 | B1:F16 | B2:I13 | BUS4.11 | BUS5.4 | 300 |
+| #78 | AWG24 | +5V | B1:L16 | B2:D13 | BUS2.6 | BUS3.4 | 300 |
+| #79 | AWG24 | GND | B1:F18 | B2:F15 | BUS6.12 | BUS7.10 | 300 |
+| #80 | AWG30 | +3V3 | B1:G14 | B2:I13 | BUS4.11 | BUS5.4 | 300 |
 | #81 | AWG30 | Buzzer drive | B1:D2 | B2:H17 | R9.1 | A1.17 | 300 |
 | #82 | AWG30 | Display RX | B1:O3 | B2:F11 | Q2.1 | A1.39 | 300 |
 | #83 | AWG30 | Display TX | B1:W3 | B2:G11 | Q1.1 | A1.38 | 300 |
@@ -247,12 +247,12 @@ One table per part: every pin with its hole and the wire numbers that touch it. 
 
 | Pin | Name | Net | Hole | Wires |
 |---|---|---|---|---|
-| 1 |  | +5V | B1:W16 | #02 |
-| 2 |  | +5V | B1:V16 | #04 |
-| 3 |  | +5V | B1:U16 | #03 |
-| 4 |  | +5V | B1:T16 | #05 |
-| 5 |  | +5V | B1:S16 | #01 |
-| 6 |  | +5V | B1:R16 | #78 |
+| 1 |  | +5V | B1:Q16 | #02 |
+| 2 |  | +5V | B1:P16 | #04 |
+| 3 |  | +5V | B1:O16 | #03 |
+| 4 |  | +5V | B1:N16 | #05 |
+| 5 |  | +5V | B1:M16 | #01 |
+| 6 |  | +5V | B1:L16 | #78 |
 
 **BUS3** +5V bus
 
@@ -267,17 +267,17 @@ One table per part: every pin with its hole and the wire numbers that touch it. 
 
 | Pin | Name | Net | Hole | Wires |
 |---|---|---|---|---|
-| 1 |  | +3V3 | B1:P16 | #15 |
-| 2 |  | +3V3 | B1:O16 | #17 |
-| 3 |  | +3V3 | B1:N16 | #19 |
-| 4 |  | +3V3 | B1:M16 | #18 |
-| 5 |  | +3V3 | B1:L16 | #16 |
-| 6 |  | +3V3 | B1:K16 | #20 |
-| 7 |  | +3V3 | B1:J16 | #11 |
-| 8 |  | +3V3 | B1:I16 | #12 |
-| 9 |  | +3V3 | B1:H16 | #13 |
-| 10 |  | +3V3 | B1:G16 | #14 |
-| 11 |  | +3V3 | B1:F16 | #80 |
+| 1 |  | +3V3 | B1:Q14 | #15 |
+| 2 |  | +3V3 | B1:P14 | #17 |
+| 3 |  | +3V3 | B1:O14 | #19 |
+| 4 |  | +3V3 | B1:N14 | #18 |
+| 5 |  | +3V3 | B1:M14 | #16 |
+| 6 |  | +3V3 | B1:L14 | #20 |
+| 7 |  | +3V3 | B1:K14 | #11 |
+| 8 |  | +3V3 | B1:J14 | #12 |
+| 9 |  | +3V3 | B1:I14 | #13 |
+| 10 |  | +3V3 | B1:H14 | #14 |
+| 11 |  | +3V3 | B1:G14 | #80 |
 
 **BUS5** +3V3 bus
 
@@ -292,18 +292,18 @@ One table per part: every pin with its hole and the wire numbers that touch it. 
 
 | Pin | Name | Net | Hole | Wires |
 |---|---|---|---|---|
-| 1 |  | GND | B1:R14 | #08 |
-| 2 |  | GND | B1:Q14 | #24 |
-| 3 |  | GND | B1:P14 | #09 |
-| 4 |  | GND | B1:O14 | #10 |
-| 5 |  | GND | B1:N14 | #25 |
-| 6 |  | GND | B1:M14 | #26 |
-| 7 |  | GND | B1:L14 | #21 |
-| 8 |  | GND | B1:K14 | #23 |
-| 9 |  | GND | B1:J14 | #06 |
-| 10 |  | GND | B1:I14 | #07 |
-| 11 |  | GND | B1:H14 | #22 |
-| 12 |  | GND | B1:G14 | #79 |
+| 1 |  | GND | B1:Q18 | #08 |
+| 2 |  | GND | B1:P18 | #24 |
+| 3 |  | GND | B1:O18 | #09 |
+| 4 |  | GND | B1:N18 | #10 |
+| 5 |  | GND | B1:M18 | #25 |
+| 6 |  | GND | B1:L18 | #26 |
+| 7 |  | GND | B1:K18 | #21 |
+| 8 |  | GND | B1:J18 | #23 |
+| 9 |  | GND | B1:I18 | #06 |
+| 10 |  | GND | B1:H18 | #07 |
+| 11 |  | GND | B1:G18 | #22 |
+| 12 |  | GND | B1:F18 | #79 |
 
 **BUS7** GND bus
 

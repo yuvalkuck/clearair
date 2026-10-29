@@ -13,7 +13,7 @@ PCB = sys.argv[1] if len(sys.argv) > 1 else (glob.glob('*.kicad_pcb') or ['board
 OUT = sys.argv[2] if len(sys.argv) > 2 else 'perfboard_wiring.md'
 CFG_PATH = sys.argv[3] if len(sys.argv) > 3 else os.path.join(os.path.dirname(os.path.abspath(PCB)), 'wire_list.json')
 CFG = dict(net_names={}, mcu=None, female=None, posts=[], sensors=[], high_current_prefixes=[], transistor_pins={},
-           headers=[], header_footprints=['PinHeader'], link_max_mm=300, max_wires_per_hole=3, bus_min_pads=4, bus_near=[], awg_thick='AWG24', awg_thin='AWG30')
+           headers=[], header_footprints=['PinHeader'], link_max_mm=300, max_wires_per_hole=3, bus_min_pads=4, bus_near=[], bus_area={}, awg_thick='AWG24', awg_thin='AWG30')
 if os.path.exists(CFG_PATH): CFG.update(json.load(open(CFG_PATH)))
 
 # Part data lives in the schematic next to the board: field "Role" (words: mcu, female, header, post, sensor, heavy),
@@ -35,6 +35,7 @@ if os.path.exists(SCH):
                 if key == 'mcu': CFG['mcu'] = ref
                 else: CFG[key] = list(CFG[key] or []) + [ref]
         if 'bus' in words: CFG['bus_near'] = list(CFG['bus_near']) + [ref]
+        if props.get('Bus area'): CFG['bus_area'] = dict(CFG['bus_area'], **{ref: props['Bus area']})      # e.g. A14:Q18, hole names of two corners
         if 'heavy' in words: CFG['heavy'] = CFG.get('heavy', []) + [ref]
         if lid in libpins and ref[0] == 'Q': CFG['transistor_pins'].setdefault(props['Value'], {}).update(libpins[lid])
         for k, v in props.items():
@@ -86,6 +87,10 @@ for ref, pt in parts.items():
         p['hole'] = (c, rw)
 def ncols(bd): return bd['H'] if bd['rot'] else bd['W']
 def nrows(bd): return bd['W'] if bd['rot'] else bd['H']
+def cnum(s):
+    n = 0
+    for ch in s: n = n * 26 + ord(ch) - 64
+    return n
 def cname(c):
     """Column letter: 1 = A ... 24 = X, 27 = AA."""
     s = ''
@@ -167,17 +172,23 @@ if CFG['bus_min_pads']:
             mrows = sorted({p['hole'][1] for p in allpads if p['bd'] is bd and p['ref'] == MCU})
             near = [p for p in allpads if p['bd'] is bd and p['ref'] in CFG['bus_near']] or loc      # strips go next to the parts with Role = bus
             mean_r = sum(p['hole'][1] for p in near) / len(near); mean_c = sum(p['hole'][0] for p in near) / len(near)
+            area = [CFG['bus_area'][p['ref']] for p in near if p['ref'] in CFG['bus_area']]      # the strips of this board stay inside this rectangle
+            if area:
+                (la, ra), (lb, rb) = (re.fullmatch(r'([A-Z]+)(\d+)', s).groups() for s in area[0].split(':'))
+                ca = sorted((ncol + 1 - cnum(la), ncol + 1 - cnum(lb))); ra_ = sorted((nrow + 1 - int(ra), nrow + 1 - int(rb)))
+            else: ca, ra_ = (1, ncol), (1, nrow)
             between = [r for r in range(1, nrow + 1) if len(mrows) > 1 and mrows[0] < r < mrows[-1]]
             between = [r for r in between if r not in (mrows[0] + 1, mrows[-1] - 1)] or between      # not right next to the socket rows of the module
             between = sorted(between, key=lambda r: abs(r - mean_r))
             between = between[0::2] + between[1::2]                                                  # every other row first: bare wires 2 rows apart
-            rest = sorted((r for r in range(1, nrow + 1) if r not in between), key=lambda r: abs(r - mean_r))
+            between = [r for r in between if ra_[0] <= r <= ra_[1]]
+            rest = sorted((r for r in range(ra_[0], ra_[1] + 1) if r not in between), key=lambda r: abs(r - mean_r))
             def fits(r, w):                                                                          # no strip in the next row over the same columns
                 return not any(abs(r2 - r) == 1 and not (w[-1] < a - 1 or w[0] > b + 1) for r2, a, b in spans[bd['i']])
             pick = None
             for strict in (True, False):
                 for r in between + rest:
-                    free = [c for c in range(1, ncol + 1) if (c, r) not in used[bd['i']]]
+                    free = [c for c in range(ca[0], ca[1] + 1) if (c, r) not in used[bd['i']]]
                     runs_, cur_ = [], []
                     for c in free:
                         if cur_ and c != cur_[-1] + 1: runs_.append(cur_); cur_ = []

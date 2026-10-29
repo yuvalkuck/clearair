@@ -20476,6 +20476,17 @@
 				)
 			)
 		)
+		(property "Bus area" "A14:Q18"
+			(at 248.92 144.78 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "7d1e081c-dcb7-5998-860b-1649af2153b9")
 		)
@@ -21294,6 +21305,17 @@
 			)
 		)
 		(property "Role" "bus"
+			(at 259.08 144.78 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Bus area" "A14:Q18"
 			(at 259.08 144.78 0)
 			(hide yes)
 			(show_name no)
