@@ -3073,7 +3073,7 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "Connector_Generic:Conn_01x06"
+		(symbol "clearair:BME680_Header"
 			(pin_names
 				(offset 1.016)
 				(hide yes)
@@ -3093,7 +3093,7 @@
 					)
 				)
 			)
-			(property "Value" "Conn_01x06"
+			(property "Value" "BME680_Header"
 				(at 0 -10.16 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -3125,7 +3125,7 @@
 					)
 				)
 			)
-			(property "Description" "Generic connector, single row, 01x06, script generated (kicad-library-utils/schlib/autogen/connector/)"
+			(property "Description" "BME680 module on a 1x06 wire header: 1 VCC, 2 GND, 3 SCL, 4 SDA, 5 SDO, 6 CS. Pins and types as FullModules:BME680_Board, drawing as Conn_01x06."
 				(at 0 0 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -3158,7 +3158,7 @@
 					)
 				)
 			)
-			(symbol "Conn_01x06_1_1"
+			(symbol "BME680_Header_1_1"
 				(rectangle
 					(start -1.27 6.35)
 					(end 1.27 -8.89)
@@ -3236,10 +3236,10 @@
 						(type none)
 					)
 				)
-				(pin passive line
+				(pin power_in line
 					(at -5.08 5.08 0)
 					(length 3.81)
-					(name "Pin_1"
+					(name "VCC"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -3254,10 +3254,10 @@
 						)
 					)
 				)
-				(pin passive line
+				(pin power_in line
 					(at -5.08 2.54 0)
 					(length 3.81)
-					(name "Pin_2"
+					(name "GND"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -3272,10 +3272,10 @@
 						)
 					)
 				)
-				(pin passive line
+				(pin input line
 					(at -5.08 0 0)
 					(length 3.81)
-					(name "Pin_3"
+					(name "SCL"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -3290,10 +3290,10 @@
 						)
 					)
 				)
-				(pin passive line
+				(pin bidirectional line
 					(at -5.08 -2.54 0)
 					(length 3.81)
-					(name "Pin_4"
+					(name "SDA"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -3308,10 +3308,10 @@
 						)
 					)
 				)
-				(pin passive line
+				(pin input line
 					(at -5.08 -5.08 0)
 					(length 3.81)
-					(name "Pin_5"
+					(name "SDO"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -3326,10 +3326,10 @@
 						)
 					)
 				)
-				(pin passive line
+				(pin input line
 					(at -5.08 -7.62 0)
 					(length 3.81)
-					(name "Pin_6"
+					(name "CS"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -16686,17 +16686,6 @@
 				)
 			)
 		)
-		(property "Role" "sensor"
-			(at 299.72 304.8 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
 		(property "Net Pin_3" "MiCS CO"
 			(at 299.72 304.8 0)
 			(hide yes)
@@ -17263,7 +17252,7 @@
 		)
 	)
 	(symbol
-		(lib_id "Connector_Generic:Conn_01x06")
+		(lib_id "clearair:BME680_Header")
 		(at 215.9 214.63 180)
 		(unit 1)
 		(body_style 1)
@@ -17317,17 +17306,6 @@
 		)
 		(property "Description" "Wire header to the off-board sensor module Pins: 1 VCC, 2 GND, 3 SCL, 4 SDA, 5 SDO, 6 CS"
 			(at 215.9 214.63 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Tie high" "5 6"
-			(at 0 0 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -19007,28 +18985,6 @@
 				)
 			)
 		)
-		(property "Role" "heavy"
-			(at 510.54 66.04 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Wire colors" "+12V:red;+5V:red;+3V3:red;GND:black;Buzzer GND:black;Buzzer base:orange;Buzzer drive:orange;MQ131 out:yellow;MiCS CO:yellow;MiCS NO2:yellow;Front fan PWM:yellow;Rear fan PWM:yellow;I2C SCL:green;I2C SDA:blue;Front fan tach:grey;Rear fan tach:grey;ZC in:orange;ZC out:orange;TRIAC gate:orange;Reset button:orange;Cold-boot button:orange;Display TX:purple;Display RX:purple"
-			(at 0 0 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
 		(pin "1"
 			(uuid "0cfcfa44-74d6-5139-ab14-6517c114e3e1")
 		)
@@ -19212,17 +19168,6 @@
 			)
 		)
 		(property "ki_keywords" "STM32G474 STM32G474CEU6 WeAct CoreBoard Long STM32"
-			(at 299.72 200.66 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Role" "mcu female"
 			(at 299.72 200.66 0)
 			(hide yes)
 			(show_name no)
@@ -19977,17 +19922,6 @@
 				)
 			)
 		)
-		(property "Role" "sensor"
-			(at 215.9 180.34 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
 		(pin "1"
 			(uuid "478fe83a-33ef-4109-93ff-eaa5a702578e")
 		)
@@ -20088,17 +20022,6 @@
 			)
 		)
 		(property "ki_fp_filters" "*Buzzer*"
-			(at 213.36 63.5 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Role" "heavy"
 			(at 213.36 63.5 0)
 			(hide yes)
 			(show_name no)
@@ -20336,17 +20259,6 @@
 				)
 			)
 		)
-		(property "Role" "heavy"
-			(at 288.29 76.2 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
 		(property "Net Pin_4" "Rear fan PWM"
 			(at 288.29 76.2 0)
 			(hide yes)
@@ -20433,17 +20345,6 @@
 			)
 		)
 		(property "Description" ""
-			(at 457.2 66.04 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Role" "header"
 			(at 457.2 66.04 0)
 			(hide yes)
 			(show_name no)
@@ -20549,17 +20450,6 @@
 			)
 		)
 		(property "Description" "Wire header to the off-board sensor module Pins: 1 VCC, 2 GND, 3 DO nc, 4 AO"
-			(at 396.24 180.34 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Role" "sensor"
 			(at 396.24 180.34 0)
 			(hide yes)
 			(show_name no)
@@ -20766,28 +20656,6 @@
 			)
 		)
 		(property "ki_fp_filters" "R_*"
-			(at 248.92 144.78 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Role" "bus"
-			(at 248.92 144.78 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Bus area" "A14:Q18"
 			(at 248.92 144.78 0)
 			(hide yes)
 			(show_name no)
@@ -21074,17 +20942,6 @@
 			)
 		)
 		(property "ki_fp_filters" "Connector*:*_1x??_*"
-			(at 391.16 68.58 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Role" "post heavy"
 			(at 391.16 68.58 0)
 			(hide yes)
 			(show_name no)
@@ -21385,17 +21242,6 @@
 				)
 			)
 		)
-		(property "Role" "heavy"
-			(at 261.62 76.2 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
 		(property "Net Pin_4" "Front fan PWM"
 			(at 261.62 76.2 0)
 			(hide yes)
@@ -21605,28 +21451,6 @@
 			)
 		)
 		(property "ki_fp_filters" "R_*"
-			(at 259.08 144.78 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Role" "bus"
-			(at 259.08 144.78 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Bus area" "A14:Q18"
 			(at 259.08 144.78 0)
 			(hide yes)
 			(show_name no)

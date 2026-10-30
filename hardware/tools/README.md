@@ -823,7 +823,14 @@ Run it from the board folder (after you place the parts, step 4 above):
 cd hardware/WeAct-G474CE-Long
 python3 ../tools/wire_list.py                       # clearair.kicad_pcb -> perfboard_wiring.md
 python3 ../tools/wire_list.py BOARD.kicad_pcb OUT.md
+python3 ../tools/wire_list.py --link-max-mm 400 --max-wires-per-hole 2 --wire-stock 22,24,30
 ```
+
+| Option | Default | Meaning |
+| :--- | :--- | :--- |
+| `--link-max-mm` | 300 | Longest wire between two boards (how far apart they sit) |
+| `--max-wires-per-hole` | 3 | Wire ends that fit on one solder pad |
+| `--wire-stock` | `24,30` | AWG numbers of the wire you have |
 
 Run it again after you move parts. The file is generated, so do not edit it
 by hand.
@@ -843,16 +850,12 @@ board lies landscape.
    place it at, as column letter + row number (`E7`). Male headers are for everything that
    connects from off the board with a wire or plug; the MCU module (`A1`)
    plugs into female sockets.
-2. **Wires (back side).** Three tables (board 1, board 2, wires between the boards), each sorted by AWG number from high to low (thin first; the bare bus-strip wires are listed with the thick AWG24 wires), then net (voltage rails first, then ground, then signals). One row per wire: number, board, net, from pin and hole,
+2. **Wires (back side).** Three tables (board 1, board 2, wires between the boards), each sorted by AWG number from high to low (thin first; the bare bus-strip wires are listed with the thick AWG24 wires), then net (voltage rails first, then ground, then signals), then wire color. One row per wire: number, board, net, from pin and hole,
    to pin and hole, **AWG** and max length. Every pin of a net is wired to the nearest pin of the same net that is
    already connected, so no hole gets more than 3 wire ends (`max_wires_per_hole`).
-   Voltage and ground nets with at least `bus_min_pads` (4) connections, counting
-   the board link, get a bus strip instead: a free row of holes (between the
-   socket rows of the MCU module, but not in the rows right next to the sockets,
-   if the board has one; short strips share a row with one hole of gap, and strips
-   in neighbouring rows do not run over the same columns; else next to the parts
-   with `Role` = `bus`) joined by one bare wire, with one short wire from each
-   pin to its own hole of the strip.
+   A rail with a bus strip on that board gets one bare wire along the strip's
+   holes, and one short wire from each pin to its own hole of the strip
+   (see [Bus strips](#bus-strips)).
    The pins of the MCU module are joined inside it, so each is a start point.
    A wire is thick when any wire behind it is thick. One wire per net joins the two boards.
 3. **Check list per part.** One table per part: every pin with its name, net, hole and the wire numbers that touch it.
@@ -866,37 +869,43 @@ from the solder side the board is turned over left to right, so A is then
 at the left. Wires are numbered `#01`, `#02`, ... so they cannot be
 mistaken for holes like `W15`.
 
-## Part data in the schematic
+## Part data from KiCad
 
-The script reads the `.kicad_sch` next to the board file. No config file is
-needed: the part data are hidden fields on the schematic symbols. Without a
-schematic it takes the part with the most pins as the MCU module and uses
-AWG24 / AWG30 for the wires.
+The script reads the `.kicad_sch`, `.kicad_pro` and `.kicad_pcb` next to the
+board file. There is no config file and no custom field except `Net <pin>`.
 
-| Field | Meaning |
-| :--- | :--- |
-| `Role` | Space-separated words. `mcu`: start of every net, no wire between its own pins. `female`: a socket the module plugs into. `header`: male header without a `PinHeader` footprint. `post`: loose male pins (supply). `bus`: bus strips are placed next to this part (boards without an MCU module). `sensor`: power and ground wires get the thick wire. `heavy`: same, for fan, buzzer and supply parts |
-| `Optional` | Free text, for example `RTC, planned`: hardware for a later stage. Every wire that ends on this part is marked `optional: <text>` in the Note column, sorted after the required wires of its table, and the part is marked optional in the part tables. The wires are still listed, so you can leave them out |
-| `Tie high` | Space-separated pin numbers of this part that are strapped to the supply (for example `5 6` for the SDO and CS pins of the BME680) and not powered by it. Their wires are white in the Color column. |
-| `Wire colors` | On the MCU part: `Net name:color` pairs separated by `;`, for example `GND:black;+5V:red`. The names are the readable net names. The wire tables show the color of each wire in the Color column. Wires on a `Tie high` pin are white. The bare bus-strip wires show `Bare`. |
-| `Bus area` | On a part with `Role` = `bus`: the strips of its board stay inside this rectangle, given as two corner hole names, for example `A14:Q18` |
-| `Net <pin>` | Readable name for the net KiCad names after that pin, for example `Net PA0` = `MQ131 out` names `Net-(A1-PA0)` |
-
-Transistor pin letters come from the symbol's pin names. The two gauges are
-defaults in the script (`AWG24`, `AWG30`), and the
-longest wire between two boards is `link_max_mm` (300), and the most wire ends in one hole is `max_wires_per_hole` (3).
-
-An optional `wire_list.json` next to the board (or its path as the third
-argument) still overrides any of these keys: `mcu`, `female`, `headers`,
-`posts`, `sensors`, `high_current_prefixes`, `transistor_pins`, `net_names`,
-`link_max_mm`, `max_wires_per_hole`, `bus_min_pads` (0 = no strips), `bus_near`, `awg_thick`, `awg_thin`. ClearAir does not use one.
+| Data | Where in KiCad | Used for |
+| :--- | :--- | :--- |
+| MCU module | The part with the most pins | Start of every net; its own pins of a net are joined inside it |
+| Wire gauge | Net classes (Schematic Setup > Net Classes): track width | See [Wire gauge](#wire-gauge) |
+| Wire color | Net classes: schematic color | The Color column shows the nearest color name |
+| Logic-high straps | Symbol pin electrical types | A logic pin (`input`, `bidirectional`, ...) on a voltage rail is a strap: its wire is White |
+| Later-stage parts | The symbol's DNP (Do Not Populate) flag | Its wires get the Note `optional: DNP` |
+| Bus strips | Board-only footprints in the PCB | See [Bus strips](#bus-strips) |
+| Transistor pin letters | Symbol pin names | `S`/`G`/`D`, `E`/`B`/`C` in the part tables |
+| Readable net names | Field `Net <pin>` on a symbol, for example `Net PA0` = `MQ131 out` names `Net-(A1-PA0)` | Net column |
 
 ## Wire gauge
 
-Power and ground wires are thick (`awg_thick`) when they feed the supply, the
-MCU module, a high-current part or a `sensors` part, and for the ground wire
-between boards. Everything else is thin (`awg_thin`). The rules are in
-`wire_kind()` in the script.
+The track width of a net class gives the current: IPC-2221, outer layer, 1 oz
+(35 um) copper, 10 C rise, as in KiCad's PCB Calculator. The wire is the
+thinnest one in `--wire-stock` whose chassis-wiring current covers it
+(AWG24 3.5 A, AWG30 0.86 A, table in `AMPACITY`). If none does, the script
+warns and uses the thickest. ClearAir: `Power` (`+12V`, `+5V`) and `Ground`
+(`GND`, the buzzer low side) are 1.0 mm (2.4 A), so AWG24. `Logic power`
+(`+3V3`), `Clock`, `Data` and `Default` are 0.2 mm (0.74 A), so AWG30. A wire
+is as thick as the thickest wire behind it. The bare wire of a bus strip is
+the thickest wire in stock.
+
+## Bus strips
+
+A bus strip is a footprint with the `board_only` attribute (Footprint
+Properties > Not in schematic) whose pads all have the same net: the rail it
+carries. It stays in the PCB when you update it from the schematic, like a
+mounting hole tied to GND. Put its pads in a free row of holes. ClearAir has
+`BUS1` to `BUS7` (`clearair:Bus_Strip`). The pins of that rail on the same board are
+wired one per hole, in hole order; the last hole takes the wire to the other
+board. With more pins than holes, each pin goes to the nearest hole.
 
 ## Check the layout first
 
@@ -932,7 +941,7 @@ python3 ../tools/verify_perfboard.py clearair.kicad_pcb --kicad-cli "$HOME/bin/k
 | `WIRING` | file written by `wire_list.py` | `perfboard_wiring.md` next to the board |
 | `--sch FILE` | schematic for check 5 | the `.kicad_sch` next to the board |
 | `--kicad-cli CMD` | command that runs `kicad-cli` | `kicad-cli` on `PATH` |
-| `--mcu REF` | part whose pins of one net are joined inside the module and need no wire | part with `Role` = `mcu`, else the part with most pads |
+| `--mcu REF` | part whose pins of one net are joined inside the module and need no wire | the part with the most pads |
 
 Exit code 0 when all checks pass, 1 when any fails. It does not know your
 real parts: measure the module, the headers and the board before you

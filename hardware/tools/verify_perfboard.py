@@ -9,7 +9,7 @@ WIRING.md        written by wire_list.py (default: perfboard_wiring.md next to t
 --kicad-cli CMD  command that runs kicad-cli, for the schematic netlist (default: kicad-cli on PATH).
                  Without kicad-cli the net comparison is skipped.
 --mcu REF        part whose pins of one net are joined inside the module, so they need no wire
-                 (default: the part with Role = mcu in the schematic, else the part with most pads)
+                 (default: the part with the most pads)
 
 It uses only the Python standard library, so plain python3 is enough. It does not run KiCad's Python.
 Checks, each independent of the numbers in wire_list.py:
@@ -55,6 +55,8 @@ def load_board(path):
         m = re.search(r'\(at ([-\d.]+) ([-\d.]+)(?: ([-\d.]+))?\)', fp)
         x0, y0, a = float(m[1]), float(m[2]), math.radians(float(m[3] or 0))
         ref = re.search(r'"Reference"\s+"([^"]*)"', fp)[1]
+        if re.search(r'\(attr [^)]*\bboard_only\b', fp):
+            continue                           # board-only footprints (bus strips) are not parts: the wire tables list their holes
         for blk in re.split(r'\n\t\t\(pad ', fp)[1:]:
             h = re.match(r'"([^"]*)" thru_hole', blk)
             if not h:
@@ -85,12 +87,7 @@ def schematic_nets(sch, kicad_cli):
 
 
 def mcu_ref(sch, pads):
-    if os.path.exists(sch):
-        for blk in open(sch).read().split('\n\t(symbol\n')[1:]:
-            props = dict(re.findall(r'\(property "([^"]+)" "([^"]*)"', blk))
-            if 'mcu' in props.get('Role', '').split():
-                return props['Reference']
-    return max(pads, key=lambda r: len(pads[r]))
+    return max(pads, key=lambda r: len(pads[r]))      # the MCU module: the part with the most pads
 
 
 def main():
