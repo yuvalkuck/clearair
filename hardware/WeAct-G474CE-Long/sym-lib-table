@@ -1,0 +1,4 @@
+(sym_lib_table
+	(version 7)
+	(lib (name "clearair") (type "KiCad") (uri "${KIPRJMOD}/clearair.kicad_sym") (options "") (descr "ClearAir project symbols"))
+)
