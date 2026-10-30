@@ -9,10 +9,10 @@ Five scripts for any KiCad 10 board:
 - [`make_carrier.py`](#make_carrierpy-printable-carrier-for-prusaslicer):
   turns the board into a printable plate (holes for pins, grooves for
   wires) for PrusaSlicer.
-- [`wire_list.py`](#wire_listpy-perfboard-build-instructions): writes the
+- [`perfboard_wire_list.py`](#wire_listpy-perfboard-build-instructions): writes the
   build instructions for a hand-wired perfboard (where each part goes, which
   pin connects to which pin, with the wire gauge).
-- [`verify_perfboard.py`](#verify_perfboardpy-check-the-perfboard-instructions):
+- [`perfboard_verify.py`](#perfboard_verifypy-check-the-perfboard-instructions):
   checks that build instructions match the board and the schematic, before
   you solder.
 
@@ -72,17 +72,17 @@ to it), it overwrites the script's result on its next save.
    write the build instructions (`perfboard_wiring.md` next to the board):
 
    ```sh
-   cd hardware/WeAct-G474CE-Long && python3 ../tools/wire_list.py
+   cd hardware/WeAct-G474CE-Long && python3 ../tools/perfboard_wire_list.py
    ```
 
-   See [wire_list.py](#wire_listpy-perfboard-build-instructions). Then check
+   See [perfboard_wire_list.py](#wire_listpy-perfboard-build-instructions). Then check
    the result before you solder (needs only `python3`):
 
    ```sh
-   python3 ../tools/verify_perfboard.py clearair.kicad_pcb --kicad-cli "$A kicad-cli"
+   python3 ../tools/perfboard_verify.py clearair.kicad_pcb --kicad-cli "$A kicad-cli"
    ```
 
-   See [verify_perfboard.py](#verify_perfboardpy-check-the-perfboard-instructions).
+   See [perfboard_verify.py](#perfboard_verifypy-check-the-perfboard-instructions).
 
    **Build the printable carrier (needs a 3D printer).** This routes a copy of the board (your
    board file is not changed) and cuts the grooves:
@@ -809,7 +809,7 @@ Build it again after every placement change (step 7 of
 
 ---
 
-# wire_list.py: perfboard build instructions
+# perfboard_wire_list.py: perfboard build instructions
 
 Reads the board file and writes `perfboard_wiring.md`: everything you need to
 build the circuit on 2.54 mm perfboard by hand. It uses plain Python and
@@ -821,9 +821,9 @@ Run it from the board folder (after you place the parts, step 4 above):
 
 ```sh
 cd hardware/WeAct-G474CE-Long
-python3 ../tools/wire_list.py                       # clearair.kicad_pcb -> perfboard_wiring.md
-python3 ../tools/wire_list.py BOARD.kicad_pcb OUT.md
-python3 ../tools/wire_list.py --link-max-mm 400 --max-wires-per-hole 2 --wire-stock 22,24,30
+python3 ../tools/perfboard_wire_list.py                       # clearair.kicad_pcb -> perfboard_wiring.md
+python3 ../tools/perfboard_wire_list.py BOARD.kicad_pcb OUT.md
+python3 ../tools/perfboard_wire_list.py --link-max-mm 400 --max-wires-per-hole 2 --wire-stock 22,24,30
 ```
 
 | Option | Default | Meaning |
@@ -913,16 +913,16 @@ If a pin is more than 0.35 mm off the 2.54 mm grid, the file starts with a
 warning listing the parts, and the holes are rounded. Fix the layout (see
 [Grid and header pins](#grid-and-header-pins)) and run it again.
 
-# verify_perfboard.py: check the perfboard instructions
+# perfboard_verify.py: check the perfboard instructions
 
-Run it after `wire_list.py` and before you solder. It reads the board, the
+Run it after `perfboard_wire_list.py` and before you solder. It reads the board, the
 schematic and `perfboard_wiring.md`, and recomputes every hole from the pad
 positions itself, so it catches mistakes in the instructions. It uses only
 the Python standard library.
 
 ```sh
 cd hardware/WeAct-G474CE-Long
-python3 ../tools/verify_perfboard.py clearair.kicad_pcb --kicad-cli "$HOME/bin/kicad-10.0.5-x86_64.AppImage kicad-cli"
+python3 ../tools/perfboard_verify.py clearair.kicad_pcb --kicad-cli "$HOME/bin/kicad-10.0.5-x86_64.AppImage kicad-cli"
 ```
 
 | Check | What fails it |
@@ -938,7 +938,7 @@ python3 ../tools/verify_perfboard.py clearair.kicad_pcb --kicad-cli "$HOME/bin/k
 | Argument | Meaning | Default |
 | :--- | :--- | :--- |
 | `BOARD` | the `.kicad_pcb`, with one `Edge.Cuts` rectangle per perfboard | required |
-| `WIRING` | file written by `wire_list.py` | `perfboard_wiring.md` next to the board |
+| `WIRING` | file written by `perfboard_wire_list.py` | `perfboard_wiring.md` next to the board |
 | `--sch FILE` | schematic for check 5 | the `.kicad_sch` next to the board |
 | `--kicad-cli CMD` | command that runs `kicad-cli` | `kicad-cli` on `PATH` |
 | `--mcu REF` | part whose pins of one net are joined inside the module and need no wire | the part with the most pads |

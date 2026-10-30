@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """Check a perfboard wiring file against the KiCad board and schematic it came from.
 
-    python3 verify_perfboard.py BOARD.kicad_pcb [WIRING.md] [--sch FILE] [--kicad-cli CMD] [--mcu REF] [--max-per-hole N]
+    python3 perfboard_verify.py BOARD.kicad_pcb [WIRING.md] [--sch FILE] [--kicad-cli CMD] [--mcu REF] [--max-per-hole N]
 
 BOARD.kicad_pcb  the board with one Edge.Cuts rectangle per perfboard
-WIRING.md        written by wire_list.py (default: perfboard_wiring.md next to the board)
+WIRING.md        written by perfboard_wire_list.py (default: perfboard_wiring.md next to the board)
 --sch FILE       schematic to compare the nets with (default: the .kicad_sch next to the board)
 --kicad-cli CMD  command that runs kicad-cli, for the schematic netlist (default: kicad-cli on PATH).
                  Without kicad-cli the net comparison is skipped.
@@ -12,7 +12,7 @@ WIRING.md        written by wire_list.py (default: perfboard_wiring.md next to t
                  (default: the part with the most pads)
 
 It uses only the Python standard library, so plain python3 is enough. It does not run KiCad's Python.
-Checks, each independent of the numbers in wire_list.py:
+Checks, each independent of the numbers in perfboard_wire_list.py:
   1. every through-hole pad is inside exactly one board, on its 2.54 mm grid
   2. no two pads share a hole
   3. the back-side holes in the check list (section 3) match the pad positions,
