@@ -22,10 +22,8 @@ STOCK = sorted(int(x) for x in ARGS.wire_stock.split(','))         # thick (low 
 CFG = dict(transistor_pins={}, header_footprints=['PinHeader', 'PinSocket'], link_max_mm=ARGS.link_max_mm,
            max_wires_per_hole=ARGS.max_wires_per_hole, optional={})
 
-# Part data lives in the schematic next to the board: the DNP flag, fields "Net <pin>" (readable net name),
-# and the pin names and electrical types of the symbols.
+# Part data lives in the schematic next to the board: the DNP flag and the pin names and electrical types of the symbols.
 SCH = os.path.splitext(PCB)[0] + '.kicad_sch'
-SCH_NETS = {}                      # (ref, pin) -> readable net name
 PIN_TYPES = {}                     # ref -> {pin number: electrical type}, from the symbols
 if os.path.exists(SCH):
     st = open(SCH).read()
@@ -40,8 +38,6 @@ if os.path.exists(SCH):
         PIN_TYPES[ref] = libpins.get(lid + ' types', {})
         if re.search(r'\n\t\t\(dnp yes\)', blk): CFG['optional'][ref] = 'DNP'      # KiCad's Do Not Populate: hardware for a later stage, wires to it can be left out
         if lid in libpins and ref[0] == 'Q': CFG['transistor_pins'].setdefault(props['Value'], {}).update(libpins[lid])
-        for k, v in props.items():
-            if k.startswith('Net '): SCH_NETS[(ref, k[4:])] = v
 KIND = {'R': 'resistor', 'J': 'header', 'Q': 'transistor', 'A': 'MCU board', 'SW': 'push button',
         'BZ': 'buzzer', 'PS': 'power input', 'M': 'fan header', 'U': 'module'}
 t = open(PCB).read()
@@ -108,8 +104,7 @@ def lab(p):
     return f"{p['ref']}.{p['num']}" + (f"@{hn(p)}" if len(same) > 1 else '')
 def where(p): return f"B{p['bd']['i']+1}:{hn(p)}"
 
-NETNAME = {}                       # readable names for unnamed nets
-for (r_, pin_), nm_ in SCH_NETS.items(): NETNAME[f'Net-({r_}-{pin_})'] = nm_   # KiCad names an unnamed net after one of its pins
+def netname(n): return n[1:] if n and n.startswith('/') else n   # a net label on the root sheet: KiCad puts the sheet path "/" before its name
 LINK_MAX_MM = CFG['link_max_mm']  # longest wire between two boards
 # Net classes from the KiCad project (Schematic Setup > Net Classes): the track width sets the current and so the AWG, the schematic color the wire color.
 PRO = os.path.splitext(PCB)[0] + '.kicad_pro'
@@ -168,7 +163,7 @@ for n, ps in nets.items():
 
 def net_rank(n):
     """Voltage rails first (highest voltage on top), then ground, then signals by name."""
-    name = NETNAME.get(n, n)
+    name = netname(n)
     v = re.fullmatch(r'\+?(\d+)V(\d*)', name)
     if v: return (0, -float(f"{v[1]}.{v[2] or 0}"), '')
     if re.fullmatch(r'(GND|AGND|DGND|VSS)', name, re.I): return (1, 0, '')
@@ -198,7 +193,7 @@ for ref, pt in sorted(parts.items(), key=lambda kv: int(re.sub(r'\D', '', kv[0])
             assign[id(p)] = q
             if q in free: free.remove(q)
     BUS[(n, bd['i'])] = dict(ref=ref, row=bpads[0]['hole'][1], pads=bpads, assign=assign, link=bpads[-1] if linked else None)
-    pt['val'] = f"{NETNAME.get(n, n)} bus"
+    pt['val'] = f"{netname(n)} bus"
 
 def top(p): return p['hole']
 def runs(ps):
@@ -241,7 +236,7 @@ def flat_side(pt, bd):
     if abs(dx) > abs(dy): return 'right' if dx > 0 else 'left'
     return 'down' if dy > 0 else 'up'
 def short_type(r, pt, n):
-    if pt.get('bus'): return f"bus strip {NETNAME.get(pt['bus'], pt['bus'])}: one bare wire ({THICK}) along the holes on the back, soldered in every hole"
+    if pt.get('bus'): return f"bus strip {netname(pt['bus'])}: one bare wire ({THICK}) along the holes on the back, soldered in every hole"
     if r in FEMALE:
         lines = len({p['hole'][1] for p in parts[r]['pads'] if 'hole' in p})
         return f"{lines} x 1x{n // max(lines, 1)} female socket"
@@ -325,14 +320,14 @@ def wire_table(title, bi_want):
         if link: return
         for ref in sorted((r for r in parts if parts[r].get('bus') and parts[r]['pads'][0]['bd']['i'] == bi_want), key=lambda r: (net_rank(parts[r]['bus']), part_sort(r))):
             ps_ = parts[ref]['pads']
-            o.append(f"| {ref} | {THICK} bare | Bare | {NETNAME.get(parts[ref]['bus'], parts[ref]['bus'])} | {hn(ps_[0])} | {hn(ps_[-1])} | {ref}.{ps_[0]['num']} | {ref}.{ps_[-1]['num']} |" + (" |" if HAS_NOTE else "") + "\n")
+            o.append(f"| {ref} | {THICK} bare | Bare | {netname(parts[ref]['bus'])} | {hn(ps_[0])} | {hn(ps_[-1])} | {ref}.{ps_[0]['num']} | {ref}.{ps_[-1]['num']} |" + (" |" if HAS_NOTE else "") + "\n")
     done = link
     for i, w in enumerate(wires, 1):
         _, n, bi, a, b, kd, aw, ln = w
         if bi != bi_want: continue
         if awgn(aw) <= awgn(THICK) and not done: bus_rows(); done = True
         fh, th = (where(a), where(b)) if link else (hn(a), hn(b))
-        o.append(f"| #{i:02d} | {aw} | {color_of(w)} | {NETNAME.get(n, n)} | {fh} | {th} | {lab(a)} | {lab(b)} |" + (f" {ln} |" if link else "") + ((f" optional: {optional_of(w)} |" if optional_of(w) else " |") if HAS_NOTE else "") + "\n")
+        o.append(f"| #{i:02d} | {aw} | {color_of(w)} | {netname(n)} | {fh} | {th} | {lab(a)} | {lab(b)} |" + (f" {ln} |" if link else "") + ((f" optional: {optional_of(w)} |" if optional_of(w) else " |") if HAS_NOTE else "") + "\n")
     if not done: bus_rows()
 wid = {}
 for i, (_, n, bi, a, b, kd, aw, ln) in enumerate(wires, 1):
@@ -348,6 +343,6 @@ for r in sorted(parts, key=part_sort):
     if not ps: continue
     o.append(f"\n**{r}** {parts[r]['val']}" + (f" (optional: {CFG['optional'][r]})" if r in CFG['optional'] else "") + "\n\n| Pin | Name | Net | Hole | Wires |\n|---|---|---|---|---|\n")
     for p in sorted(ps, key=lambda p: (len(p['num']), p['num'], p['hole'])):
-        o.append(f"| {p['num']} | {pin_name(parts[r], p)} | {NETNAME.get(p['net'], p['net']) or ''} | {where(p)} | {', '.join(f'#{w:02d}' for w in wid.get(id(p), [])) or '--'} |\n")
+        o.append(f"| {p['num']} | {pin_name(parts[r], p)} | {netname(p['net']) or ''} | {where(p)} | {', '.join(f'#{w:02d}' for w in wid.get(id(p), [])) or '--'} |\n")
 open(OUT, 'w').write(''.join(o))
 print('wrote', OUT, len(nets), 'nets,', len(wires), 'wires')

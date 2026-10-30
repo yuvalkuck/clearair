@@ -16622,6 +16622,266 @@
 		)
 		(uuid "fcfcf4d3-0c17-5cec-a21c-6970afdb76cd")
 	)
+	(label "MICS_CO_OUT"
+		(at 299.72 299.72 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "e16f2485-2316-45f4-86c3-ce88e32327b9")
+	)
+	(label "MICS_NO2_OUT"
+		(at 297.18 299.72 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "773d4b30-9a3f-42a8-ac51-6db72d8360d1")
+	)
+	(label "DISPLAY_RX_5V"
+		(at 424.18 246.38 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "6cbbec69-b19f-418a-a5e8-cabd68db8094")
+	)
+	(label "DISPLAY_TX_5V"
+		(at 424.18 218.44 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "54535220-3879-4f23-a48d-fd76dda517a8")
+	)
+	(label "MQ131_ADC"
+		(at 317.5 185.42 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "378ab68a-3947-46d4-81ef-65e09afc3968")
+	)
+	(label "MICS_CO1"
+		(at 317.5 187.96 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "913d5f64-6e42-47e0-a65d-e76f9c059ced")
+	)
+	(label "MICS_NO2"
+		(at 317.5 203.2 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "033a7afe-af91-4199-8b88-199ca7aea713")
+	)
+	(label "I2C_SCL"
+		(at 281.94 198.12 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "ece1602c-141f-4448-90b6-b53e0e68e2c9")
+	)
+	(label "I2C_SDA"
+		(at 281.94 180.34 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "218d9165-56d3-4516-80a0-691d508a3968")
+	)
+	(label "ZC_INPUT"
+		(at 317.5 208.28 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "691261b8-11e6-42dd-b20f-cba1901284bb")
+	)
+	(label "TRIAC_DIMMER"
+		(at 317.5 210.82 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "e380f2db-69e9-4414-a8c5-2a0e181890ee")
+	)
+	(label "BOOT_MODE"
+		(at 281.94 218.44 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "3c08765d-ed05-40a7-a7c0-c6a513eec953")
+	)
+	(label "NRST"
+		(at 317.5 182.88 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "b8026de9-8a77-4323-aea6-346bedbb7dc2")
+	)
+	(label "BUZZER_IN"
+		(at 281.94 215.9 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "41bf35cb-2aab-4388-bf02-0109a0d3680c")
+	)
+	(label "FAN_FRONT_PWM"
+		(at 281.94 210.82 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "f5d105c9-1d54-46c8-810f-99038e77b1df")
+	)
+	(label "FAN_REAR_PWM"
+		(at 281.94 208.28 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "f3856c71-a0f5-4d56-972e-ff1f3fae96b2")
+	)
+	(label "FAN_FRONT_TACH"
+		(at 317.5 198.12 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "d32c217f-2136-403f-9db8-7294e8603dff")
+	)
+	(label "FAN_REAR_TACH"
+		(at 281.94 190.5 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "be8d76b7-9951-4737-a072-a10152482043")
+	)
+	(label "DISPLAY_TX"
+		(at 317.5 218.44 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "171733e9-894b-484b-aa30-5bca4c19eb0a")
+	)
+	(label "DISPLAY_RX"
+		(at 317.5 220.98 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "10f1fc0e-15c2-4443-9a86-34dfbbb9967f")
+	)
+	(label "BUZZER_BASE"
+		(at 177.8 76.2 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "970a9e55-5838-40b3-b14b-27ab6bca5fc5")
+	)
+	(label "BUZZER_NEG"
+		(at 210.82 66.04 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "a531195f-cdaa-47ba-a864-d3311a751d48")
+	)
+	(label "FAN_REAR_PWM_IN"
+		(at 283.21 81.28 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "15e3c93e-b60f-42af-9f0d-d221cd47f4e4")
+	)
+	(label "ZC_OUT"
+		(at 439.42 67.31 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "517c8dc3-d1c8-47b9-a84f-d9e02849c263")
+	)
+	(label "MQ131_OUT"
+		(at 391.16 185.42 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "68548f0e-7112-41f0-b005-fc064d9fb1cb")
+	)
+	(label "FAN_FRONT_PWM_IN"
+		(at 256.54 81.28 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "e0ecf727-1a7c-47ca-b3cc-af5ffe8b3541")
+	)
 	(symbol
 		(lib_id "Connector_Generic:Conn_01x05")
 		(at 299.72 304.8 270)
@@ -16676,28 +16936,6 @@
 			)
 		)
 		(property "Description" "Wire header to the off-board sensor module Pins: 1 VCC, 2 GND, 3 RED, 4 NOX, 5 PRE"
-			(at 299.72 304.8 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Net Pin_3" "MiCS CO"
-			(at 299.72 304.8 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Net Pin_4" "MiCS NO2"
 			(at 299.72 304.8 0)
 			(hide yes)
 			(show_name no)
@@ -17112,17 +17350,6 @@
 		)
 		(property "ki_fp_filters" "TO?92*"
 			(at 419.1 243.84 90)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Net D" "Display RX"
-			(at 419.1 243.84 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -18478,17 +18705,6 @@
 				)
 			)
 		)
-		(property "Net D" "Display TX"
-			(at 419.1 215.9 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
 		(pin "1"
 			(uuid "2f35e7b6-6e66-5cfb-8632-f3f3fd9b847b")
 		)
@@ -19178,182 +19394,6 @@
 				)
 			)
 		)
-		(property "Net PA0" "MQ131 out"
-			(at 299.72 200.66 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Net PA1" "MiCS CO"
-			(at 299.72 200.66 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Net PA7" "MiCS NO2"
-			(at 299.72 200.66 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Net PA15" "I2C SCL"
-			(at 299.72 200.66 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Net PB7" "I2C SDA"
-			(at 299.72 200.66 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Net PB0" "ZC in"
-			(at 299.72 200.66 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Net PB1" "TRIAC gate"
-			(at 299.72 200.66 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Net PB14" "Cold-boot button"
-			(at 299.72 200.66 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Net NRST" "Reset button"
-			(at 299.72 200.66 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Net PB15" "Buzzer drive"
-			(at 299.72 200.66 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Net PA8" "Front fan PWM"
-			(at 299.72 200.66 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Net PA9" "Rear fan PWM"
-			(at 299.72 200.66 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Net PA5" "Front fan tach"
-			(at 299.72 200.66 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Net PB3" "Rear fan tach"
-			(at 299.72 200.66 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Net PB10" "Display TX"
-			(at 299.72 200.66 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Net PB11" "Display RX"
-			(at 299.72 200.66 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
 		(pin "1"
 			(uuid "0b84c558-ee56-5738-b92f-f85a374847a1")
 		)
@@ -19728,17 +19768,6 @@
 				)
 			)
 		)
-		(property "Net B" "Buzzer base"
-			(at 182.88 76.2 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
 		(pin "1"
 			(uuid "f6e42f6d-b20e-5460-903c-1f6182da7d39")
 		)
@@ -20032,17 +20061,6 @@
 				)
 			)
 		)
-		(property "Net -" "Buzzer GND"
-			(at 213.36 63.5 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
 		(pin "1"
 			(uuid "c8fc6b6a-2494-5825-8e6d-d372e496bddc")
 		)
@@ -20259,17 +20277,6 @@
 				)
 			)
 		)
-		(property "Net Pin_4" "Rear fan PWM"
-			(at 288.29 76.2 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
 		(pin "1"
 			(uuid "f6a943a8-509d-4bab-a511-d73bc907640d")
 		)
@@ -20345,17 +20352,6 @@
 			)
 		)
 		(property "Description" ""
-			(at 457.2 66.04 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Net Z-C" "ZC out"
 			(at 457.2 66.04 0)
 			(hide yes)
 			(show_name no)
@@ -20450,17 +20446,6 @@
 			)
 		)
 		(property "Description" "Wire header to the off-board sensor module Pins: 1 VCC, 2 GND, 3 DO nc, 4 AO"
-			(at 396.24 180.34 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Net Pin_4" "MQ131 out"
 			(at 396.24 180.34 0)
 			(hide yes)
 			(show_name no)
@@ -21232,17 +21217,6 @@
 			)
 		)
 		(property "Description" "12V 4-pin fan: 1 GND, 2 +12V, 3 TACH, 4 PWM"
-			(at 261.62 76.2 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Net Pin_4" "Front fan PWM"
 			(at 261.62 76.2 0)
 			(hide yes)
 			(show_name no)

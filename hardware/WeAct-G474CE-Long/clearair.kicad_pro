@@ -632,31 +632,31 @@
       },
       {
         "netclass": "Ground",
-        "pattern": "Net-(BZ1--)"
+        "pattern": "/BUZZER_NEG"
       },
       {
         "netclass": "Clock",
-        "pattern": "Net-(A1-PA15)"
+        "pattern": "/I2C_SCL"
       },
       {
         "netclass": "Clock",
-        "pattern": "Net-(A1-PB10)"
+        "pattern": "/DISPLAY_TX"
       },
       {
         "netclass": "Clock",
-        "pattern": "Net-(Q1-D)"
+        "pattern": "/DISPLAY_TX_5V"
       },
       {
         "netclass": "Data",
-        "pattern": "Net-(A1-PB7)"
+        "pattern": "/I2C_SDA"
       },
       {
         "netclass": "Data",
-        "pattern": "Net-(A1-PB11)"
+        "pattern": "/DISPLAY_RX"
       },
       {
         "netclass": "Data",
-        "pattern": "Net-(Q2-D)"
+        "pattern": "/DISPLAY_RX_5V"
       }
     ]
   },

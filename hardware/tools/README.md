@@ -872,7 +872,7 @@ mistaken for holes like `W15`.
 ## Part data from KiCad
 
 The script reads the `.kicad_sch`, `.kicad_pro` and `.kicad_pcb` next to the
-board file. There is no config file and no custom field except `Net <pin>`.
+board file. There is no config file and no custom field.
 
 | Data | Where in KiCad | Used for |
 | :--- | :--- | :--- |
@@ -883,7 +883,7 @@ board file. There is no config file and no custom field except `Net <pin>`.
 | Later-stage parts | The symbol's DNP (Do Not Populate) flag | Its wires get the Note `optional: DNP` |
 | Bus strips | Board-only footprints in the PCB | See [Bus strips](#bus-strips) |
 | Transistor pin letters | Symbol pin names | `S`/`G`/`D`, `E`/`B`/`C` in the part tables |
-| Readable net names | Field `Net <pin>` on a symbol, for example `Net PA0` = `MQ131 out` names `Net-(A1-PA0)` | Net column |
+| Net names | Net labels on the schematic wires, for example `MQ131_ADC` on `PA0` (the sheet path `/` is left out) | Net column |
 
 ## Wire gauge
 
