@@ -877,6 +877,8 @@ AWG24 / AWG30 for the wires.
 | :--- | :--- |
 | `Role` | Space-separated words. `mcu`: start of every net, no wire between its own pins. `female`: a socket the module plugs into. `header`: male header without a `PinHeader` footprint. `post`: loose male pins (supply). `bus`: bus strips are placed next to this part (boards without an MCU module). `sensor`: power and ground wires get the thick wire. `heavy`: same, for fan, buzzer and supply parts |
 | `Optional` | Free text, for example `RTC, planned`: hardware for a later stage. Every wire that ends on this part is marked `optional: <text>` in the Note column, sorted after the required wires of its table, and the part is marked optional in the part tables. The wires are still listed, so you can leave them out |
+| `Tie high` | Space-separated pin numbers of this part that are strapped to the supply (for example `5 6` for the SDO and CS pins of the BME680) and not powered by it. Their wires are white in the Color column. |
+| `Wire colors` | On the MCU part: `Net name:color` pairs separated by `;`, for example `GND:black;+5V:red`. The names are the readable net names. The wire tables show the color of each wire in the Color column. Wires on a `Tie high` pin are white. The bare bus-strip wires show `Bare`. |
 | `Bus area` | On a part with `Role` = `bus`: the strips of its board stay inside this rectangle, given as two corner hole names, for example `A14:Q18` |
 | `Net <pin>` | Readable name for the net KiCad names after that pin, for example `Net PA0` = `MQ131 out` names `Net-(A1-PA0)` |
 

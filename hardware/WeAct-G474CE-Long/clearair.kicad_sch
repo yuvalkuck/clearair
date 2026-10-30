@@ -17326,6 +17326,17 @@
 				)
 			)
 		)
+		(property "Tie high" "5 6"
+			(at 0 0 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "245d7ce6-193c-4cd7-b69b-f7fb3c1e6e77")
 		)
@@ -18998,6 +19009,17 @@
 		)
 		(property "Role" "heavy"
 			(at 510.54 66.04 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Wire colors" "+12V:red;+5V:red;+3V3:red;GND:black;Buzzer GND:black;Buzzer base:orange;Buzzer drive:orange;MQ131 out:yellow;MiCS CO:yellow;MiCS NO2:yellow;Front fan PWM:yellow;Rear fan PWM:yellow;I2C SCL:green;I2C SDA:blue;Front fan tach:grey;Rear fan tach:grey;ZC in:orange;ZC out:orange;TRIAC gate:orange;Reset button:orange;Cold-boot button:orange;Display TX:purple;Display RX:purple"
+			(at 0 0 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)

@@ -228,7 +228,7 @@ def main():
         if re.match(r'\| #\d+ \|', line):
             rows.append((section, [x.strip() for x in line.strip('|').split('|')]))
     for line in md[md.index('## 2.'):md.index('## 3.')].splitlines():     # the bare wire of a strip runs from its first to its last hole
-        m = re.match(r'\| (BUS\d+) \| [^|]*\| [^|]*\| ([A-Z]+\d+) \| ([A-Z]+\d+) \|', line)
+        m = re.match(r'\| (BUS\d+) \| [^|]*\| [^|]*\| [^|]*\| ([A-Z]+\d+) \| ([A-Z]+\d+) \|', line)
         if m:
             seen_bus_rows.add(m[1])
             bb = buses.get(m[1])
@@ -239,8 +239,8 @@ def main():
         if ref not in seen_bus_rows:
             bad('bus strip has no bare-wire row in the wire tables:', ref)
     for section, c in rows:
-        parent[find(re.sub(r'@.*', '', c[5]))] = find(re.sub(r'@.*', '', c[6]))
-        for hole, pin in ((c[3], c[5]), (c[4], c[6])):
+        parent[find(re.sub(r'@.*', '', c[6]))] = find(re.sub(r'@.*', '', c[7]))
+        for hole, pin in ((c[4], c[6]), (c[5], c[7])):
             if pin.startswith('BUS'):
                 parent[find(pin)] = find(pin.split('.')[0])          # all holes of one strip are one conductor
                 b, cell = (int(hole[1]), hole[3:]) if ':' in hole else (section, hole)
@@ -269,7 +269,7 @@ def main():
     # 7: wire ends per hole
     ends = collections.Counter()
     for section, c in rows:
-        for h in c[3:5]:
+        for h in c[4:6]:
             ends[h if ':' in h else f'B{section}:{h}'] += 1
     for h, n in sorted(ends.items()):
         if n > args.max_per_hole:

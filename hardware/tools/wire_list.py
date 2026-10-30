@@ -36,6 +36,8 @@ if os.path.exists(SCH):
                 else: CFG[key] = list(CFG[key] or []) + [ref]
         if 'bus' in words: CFG['bus_near'] = list(CFG['bus_near']) + [ref]
         if props.get('Optional'): CFG['optional'] = dict(CFG['optional'], **{ref: props['Optional']})       # hardware for a later stage: wires to it can be left out
+        if props.get('Tie high'): CFG['tie_high'] = CFG.get('tie_high', set()) | {(ref, n) for n in props['Tie high'].split()}      # pin numbers strapped to the supply (not powered by it): own color of wire
+        if props.get('Wire colors'): CFG['wire_colors'] = dict(kv.rsplit(':', 1) for kv in props['Wire colors'].split(';'))      # readable net name -> insulation color
         if props.get('Bus area'): CFG['bus_area'] = dict(CFG['bus_area'], **{ref: props['Bus area']})      # e.g. A14:Q18, hole names of two corners
         if 'heavy' in words: CFG['heavy'] = CFG.get('heavy', []) + [ref]
         if lid in libpins and ref[0] == 'Q': CFG['transistor_pins'].setdefault(props['Value'], {}).update(libpins[lid])
@@ -326,25 +328,28 @@ for n in sorted(nets):
         b = BUS[(n, 1)]['link'] if (n, 1) in BUS else hub[(n, 1)]
         kd, aw = wire_kind(n, a, b, link=True)
         wires.append((order.get(kd.split()[0].rstrip(','), 2), n, 2, a, b, kd, aw, str(LINK_MAX_MM)))
+def color_of(w): return ('white' if tie_of(w) else CFG.get('wire_colors', {}).get(NETNAME.get(w[1], w[1]), '')).capitalize()
+def tie_of(w): return any((p['ref'], p['num']) in CFG.get('tie_high', ()) for p in (w[3], w[4]))
 def optional_of(w):                                             # a wire to a pin header (J...) that is not optional is built with that header
     if any(prefix(p['ref']) == 'J' and p['ref'] not in CFG['optional'] for p in (w[3], w[4])): return ''
     return next((CFG['optional'][p['ref']] for p in (w[3], w[4]) if p['ref'] in CFG['optional']), '')
 wires.sort(key=lambda w: (w[2] == 2, w[2], w[6] == THICK, net_rank(w[1]), part_sort(w[3]['ref'])))   # board (links last), thin wire (higher AWG number) first, then net
+HAS_NOTE = any(optional_of(w) for w in wires)               # the Note column is only there when a wire has a note
 def wire_table(title, bi_want):
     link = bi_want == 2
-    o.append(f"\n### {title}\n\n| # | AWG | Net | From hole | To hole | From pin | To pin |" + (" Max length (mm) |" if link else "") + " Note |\n|---|---|---|---|---|---|---|" + ("---|" if link else "") + "---|\n")
+    o.append(f"\n### {title}\n\n| # | AWG | Color | Net | From hole | To hole | From pin | To pin |" + (" Max length (mm) |" if link else "") + (" Note |" if HAS_NOTE else "") + "\n|---|---|---|---|---|---|---|---|" + ("---|" if link else "") + ("---|" if HAS_NOTE else "") + "\n")
     def bus_rows():                                             # the bare wire of each bus strip: it is a part of the board, listed with the thick wires
         if link: return
         for ref in sorted((r for r in parts if parts[r].get('bus') and parts[r]['pads'][0]['bd']['i'] == bi_want), key=lambda r: (net_rank(parts[r]['bus']), part_sort(r))):
             ps_ = parts[ref]['pads']
-            o.append(f"| {ref} | {THICK} bare | {NETNAME.get(parts[ref]['bus'], parts[ref]['bus'])} | {hn(ps_[0])} | {hn(ps_[-1])} | {ref}.{ps_[0]['num']} | {ref}.{ps_[-1]['num']} |" + (" |" if not link else "") + " |\n")
+            o.append(f"| {ref} | {THICK} bare | Bare | {NETNAME.get(parts[ref]['bus'], parts[ref]['bus'])} | {hn(ps_[0])} | {hn(ps_[-1])} | {ref}.{ps_[0]['num']} | {ref}.{ps_[-1]['num']} |" + (" |" if HAS_NOTE else "") + "\n")
     done = link
     for i, w in enumerate(wires, 1):
         _, n, bi, a, b, kd, aw, ln = w
         if bi != bi_want: continue
         if aw == THICK and not done: bus_rows(); done = True
         fh, th = (where(a), where(b)) if link else (hn(a), hn(b))
-        o.append(f"| #{i:02d} | {aw} | {NETNAME.get(n, n)} | {fh} | {th} | {lab(a)} | {lab(b)} |" + (f" {ln} |" if link else "") + (f" optional: {optional_of(w)} |" if optional_of(w) else " |") + "\n")
+        o.append(f"| #{i:02d} | {aw} | {color_of(w)} | {NETNAME.get(n, n)} | {fh} | {th} | {lab(a)} | {lab(b)} |" + (f" {ln} |" if link else "") + ((f" optional: {optional_of(w)} |" if optional_of(w) else " |") if HAS_NOTE else "") + "\n")
     if not done: bus_rows()
 wid = {}
 for i, (_, n, bi, a, b, kd, aw, ln) in enumerate(wires, 1):
