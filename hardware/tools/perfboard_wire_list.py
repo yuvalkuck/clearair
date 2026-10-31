@@ -321,7 +321,7 @@ def wire_table(title, bi_want):
         if link: return
         for ref in sorted((r for r in parts if parts[r].get('bus') and parts[r]['pads'][0]['bd']['i'] == bi_want), key=lambda r: (net_rank(parts[r]['bus']), part_sort(r))):
             ps_ = parts[ref]['pads']
-            o.append(f"| {ref} | {THICK} bare | Bare | {netname(parts[ref]['bus'])} | {hn(ps_[0])} | {hn(ps_[-1])} | {ref}.{ps_[0]['num']} | {ref}.{ps_[-1]['num']} |" + (" |" if HAS_NOTE else "") + "\n")
+            o.append(f"| {ref} | {THICK} | [Bare] | {netname(parts[ref]['bus'])} | {hn(ps_[0])} | {hn(ps_[-1])} | {ref}.{ps_[0]['num']} | {ref}.{ps_[-1]['num']} |" + (" |" if HAS_NOTE else "") + "\n")
     done = link
     for i, w in enumerate(wires, 1):
         _, n, bi, a, b, kd, aw, ln = w

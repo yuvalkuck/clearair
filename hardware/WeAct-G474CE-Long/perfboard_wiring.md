@@ -101,9 +101,9 @@ Solder on the **back** side. **Bus strips** (`BUSn`, the first of the thick AWG2
 | #27 | AWG30 | Yellow | MICS_NO2_OUT | K9 | Q9 | R7.1 | J6.4 |
 | #28 | AWG30 | Yellow | MQ131_ADC | S9 | U12 | R4.1 | R3.2 |
 | #29 | AWG30 | Yellow | MQ131_OUT | U9 | W9 | R3.1 | J5.4 |
-| BUS2 | AWG24 bare | Bare | +5V | Q16 | L16 | BUS2.1 | BUS2.6 |
-| BUS4 | AWG24 bare | Bare | +3V3 | Q14 | G14 | BUS4.1 | BUS4.11 |
-| BUS6 | AWG24 bare | Bare | GND | Q18 | F18 | BUS6.1 | BUS6.12 |
+| BUS2 | AWG24 | [Bare] | +5V | Q16 | L16 | BUS2.1 | BUS2.6 |
+| BUS4 | AWG24 | [Bare] | +3V3 | Q14 | G14 | BUS4.1 | BUS4.11 |
+| BUS6 | AWG24 | [Bare] | GND | Q18 | F18 | BUS6.1 | BUS6.12 |
 | #30 | AWG24 | Red | +5V | E12 | M16 | J3.1 | BUS2.5 |
 | #31 | AWG24 | Red | +5V | W12 | Q16 | J5.1 | BUS2.1 |
 | #32 | AWG24 | Red | +5V | Q12 | O16 | J6.1 | BUS2.3 |
@@ -144,10 +144,10 @@ Solder on the **back** side. **Bus strips** (`BUSn`, the first of the thick AWG2
 | #62 | AWG30 | Yellow | ZC_INPUT | R9 | K11 | R14.1 | A1.34 |
 | #63 | AWG30 | Yellow | ZC_INPUT | W9 | R9 | R15.1 | R14.1 |
 | #64 | AWG30 | Yellow | ZC_OUT | J2 | O9 | U5.3 | R14.2 |
-| BUS1 | AWG24 bare | Bare | +12V | Q13 | N13 | BUS1.1 | BUS1.4 |
-| BUS3 | AWG24 bare | Bare | +5V | G13 | D13 | BUS3.1 | BUS3.4 |
-| BUS5 | AWG24 bare | Bare | +3V3 | W13 | S13 | BUS5.1 | BUS5.5 |
-| BUS7 | AWG24 bare | Bare | GND | O15 | F15 | BUS7.1 | BUS7.10 |
+| BUS1 | AWG24 | [Bare] | +12V | Q13 | N13 | BUS1.1 | BUS1.4 |
+| BUS3 | AWG24 | [Bare] | +5V | G13 | D13 | BUS3.1 | BUS3.4 |
+| BUS5 | AWG24 | [Bare] | +3V3 | W13 | S13 | BUS5.1 | BUS5.5 |
+| BUS7 | AWG24 | [Bare] | GND | O15 | F15 | BUS7.1 | BUS7.10 |
 | #65 | AWG24 | Red | +12V | Q2 | P13 | M2.2 | BUS1.2 |
 | #66 | AWG24 | Red | +12V | V2 | Q13 | M3.2 | BUS1.1 |
 | #67 | AWG24 | Red | +12V | F2 | O13 | PS1.3 | BUS1.3 |
