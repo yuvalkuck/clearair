@@ -324,7 +324,7 @@ def wire_table(title, bi_want):
             o.append(f"| {ref} | {THICK} | [Bare] | {netname(parts[ref]['bus'])} | {hn(ps_[0])} | {hn(ps_[-1])} | {ref}.{ps_[0]['num']} | {ref}.{ps_[-1]['num']} |" + (" |" if HAS_NOTE else "") + "\n")
     done = link
     for i, w in enumerate(wires, 1):
-        _, n, bi, a, b, kd, aw, ln = w
+        _, n, bi, b, a, kd, aw, ln = w                            # From and To swapped for printing only; the sort is unchanged
         if bi != bi_want: continue
         if awgn(aw) <= awgn(THICK) and not done: bus_rows(); done = True
         fh, th = (where(a), where(b)) if link else (hn(a), hn(b))

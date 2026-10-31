@@ -72,114 +72,114 @@ Solder on the **back** side. **Bus strips** (`BUSn`, the first of the thick AWG2
 
 | # | AWG | Color | Net | From hole | To hole | From pin | To pin |
 |---|---|---|---|---|---|---|---|
-| #01 | AWG30 | Red | +3V3 | G12 | K14 | J4.1 | BUS4.7 |
-| #02 | AWG30 | Red | +3V3 | C12 | H14 | J7.1 | BUS4.10 |
-| #03 | AWG30 | Red | +3V3 | U14 | P14 | R1.1 | BUS4.2 |
-| #04 | AWG30 | Red | +3V3 | S14 | N14 | R2.1 | BUS4.4 |
-| #05 | AWG30 | Red | +3V3 | T2 | O14 | R10.1 | BUS4.3 |
-| #06 | AWG30 | Red | +3V3 | L2 | L14 | R12.1 | BUS4.6 |
-| #07 | AWG30 | White | +3V3 | G8 | J14 | J4.5 | BUS4.8 |
-| #08 | AWG30 | White | +3V3 | G7 | I14 | J4.6 | BUS4.9 |
-| #09 | AWG30 | White | +3V3 | W4 | Q14 | Q1.2 | BUS4.1 |
-| #10 | AWG30 | White | +3V3 | O4 | M14 | Q2.2 | BUS4.5 |
-| #11 | AWG30 | Yellow | BUZZER_BASE | D5 | G4 | R9.2 | Q3.2 |
-| #12 | AWG30 | Blue | DISPLAY_RX | L5 | O3 | R12.2 | Q2.1 |
-| #13 | AWG30 | Blue | DISPLAY_RX_5V | O5 | T7 | Q2.3 | J8.2 |
-| #14 | AWG30 | Blue | DISPLAY_RX_5V | J5 | O5 | R13.2 | Q2.3 |
-| #15 | AWG30 | Green | DISPLAY_TX | T5 | W3 | R10.2 | Q1.1 |
-| #16 | AWG30 | Green | DISPLAY_TX_5V | W5 | U7 | Q1.3 | J8.1 |
-| #17 | AWG30 | Green | DISPLAY_TX_5V | R5 | U7 | R11.2 | J8.1 |
-| #18 | AWG30 | Green | I2C_SCL | E10 | G10 | J3.3 | J4.3 |
-| #19 | AWG30 | Green | I2C_SCL | C9 | E10 | J7.4 | J3.3 |
-| #20 | AWG30 | Green | I2C_SCL | U17 | G10 | R1.2 | J4.3 |
-| #21 | AWG30 | Blue | I2C_SDA | E11 | G9 | J3.2 | J4.4 |
-| #22 | AWG30 | Blue | I2C_SDA | C10 | E11 | J7.3 | J3.2 |
-| #23 | AWG30 | Blue | I2C_SDA | S17 | G9 | R2.2 | J4.4 |
-| #24 | AWG30 | Yellow | MICS_CO1 | O9 | M9 | R5.1 | R6.1 |
-| #25 | AWG30 | Yellow | MICS_CO_OUT | O12 | Q10 | R5.2 | J6.3 |
-| #26 | AWG30 | Yellow | MICS_NO2 | I9 | K12 | R8.1 | R7.2 |
-| #27 | AWG30 | Yellow | MICS_NO2_OUT | K9 | Q9 | R7.1 | J6.4 |
-| #28 | AWG30 | Yellow | MQ131_ADC | S9 | U12 | R4.1 | R3.2 |
-| #29 | AWG30 | Yellow | MQ131_OUT | U9 | W9 | R3.1 | J5.4 |
+| #01 | AWG30 | Red | +3V3 | K14 | G12 | BUS4.7 | J4.1 |
+| #02 | AWG30 | Red | +3V3 | H14 | C12 | BUS4.10 | J7.1 |
+| #03 | AWG30 | Red | +3V3 | P14 | U14 | BUS4.2 | R1.1 |
+| #04 | AWG30 | Red | +3V3 | N14 | S14 | BUS4.4 | R2.1 |
+| #05 | AWG30 | Red | +3V3 | O14 | T2 | BUS4.3 | R10.1 |
+| #06 | AWG30 | Red | +3V3 | L14 | L2 | BUS4.6 | R12.1 |
+| #07 | AWG30 | White | +3V3 | J14 | G8 | BUS4.8 | J4.5 |
+| #08 | AWG30 | White | +3V3 | I14 | G7 | BUS4.9 | J4.6 |
+| #09 | AWG30 | White | +3V3 | Q14 | W4 | BUS4.1 | Q1.2 |
+| #10 | AWG30 | White | +3V3 | M14 | O4 | BUS4.5 | Q2.2 |
+| #11 | AWG30 | Yellow | BUZZER_BASE | G4 | D5 | Q3.2 | R9.2 |
+| #12 | AWG30 | Blue | DISPLAY_RX | O3 | L5 | Q2.1 | R12.2 |
+| #13 | AWG30 | Blue | DISPLAY_RX_5V | T7 | O5 | J8.2 | Q2.3 |
+| #14 | AWG30 | Blue | DISPLAY_RX_5V | O5 | J5 | Q2.3 | R13.2 |
+| #15 | AWG30 | Green | DISPLAY_TX | W3 | T5 | Q1.1 | R10.2 |
+| #16 | AWG30 | Green | DISPLAY_TX_5V | U7 | W5 | J8.1 | Q1.3 |
+| #17 | AWG30 | Green | DISPLAY_TX_5V | U7 | R5 | J8.1 | R11.2 |
+| #18 | AWG30 | Green | I2C_SCL | G10 | E10 | J4.3 | J3.3 |
+| #19 | AWG30 | Green | I2C_SCL | E10 | C9 | J3.3 | J7.4 |
+| #20 | AWG30 | Green | I2C_SCL | G10 | U17 | J4.3 | R1.2 |
+| #21 | AWG30 | Blue | I2C_SDA | G9 | E11 | J4.4 | J3.2 |
+| #22 | AWG30 | Blue | I2C_SDA | E11 | C10 | J3.2 | J7.3 |
+| #23 | AWG30 | Blue | I2C_SDA | G9 | S17 | J4.4 | R2.2 |
+| #24 | AWG30 | Yellow | MICS_CO1 | M9 | O9 | R6.1 | R5.1 |
+| #25 | AWG30 | Yellow | MICS_CO_OUT | Q10 | O12 | J6.3 | R5.2 |
+| #26 | AWG30 | Yellow | MICS_NO2 | K12 | I9 | R7.2 | R8.1 |
+| #27 | AWG30 | Yellow | MICS_NO2_OUT | Q9 | K9 | J6.4 | R7.1 |
+| #28 | AWG30 | Yellow | MQ131_ADC | U12 | S9 | R3.2 | R4.1 |
+| #29 | AWG30 | Yellow | MQ131_OUT | W9 | U9 | J5.4 | R3.1 |
 | BUS2 | AWG24 | [Bare] | +5V | Q16 | L16 | BUS2.1 | BUS2.6 |
 | BUS4 | AWG24 | [Bare] | +3V3 | Q14 | G14 | BUS4.1 | BUS4.11 |
 | BUS6 | AWG24 | [Bare] | GND | Q18 | F18 | BUS6.1 | BUS6.12 |
-| #30 | AWG24 | Red | +5V | E12 | M16 | J3.1 | BUS2.5 |
-| #31 | AWG24 | Red | +5V | W12 | Q16 | J5.1 | BUS2.1 |
-| #32 | AWG24 | Red | +5V | Q12 | O16 | J6.1 | BUS2.3 |
-| #33 | AWG24 | Red | +5V | R2 | P16 | R11.1 | BUS2.2 |
-| #34 | AWG24 | Red | +5V | J2 | N16 | R13.1 | BUS2.4 |
-| #35 | AWG24 | Black | GND | E9 | I18 | J3.4 | BUS6.9 |
-| #36 | AWG24 | Black | GND | E8 | H18 | J3.5 | BUS6.10 |
-| #37 | AWG24 | Black | GND | G11 | K18 | J4.2 | BUS6.7 |
-| #38 | AWG24 | Black | GND | W11 | Q18 | J5.2 | BUS6.1 |
-| #39 | AWG24 | Black | GND | Q11 | O18 | J6.2 | BUS6.3 |
-| #40 | AWG24 | Black | GND | Q8 | N18 | J6.5 | BUS6.4 |
-| #41 | AWG24 | Black | GND | C11 | G18 | J7.2 | BUS6.11 |
-| #42 | AWG24 | Black | GND | G3 | J18 | Q3.1 | BUS6.8 |
-| #43 | AWG24 | Black | GND | S12 | P18 | R4.2 | BUS6.2 |
-| #44 | AWG24 | Black | GND | M12 | M18 | R6.2 | BUS6.5 |
-| #45 | AWG24 | Black | GND | I12 | L18 | R8.2 | BUS6.6 |
-| #46 | AWG24 | Black | BUZZER_NEG | G5 | B3 | Q3.3 | BZ1.2 |
+| #30 | AWG24 | Red | +5V | M16 | E12 | BUS2.5 | J3.1 |
+| #31 | AWG24 | Red | +5V | Q16 | W12 | BUS2.1 | J5.1 |
+| #32 | AWG24 | Red | +5V | O16 | Q12 | BUS2.3 | J6.1 |
+| #33 | AWG24 | Red | +5V | P16 | R2 | BUS2.2 | R11.1 |
+| #34 | AWG24 | Red | +5V | N16 | J2 | BUS2.4 | R13.1 |
+| #35 | AWG24 | Black | GND | I18 | E9 | BUS6.9 | J3.4 |
+| #36 | AWG24 | Black | GND | H18 | E8 | BUS6.10 | J3.5 |
+| #37 | AWG24 | Black | GND | K18 | G11 | BUS6.7 | J4.2 |
+| #38 | AWG24 | Black | GND | Q18 | W11 | BUS6.1 | J5.2 |
+| #39 | AWG24 | Black | GND | O18 | Q11 | BUS6.3 | J6.2 |
+| #40 | AWG24 | Black | GND | N18 | Q8 | BUS6.4 | J6.5 |
+| #41 | AWG24 | Black | GND | G18 | C11 | BUS6.11 | J7.2 |
+| #42 | AWG24 | Black | GND | J18 | G3 | BUS6.8 | Q3.1 |
+| #43 | AWG24 | Black | GND | P18 | S12 | BUS6.2 | R4.2 |
+| #44 | AWG24 | Black | GND | M18 | M12 | BUS6.5 | R6.2 |
+| #45 | AWG24 | Black | GND | L18 | I12 | BUS6.6 | R8.2 |
+| #46 | AWG24 | Black | BUZZER_NEG | B3 | G5 | BZ1.2 | Q3.3 |
 
 ### Wires on board 2
 
 | # | AWG | Color | Net | From hole | To hole | From pin | To pin |
 |---|---|---|---|---|---|---|---|
-| #47 | AWG30 | Red | +3V3 | H11 | U13 | A1.37 | BUS5.3 |
-| #48 | AWG30 | Red | +3V3 | D11 | T13 | A1.48 | BUS5.4 |
-| #49 | AWG30 | Red | +3V3 | O6 | V13 | R21.1 | BUS5.2 |
-| #50 | AWG30 | Red | +3V3 | T6 | W13 | R22.1 | BUS5.1 |
-| #51 | AWG30 | Yellow | BOOT_MODE | F6 | G17 | SW2.2 | A1.18 |
-| #52 | AWG30 | Yellow | FAN_FRONT_PWM | R4 | J17 | R19.2 | A1.15 |
-| #53 | AWG30 | Yellow | FAN_FRONT_PWM_IN | O4 | O2 | R19.1 | M2.4 |
-| #54 | AWG30 | Yellow | FAN_FRONT_TACH | P2 | R6 | M2.3 | R21.2 |
-| #55 | AWG30 | Yellow | FAN_FRONT_TACH | R6 | O11 | R21.2 | A1.30 |
-| #56 | AWG30 | Yellow | FAN_REAR_PWM | W4 | K17 | R20.2 | A1.14 |
-| #57 | AWG30 | Yellow | FAN_REAR_PWM_IN | T4 | T2 | R20.1 | M3.4 |
-| #58 | AWG30 | Yellow | FAN_REAR_TACH | U2 | W6 | M3.3 | R22.2 |
-| #59 | AWG30 | Yellow | FAN_REAR_TACH | W6 | R17 | R22.2 | A1.7 |
-| #60 | AWG30 | Yellow | NRST | I6 | U11 | SW1.2 | A1.24 |
-| #61 | AWG30 | Yellow | TRIAC_DIMMER | I2 | J11 | U5.4 | A1.35 |
-| #62 | AWG30 | Yellow | ZC_INPUT | R9 | K11 | R14.1 | A1.34 |
-| #63 | AWG30 | Yellow | ZC_INPUT | W9 | R9 | R15.1 | R14.1 |
-| #64 | AWG30 | Yellow | ZC_OUT | J2 | O9 | U5.3 | R14.2 |
+| #47 | AWG30 | Red | +3V3 | U13 | H11 | BUS5.3 | A1.37 |
+| #48 | AWG30 | Red | +3V3 | T13 | D11 | BUS5.4 | A1.48 |
+| #49 | AWG30 | Red | +3V3 | V13 | O6 | BUS5.2 | R21.1 |
+| #50 | AWG30 | Red | +3V3 | W13 | T6 | BUS5.1 | R22.1 |
+| #51 | AWG30 | Yellow | BOOT_MODE | G17 | F6 | A1.18 | SW2.2 |
+| #52 | AWG30 | Yellow | FAN_FRONT_PWM | J17 | R4 | A1.15 | R19.2 |
+| #53 | AWG30 | Yellow | FAN_FRONT_PWM_IN | O2 | O4 | M2.4 | R19.1 |
+| #54 | AWG30 | Yellow | FAN_FRONT_TACH | R6 | P2 | R21.2 | M2.3 |
+| #55 | AWG30 | Yellow | FAN_FRONT_TACH | O11 | R6 | A1.30 | R21.2 |
+| #56 | AWG30 | Yellow | FAN_REAR_PWM | K17 | W4 | A1.14 | R20.2 |
+| #57 | AWG30 | Yellow | FAN_REAR_PWM_IN | T2 | T4 | M3.4 | R20.1 |
+| #58 | AWG30 | Yellow | FAN_REAR_TACH | W6 | U2 | R22.2 | M3.3 |
+| #59 | AWG30 | Yellow | FAN_REAR_TACH | R17 | W6 | A1.7 | R22.2 |
+| #60 | AWG30 | Yellow | NRST | U11 | I6 | A1.24 | SW1.2 |
+| #61 | AWG30 | Yellow | TRIAC_DIMMER | J11 | I2 | A1.35 | U5.4 |
+| #62 | AWG30 | Yellow | ZC_INPUT | K11 | R9 | A1.34 | R14.1 |
+| #63 | AWG30 | Yellow | ZC_INPUT | R9 | W9 | R14.1 | R15.1 |
+| #64 | AWG30 | Yellow | ZC_OUT | O9 | J2 | R14.2 | U5.3 |
 | BUS1 | AWG24 | [Bare] | +12V | Q13 | N13 | BUS1.1 | BUS1.4 |
 | BUS3 | AWG24 | [Bare] | +5V | G13 | D13 | BUS3.1 | BUS3.4 |
 | BUS5 | AWG24 | [Bare] | +3V3 | W13 | S13 | BUS5.1 | BUS5.5 |
 | BUS7 | AWG24 | [Bare] | GND | O15 | F15 | BUS7.1 | BUS7.10 |
-| #65 | AWG24 | Red | +12V | Q2 | P13 | M2.2 | BUS1.2 |
-| #66 | AWG24 | Red | +12V | V2 | Q13 | M3.2 | BUS1.1 |
-| #67 | AWG24 | Red | +12V | F2 | O13 | PS1.3 | BUS1.3 |
-| #68 | AWG24 | Red | +5V | D17 | F13 | A1.44 | BUS3.2 |
-| #69 | AWG24 | Red | +5V | C2 | E13 | PS1.4 | BUS3.3 |
-| #70 | AWG24 | Red | +5V | L2 | G13 | U5.1 | BUS3.1 |
-| #71 | AWG24 | Black | GND | B17 | H15 | A1.42 | BUS7.8 |
-| #72 | AWG24 | Black | GND | R2 | M15 | M2.1 | BUS7.3 |
-| #73 | AWG24 | Black | GND | W2 | O15 | M3.1 | BUS7.1 |
-| #74 | AWG24 | Black | GND | E2 | I15 | PS1.5@E2 | BUS7.7 |
-| #75 | AWG24 | Black | GND | B2 | G15 | PS1.5@B2 | BUS7.9 |
-| #76 | AWG24 | Black | GND | T9 | N15 | R15.2 | BUS7.2 |
-| #77 | AWG24 | Black | GND | I9 | K15 | SW1.1 | BUS7.5 |
-| #78 | AWG24 | Black | GND | F9 | J15 | SW2.1 | BUS7.6 |
-| #79 | AWG24 | Black | GND | K2 | L15 | U5.2 | BUS7.4 |
+| #65 | AWG24 | Red | +12V | P13 | Q2 | BUS1.2 | M2.2 |
+| #66 | AWG24 | Red | +12V | Q13 | V2 | BUS1.1 | M3.2 |
+| #67 | AWG24 | Red | +12V | O13 | F2 | BUS1.3 | PS1.3 |
+| #68 | AWG24 | Red | +5V | F13 | D17 | BUS3.2 | A1.44 |
+| #69 | AWG24 | Red | +5V | E13 | C2 | BUS3.3 | PS1.4 |
+| #70 | AWG24 | Red | +5V | G13 | L2 | BUS3.1 | U5.1 |
+| #71 | AWG24 | Black | GND | H15 | B17 | BUS7.8 | A1.42 |
+| #72 | AWG24 | Black | GND | M15 | R2 | BUS7.3 | M2.1 |
+| #73 | AWG24 | Black | GND | O15 | W2 | BUS7.1 | M3.1 |
+| #74 | AWG24 | Black | GND | I15 | E2 | BUS7.7 | PS1.5@E2 |
+| #75 | AWG24 | Black | GND | G15 | B2 | BUS7.9 | PS1.5@B2 |
+| #76 | AWG24 | Black | GND | N15 | T9 | BUS7.2 | R15.2 |
+| #77 | AWG24 | Black | GND | K15 | I9 | BUS7.5 | SW1.1 |
+| #78 | AWG24 | Black | GND | J15 | F9 | BUS7.6 | SW2.1 |
+| #79 | AWG24 | Black | GND | L15 | K2 | BUS7.4 | U5.2 |
 
 ### Wires between the boards (B1 ↔ B2)
 
 | # | AWG | Color | Net | From hole | To hole | From pin | To pin | Max length (mm) |
 |---|---|---|---|---|---|---|---|---|
-| #80 | AWG30 | Red | +3V3 | B1:G14 | B2:S13 | BUS4.11 | BUS5.5 | 300 |
-| #81 | AWG30 | Yellow | BUZZER_IN | B1:D2 | B2:H17 | R9.1 | A1.17 | 300 |
-| #82 | AWG30 | Blue | DISPLAY_RX | B1:O3 | B2:F11 | Q2.1 | A1.39 | 300 |
-| #83 | AWG30 | Green | DISPLAY_TX | B1:W3 | B2:G11 | Q1.1 | A1.38 | 300 |
-| #84 | AWG30 | Green | I2C_SCL | B1:G10 | B2:O17 | J4.3 | A1.10 | 300 |
-| #85 | AWG30 | Blue | I2C_SDA | B1:G9 | B2:V17 | J4.4 | A1.3 | 300 |
-| #86 | AWG30 | Yellow | MICS_CO1 | B1:M9 | B2:S11 | R6.1 | A1.26 | 300 |
-| #87 | AWG30 | Yellow | MICS_NO2 | B1:K12 | B2:M11 | R7.2 | A1.32 | 300 |
-| #88 | AWG30 | Yellow | MQ131_ADC | B1:U12 | B2:T11 | R3.2 | A1.25 | 300 |
-| #89 | AWG24 | Red | +12V | B1:B4 | B2:N13 | BZ1.1 | BUS1.4 | 300 |
-| #90 | AWG24 | Red | +5V | B1:L16 | B2:D13 | BUS2.6 | BUS3.4 | 300 |
-| #91 | AWG24 | Black | GND | B1:F18 | B2:F15 | BUS6.12 | BUS7.10 | 300 |
+| #80 | AWG30 | Red | +3V3 | B2:S13 | B1:G14 | BUS5.5 | BUS4.11 | 300 |
+| #81 | AWG30 | Yellow | BUZZER_IN | B2:H17 | B1:D2 | A1.17 | R9.1 | 300 |
+| #82 | AWG30 | Blue | DISPLAY_RX | B2:F11 | B1:O3 | A1.39 | Q2.1 | 300 |
+| #83 | AWG30 | Green | DISPLAY_TX | B2:G11 | B1:W3 | A1.38 | Q1.1 | 300 |
+| #84 | AWG30 | Green | I2C_SCL | B2:O17 | B1:G10 | A1.10 | J4.3 | 300 |
+| #85 | AWG30 | Blue | I2C_SDA | B2:V17 | B1:G9 | A1.3 | J4.4 | 300 |
+| #86 | AWG30 | Yellow | MICS_CO1 | B2:S11 | B1:M9 | A1.26 | R6.1 | 300 |
+| #87 | AWG30 | Yellow | MICS_NO2 | B2:M11 | B1:K12 | A1.32 | R7.2 | 300 |
+| #88 | AWG30 | Yellow | MQ131_ADC | B2:T11 | B1:U12 | A1.25 | R3.2 | 300 |
+| #89 | AWG24 | Red | +12V | B2:N13 | B1:B4 | BUS1.4 | BZ1.1 | 300 |
+| #90 | AWG24 | Red | +5V | B2:D13 | B1:L16 | BUS3.4 | BUS2.6 | 300 |
+| #91 | AWG24 | Black | GND | B2:F15 | B1:F18 | BUS7.10 | BUS6.12 | 300 |
 
 ## 3. Check list per part
 
