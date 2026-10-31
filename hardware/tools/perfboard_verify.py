@@ -21,6 +21,8 @@ Checks, each independent of the numbers in perfboard_wire_list.py:
   5. the board nets equal the schematic nets
   6. the wire table joins every net and never joins two nets
   7. no hole has more than --max-per-hole wire ends (default 3)
+  8. each wire table is sorted by AWG number (high to low), then net (voltage rails highest first,
+     then ground, then signals by name), then color
 
 Exit code 0 when all checks pass, 1 when any fails.
 """
@@ -272,6 +274,22 @@ def main():
         if n > args.max_per_hole:
             bad(f'{n} wire ends in hole {h} (max {args.max_per_hole})')
     print(f'7.   at most {max(ends.values())} wire ends in one hole (max {args.max_per_hole})')
+
+    # 8: the fixed wire order in each table: AWG number high to low, then net (rails highest voltage first, then ground, then signals by name), then color
+    def net_rank(name):
+        v = re.fullmatch(r'\+?(\d+)V(\d*)', name)
+        if v: return (0, -float(f"{v[1]}.{v[2] or 0}"), '')
+        if re.fullmatch(r'(GND|AGND|DGND|VSS)', name, re.I): return (1, 0, '')
+        return (2, 0, name)
+    tables = collections.defaultdict(list)
+    for section, c in rows:
+        tables[section].append(c)
+    for section, cs in tables.items():
+        keys = [(-int(c[1][3:]), net_rank(c[3]), c[2]) for c in cs]
+        for (k0, c0), (k1, c1) in zip(zip(keys, cs), zip(keys[1:], cs[1:])):
+            if k1 < k0:
+                bad('wire out of order (AWG, net, color):', c0[0], 'before', c1[0])
+    print('8.   wires sorted by AWG (high to low), net, color')
 
     print('PROBLEMS:', len(errors))
     sys.exit(1 if errors else 0)

@@ -117,8 +117,8 @@ def net_class(net):
 PALETTE = {'red': (220, 0, 0), 'black': (0, 0, 0), 'white': (255, 255, 255), 'yellow': (200, 160, 0), 'green': (0, 140, 0),
            'blue': (0, 0, 220), 'orange': (255, 128, 0), 'grey': (128, 128, 128), 'purple': (128, 0, 160), 'brown': (120, 60, 0)}
 def class_color(net):
-    m = re.match(r'rgba\((\d+), (\d+), (\d+), ([\d.]+)\)', net_class(net).get('schematic_color', ''))
-    if not m or float(m[4]) == 0: return ''
+    m = re.match(r'rgba?\((\d+), (\d+), (\d+)(?:, ([\d.]+))?\)', net_class(net).get('schematic_color', ''))   # KiCad saves an opaque color as rgb()
+    if not m or (m[4] is not None and float(m[4]) == 0): return ''
     rgb = tuple(int(x) for x in m.groups()[:3])
     return min(PALETTE, key=lambda k: sum((u - v) ** 2 for u, v in zip(PALETTE[k], rgb)))
 AMPACITY = {20: 11, 22: 7, 24: 3.5, 26: 2.2, 28: 1.4, 30: 0.86, 32: 0.53}      # A, chassis wiring (single wire in free air)
@@ -311,6 +311,7 @@ def tie_of(w):                                                  # a logic pin (i
 def optional_of(w):                                             # a wire to a pin header (J...) that is not optional is built with that header
     if any(prefix(p['ref']) == 'J' and p['ref'] not in CFG['optional'] for p in (w[3], w[4])): return ''
     return next((CFG['optional'][p['ref']] for p in (w[3], w[4]) if p['ref'] in CFG['optional']), '')
+# Fixed order, do not change: AWG number high to low, then net, then color (perfboard_verify.py check 8).
 wires.sort(key=lambda w: (w[2] == 2, w[2], -awgn(w[6]), net_rank(w[1]), color_of(w), part_sort(w[3]['ref'])))   # board (links last), thin wire (higher AWG number) first, then net, then color
 HAS_NOTE = any(optional_of(w) for w in wires)               # the Note column is only there when a wire has a note
 def wire_table(title, bi_want):
