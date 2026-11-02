@@ -88,4 +88,5 @@ ADD_SUBDIRECTORY(device/o3sensor)
 ADD_SUBDIRECTORY(device/particle)
 ADD_SUBDIRECTORY(device/co1no2)
 ADD_SUBDIRECTORY(device/fanmotor)
+ADD_SUBDIRECTORY(device/rtc)
 # Add linked libraries

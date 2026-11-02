@@ -67,6 +67,8 @@ void Error_Handler(void);
 #define FAN_FRONT_TACH_GPIO_Port GPIOA
 #define MICS_NO2_Pin GPIO_PIN_7
 #define MICS_NO2_GPIO_Port GPIOA
+#define RTC_SCL_Pin GPIO_PIN_4
+#define RTC_SCL_GPIO_Port GPIOC
 #define ZC_INPUT_Pin GPIO_PIN_0
 #define ZC_INPUT_GPIO_Port GPIOB
 #define ZC_INPUT_EXTI_IRQn EXTI0_IRQn
@@ -78,10 +80,12 @@ void Error_Handler(void);
 #define BUZZER_IN_GPIO_Port GPIOB
 #define LED_BOARD_Pin GPIO_PIN_6
 #define LED_BOARD_GPIO_Port GPIOC
-#define FAN_FRONT_PWM_Pin GPIO_PIN_8
-#define FAN_FRONT_PWM_GPIO_Port GPIOA
+#define RTC_SDA_Pin GPIO_PIN_8
+#define RTC_SDA_GPIO_Port GPIOA
 #define FAN_REAR_PWM_Pin GPIO_PIN_9
 #define FAN_REAR_PWM_GPIO_Port GPIOA
+#define FAN_FRONT_PWM_Pin GPIO_PIN_10
+#define FAN_FRONT_PWM_GPIO_Port GPIOA
 #define I2C_SCL_Pin GPIO_PIN_15
 #define I2C_SCL_GPIO_Port GPIOA
 #define FAN_REAR_TACH_Pin GPIO_PIN_3

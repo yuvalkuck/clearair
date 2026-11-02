@@ -270,7 +270,47 @@ void HAL_I2C_MspInit(I2C_HandleTypeDef* hi2c)
     /* USER CODE BEGIN I2C1_MspInit 1 */
 
     /* USER CODE END I2C1_MspInit 1 */
+  }
+  else if(hi2c->Instance==I2C2)
+  {
+    /* USER CODE BEGIN I2C2_MspInit 0 */
 
+    /* USER CODE END I2C2_MspInit 0 */
+
+  /** Initializes the peripherals clocks
+  */
+    PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_I2C2;
+    PeriphClkInit.I2c2ClockSelection = RCC_I2C2CLKSOURCE_PCLK1;
+    if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
+    {
+      Error_Handler();
+    }
+
+    __HAL_RCC_GPIOC_CLK_ENABLE();
+    __HAL_RCC_GPIOA_CLK_ENABLE();
+    /**I2C2 GPIO Configuration
+    PC4     ------> I2C2_SCL
+    PA8     ------> I2C2_SDA
+    */
+    GPIO_InitStruct.Pin = RTC_SCL_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    GPIO_InitStruct.Alternate = GPIO_AF4_I2C2;
+    HAL_GPIO_Init(RTC_SCL_GPIO_Port, &GPIO_InitStruct);
+
+    GPIO_InitStruct.Pin = RTC_SDA_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    GPIO_InitStruct.Alternate = GPIO_AF4_I2C2;
+    HAL_GPIO_Init(RTC_SDA_GPIO_Port, &GPIO_InitStruct);
+
+    /* Peripheral clock enable */
+    __HAL_RCC_I2C2_CLK_ENABLE();
+    /* USER CODE BEGIN I2C2_MspInit 1 */
+
+    /* USER CODE END I2C2_MspInit 1 */
   }
 
 }
@@ -302,6 +342,26 @@ void HAL_I2C_MspDeInit(I2C_HandleTypeDef* hi2c)
     /* USER CODE BEGIN I2C1_MspDeInit 1 */
 
     /* USER CODE END I2C1_MspDeInit 1 */
+  }
+  else if(hi2c->Instance==I2C2)
+  {
+    /* USER CODE BEGIN I2C2_MspDeInit 0 */
+
+    /* USER CODE END I2C2_MspDeInit 0 */
+    /* Peripheral clock disable */
+    __HAL_RCC_I2C2_CLK_DISABLE();
+
+    /**I2C2 GPIO Configuration
+    PC4     ------> I2C2_SCL
+    PA8     ------> I2C2_SDA
+    */
+    HAL_GPIO_DeInit(RTC_SCL_GPIO_Port, RTC_SCL_Pin);
+
+    HAL_GPIO_DeInit(RTC_SDA_GPIO_Port, RTC_SDA_Pin);
+
+    /* USER CODE BEGIN I2C2_MspDeInit 1 */
+
+    /* USER CODE END I2C2_MspDeInit 1 */
   }
 
 }
@@ -389,10 +449,10 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef* htim)
 
     __HAL_RCC_GPIOA_CLK_ENABLE();
     /**TIM1 GPIO Configuration
-    PA8     ------> TIM1_CH1
     PA9     ------> TIM1_CH2
+    PA10     ------> TIM1_CH3
     */
-    GPIO_InitStruct.Pin = FAN_FRONT_PWM_Pin|FAN_REAR_PWM_Pin;
+    GPIO_InitStruct.Pin = FAN_REAR_PWM_Pin|FAN_FRONT_PWM_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
