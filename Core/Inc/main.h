@@ -65,19 +65,17 @@ void Error_Handler(void);
 #define MICS_CO1_GPIO_Port GPIOA
 #define FAN_FRONT_TACH_Pin GPIO_PIN_5
 #define FAN_FRONT_TACH_GPIO_Port GPIOA
+#define BUZZER_IN_Pin GPIO_PIN_6
+#define BUZZER_IN_GPIO_Port GPIOA
 #define MICS_NO2_Pin GPIO_PIN_7
 #define MICS_NO2_GPIO_Port GPIOA
 #define RTC_SCL_Pin GPIO_PIN_4
 #define RTC_SCL_GPIO_Port GPIOC
-#define ZC_INPUT_Pin GPIO_PIN_0
-#define ZC_INPUT_GPIO_Port GPIOB
-#define ZC_INPUT_EXTI_IRQn EXTI0_IRQn
-#define TRIAC_DIMMER_Pin GPIO_PIN_1
-#define TRIAC_DIMMER_GPIO_Port GPIOB
-#define BOOT_MODE_Pin GPIO_PIN_14
+#define BOOT_MODE_Pin GPIO_PIN_2
 #define BOOT_MODE_GPIO_Port GPIOB
-#define BUZZER_IN_Pin GPIO_PIN_15
-#define BUZZER_IN_GPIO_Port GPIOB
+#define ZC_INPUT_Pin GPIO_PIN_12
+#define ZC_INPUT_GPIO_Port GPIOB
+#define ZC_INPUT_EXTI_IRQn EXTI15_10_IRQn
 #define LED_BOARD_Pin GPIO_PIN_6
 #define LED_BOARD_GPIO_Port GPIOC
 #define RTC_SDA_Pin GPIO_PIN_8
@@ -92,6 +90,8 @@ void Error_Handler(void);
 #define FAN_REAR_TACH_GPIO_Port GPIOB
 #define I2C_SDA_Pin GPIO_PIN_7
 #define I2C_SDA_GPIO_Port GPIOB
+#define TRIAC_DIMMER_Pin GPIO_PIN_9
+#define TRIAC_DIMMER_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 #define DETECTION_SLEEP_LOOP_LIMIT 50000 // 5sec of sleep

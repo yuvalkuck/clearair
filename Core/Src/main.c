@@ -854,29 +854,13 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, TRIAC_DIMMER_Pin|BUZZER_IN_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(BUZZER_IN_GPIO_Port, BUZZER_IN_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(LED_BOARD_GPIO_Port, LED_BOARD_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin : ZC_INPUT_Pin */
-  GPIO_InitStruct.Pin = ZC_INPUT_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
-  HAL_GPIO_Init(ZC_INPUT_GPIO_Port, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : TRIAC_DIMMER_Pin */
-  GPIO_InitStruct.Pin = TRIAC_DIMMER_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-  HAL_GPIO_Init(TRIAC_DIMMER_GPIO_Port, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : BOOT_MODE_Pin */
-  GPIO_InitStruct.Pin = BOOT_MODE_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
-  HAL_GPIO_Init(BOOT_MODE_GPIO_Port, &GPIO_InitStruct);
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(TRIAC_DIMMER_GPIO_Port, TRIAC_DIMMER_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : BUZZER_IN_Pin */
   GPIO_InitStruct.Pin = BUZZER_IN_Pin;
@@ -885,6 +869,18 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(BUZZER_IN_GPIO_Port, &GPIO_InitStruct);
 
+  /*Configure GPIO pin : BOOT_MODE_Pin */
+  GPIO_InitStruct.Pin = BOOT_MODE_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(BOOT_MODE_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : ZC_INPUT_Pin */
+  GPIO_InitStruct.Pin = ZC_INPUT_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(ZC_INPUT_GPIO_Port, &GPIO_InitStruct);
+
   /*Configure GPIO pin : LED_BOARD_Pin */
   GPIO_InitStruct.Pin = LED_BOARD_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
@@ -892,9 +888,16 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(LED_BOARD_GPIO_Port, &GPIO_InitStruct);
 
+  /*Configure GPIO pin : TRIAC_DIMMER_Pin */
+  GPIO_InitStruct.Pin = TRIAC_DIMMER_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+  HAL_GPIO_Init(TRIAC_DIMMER_GPIO_Port, &GPIO_InitStruct);
+
   /* EXTI interrupt init*/
-  HAL_NVIC_SetPriority(EXTI0_IRQn, 5, 0);
-  HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+  HAL_NVIC_SetPriority(EXTI15_10_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
 
