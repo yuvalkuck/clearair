@@ -8,9 +8,20 @@
 
 // Keep this POD (plain-old-data) so it can be copied through an RTOS queue safely.
 struct DataBME680 {
-    int8_t temperature; //  Temperature in C - BME680 with BSEC2
-    uint8_t humidity; // Humidity in % - BME680 with BSEC2
+    int8_t temperature;             //  Temperature in C - BME680 with BSEC2
+    uint8_t humidity;               // Humidity in % - BME680 with BSEC2
     uint16_t indoorAirQualityIndex; // Indoor Air Quality (IAQ) index - BME680 with BSEC2
+};
+
+enum ButtonPressedTypes : uint8_t {
+    BUTTON_INVALID = 0,
+    //
+    BUTTON_UP        = 1,
+    BUTTON_DOWN      = 2,
+    BUTTON_LEFT      = 3,
+    BUTTON_RIGHT     = 4,
+    // JUST ONE
+    MAX_BUTTON_PRESSED
 };
 
 struct DataUiValue {
@@ -27,6 +38,5 @@ struct DataCO1NO2 {
     float co1;
     float no2;
 };
-
 
 #endif //CLEARAIR_EVENT_DATA_H

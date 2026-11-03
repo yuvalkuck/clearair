@@ -15,6 +15,7 @@
         SPS30Particle,
         MICS4514CO1NO2,
         // Other Events
+        BUTTON_PRESSED,
     } UniqueID;
 
     struct CommonMessage {
@@ -25,6 +26,7 @@
             struct DataUiValue uiValue;
             struct DataParticle particle;
             struct DataCO1NO2 co1_no2;
+            enum ButtonPressedTypes button;
             // BmpData bmp; etc. for other sensors
         } payload;
     };
