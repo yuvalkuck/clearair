@@ -53,10 +53,10 @@ graph TD
 
 ## ⚡ Power & Logic Integration
 
-*   **Mains Split & Supply Rails:** The 220VAC mains feed splits two ways: one branch goes to the RobotDyn TRIAC dimmer (fan phase control), the other to two AC-DC power supply modules, each 2 A and 36.4 x 70 x 23 mm: one outputs **12V** (safety buzzer and both 80 mm fans) and one outputs **5V** (WeAct G474CE Long board via its `P3` 5V pad, plus all sensors, the RobotDyn logic side, and the Arduino Nano). The **3.3V** rail comes from the WeAct board's on-board regulator. Both 80 mm fans run all the time from the 12V rail. Each fan's PWM and tach wires go to the STM32 (see the pin plan); the fan GND is common with the STM32 GND.
+*   **Mains Split & Supply Rails:** The 220VAC mains feed splits two ways: one branch goes to the RobotDyn TRIAC dimmer (fan phase control), the other to two AC-DC power supply modules, each 2 A and 36.4 x 70 x 23 mm: one outputs **12V** (safety buzzer and both 80 mm fans) and one outputs **5V** (WeAct G474CE Long board via its `P3` 5V pad, plus all sensors, the RobotDyn logic side, and the front-panel WS2812B LEDs). The **3.3V** rail comes from the WeAct board's on-board regulator. Both 80 mm fans run all the time from the 12V rail. Each fan's PWM and tach wires go to the STM32 (see the pin plan); the fan GND is common with the STM32 GND.
 *   **Electrical Noise Isolation:** The internal 5V heating elements of the gas sensors are powered directly from the external 5V supply rail rather than drawing from the MCU. This layout keeps heavy electrical switching current ripples completely away from the sensitive STM32 analog circuitry.
 *   **Logic Interfacing:** The `I2C1` bus uses 4.7 kΩ pull-up resistors tied strictly to the STM32's 3.3V rail. The 5V-powered modules (MQ131, MiCS-4514, RobotDyn dimmer) send their outputs (MQ131 `AO`, MiCS-4514 `RED`/`NOX`, RobotDyn `Z-C`) through passive 1.8 kΩ (series) / 3.3 kΩ (to GND) voltage dividers, which drop a 5V signal to ~3.24V, under the 3.3V GPIO/ADC limit.
-*   **USART3 Link to Arduino (future):** A dedicated **USART3** connection will eventually bridge the STM32 to a secondary **Arduino Nano** (already in stock), running on its native 5V logic domain — kept separate from the sensor `I2C1` bus. A pair of **2N7000** MOSFETs will handle bidirectional 3.3V↔5V level shifting on the TX/RX lines between the STM32's 3.3V USART3 pins and the Arduino's 5V UART pins. The Arduino Nano (`A2`) sits on the board and receives status bytes over this serial link. Header `J8` (1x14) brings out its front-panel I/O: pins 1-6 are `D2`-`D7`, one per metric (IAQ, O3, PM2.5, PM10, CO, NO2), each driving a green/red LED pair (pin LOW = green, HIGH = red, toggling = blinking at the buzzer alarm); pins 7-8 are `A5` SCL and `A4` SDA for an I2C text display; pins 9-12 are `KEY1`-`KEY4` (`A3`, `A2`, `A1`, `A0`), four panel buttons to GND read as digital inputs with the Nano's internal pull-ups; pins 13-14 are +5V and GND. The LEDs, their 330 Ω resistors and the buttons are on the panel, not on the board. The Nano has its place on the board but is not fitted yet. The safety-latch buzzer stays wired directly to the STM32 (see Safety Core & Fail-Safes) so it keeps working even if the Arduino is unreachable or dead.
+*   **Front Panel:** The STM32 drives the panel itself; there is no second controller. Six WS2812B RGB LEDs (5 V, one per metric: IAQ, O3, PM2.5, PM10, CO, NO2) form one chain on header `J9` (1 +5V, 2 DIN, 3 GND). Their data comes from `PA6` (`LED_DATA`, `TIM16_CH1` PWM fed by DMA at 800 kHz) through one gate of a 74AHCT125N (`U6`, in a DIP-14 socket, powered from 5 V), because the WS2812B needs at least 0.7 x 5 V = 3.5 V on DIN, more than a 3.3V pin gives. A 330 Ω resistor (`R25`) sits in series with DIN, `C27` (220 µF) buffers the LED supply at `J9`, and `C26` (100 nF) decouples `U6`. The three unused gates have their inputs on GND and `OE` on +5V. Each LED shows its metric's danger level by color and blinks while the buzzer alarm runs; the firmware caps the brightness. An I2C text display connects to header `J10` (1 3V3, 2 GND, 3 SDA, 4 SCL) on `I2C2`, shared with the RTC; the firmware does not use it yet, and once it does, the RTC driver needs a bus lock. Use a 3.3V display (OLED), or remove the 5V pull-ups of an LCD backpack. The safety buzzer stays on its own GPIO (see Safety Core & Fail-Safes), so it still sounds if the LEDs or the display fail.
 *   **Real-Time Clock (RTC):** A PCF8563 on a HW-689 module (I2C address 0x51, 1.0 to 5.5 V) has its own bus, `I2C2` (`PC4` SCL, `PA8` SDA), with 4.7 kΩ pull-ups to 3.3V; its `COT` and `INT` pins stay unconnected. Only the RTC task uses that bus, so it needs no lock shared with the sensor tasks. The module sits off the perfboard and connects through the 4-pin header `J7` (VCC 3V3, GND, SDA, SCL). A CR1220 cell on the module keeps the clock running during a power loss. Before fitting a non-rechargeable cell, power the module with no cell and check that the cell's + contact reads about 0 V: some RTC modules charge the cell, which would damage a CR1220. The driver is `device/rtc` (`ClockRtc`). Only elapsed time matters, so the clock is never set to the real time: if the `VL` bit says the clock was lost, it restarts at 2000-01-01 00:00. The `rtcTask` writes a "last alive" stamp (minute, hour, day, weekday) once a minute into the four alarm registers, with every alarm-enable bit off so the alarm never fires. At boot, `configure()` compares the clock with the stamp: under 1 hour offline means the 30 minute MQ131 warm-up, and 1 hour or more, a lost clock, an unreadable stamp or an RTC that does not answer means the 48 hour preheat. The stamp has no month, so a gap is only counted when the stamp is from the same day or the day before. The `PB14` button still forces the cold boot. A power cut during the 48 hour preheat followed by a restart under 1 hour later only gets the 30 minute warm-up.
 *   **Gas Sensor Heaters:** The MQ131 heater needs a constant 5 V (datasheet: VH 5.0 V ±0.1 V, 34 Ω, up to 900 mW) and over 48 h of preheat after a cold start, so the module VCC and GND are wired straight to the 5 V rail and GND: it is always on and nothing switches it. The MiCS-4514 heaters run on constant power from VCC through the module's own resistors (82 Ω RED, 51 + 82 Ω OX). Its `PRE` pin is tied to GND, so the boost (which shorts the 51 Ω and runs the OX heater near 75 mW, above the 50 mW maximum) is never used. Tie `PRE` to GND only after checking it has the 100 kΩ pull-down to GND (unpowered, `PRE` to GND about 100 kΩ).
 
@@ -69,16 +69,16 @@ Typical datasheet values, not measurements (±20%). STM32 at 170 MHz (`clearair.
 | Load | Typical | Peak / max |
 | :--- | :--- | :--- |
 | WeAct G474CE Long (STM32G474 @ 170 MHz + on-board regulator + user LED; the 3.3V LDO passes the 3V3 load through, so it is counted in the next row) | ~40 mA | 60 mA |
-| 3V3 loads via the on-board regulator (BME680 incl. gas-heater pulses, I2C pull-ups, fan tach pull-ups, 2N7000 pull-ups, PCF8563 RTC) | ~5 mA | 15 mA |
+| 3V3 loads via the on-board regulator (BME680 incl. gas-heater pulses, I2C pull-ups, fan tach pull-ups, PCF8563 RTC) | ~5 mA | 15 mA |
 | SPS30 (measuring) | 60 mA | 80 mA |
 | MQ131 heater + module (always on, 5 V) | ~170 mA | 185 mA |
 | MiCS-4514 (RED + OX heaters + module, `PRE` tied to GND, no boost) | ~60 mA | 65 mA |
 | RobotDyn logic side (Z-C opto + PSM) | ~5 mA | 15 mA |
-| 1.8k/3.3k dividers (×4) + 5V pull-ups R11/R13 | ~5 mA | 5 mA |
-| Arduino Nano (board only) | ~25 mA | 40 mA |
-| Panel LEDs on `J8` (6 pairs, one LED of each pair lit, 330 Ω at 5 V) | ~55 mA | 60 mA |
-| I2C text display on `J8` (16x2 LCD with backlight, or OLED) | ~25 mA | 80 mA |
-| **Total** | **~450 mA ≈ 2.3 W** | **~610 mA ≈ 3.1 W** |
+| 1.8k/3.3k dividers (×4) | ~5 mA | 5 mA |
+| 74AHCT125N level shifter (`U6`) | <1 mA | 1 mA |
+| WS2812B LEDs on `J9` (×6; about 1 mA idle each, one color at reduced brightness typical, all white at full brightness max) | ~70 mA | 360 mA |
+| I2C display on `J10` (3.3V OLED, not fitted yet; through the 3.3V regulator) | ~20 mA | 30 mA |
+| **Total** | **~435 mA ≈ 2.2 W** | **~820 mA ≈ 4.1 W** |
 
 The 5V total has no fan, because both fans run from the 12V rail. The STLINK-V3MINIE debugger is powered over its own USB and only senses the board's 3.3V on `T_VCC`, so it adds no load to either rail. The G474 board row is an estimate, not a datasheet value: measure the board current on the bench.
 
@@ -172,11 +172,10 @@ graph TD
     BootSel_Btn[External Boot-Select Button]
 
     %% Future Visualization Stage
-    subgraph VIZ [ARDUINO VISUALIZATION - FUTURE]
-        Level_Shift[2N7000 Level Shifter]
-        Arduino_Nano[Arduino Nano]
-        LED_Array[LED Array / 7-Seg Display]
-        BootMode_LEDs[2x Boot Mode LEDs]
+    subgraph VIZ [FRONT PANEL]
+        Level_Shift[74AHCT125N 3.3V to 5V buffer]
+        LED_Array[6x WS2812B status LEDs]
+        Display[I2C display on J10, future]
     end
 
     %% Power Routing Connections
@@ -207,13 +206,12 @@ graph TD
     Buzzer_12 -->|Low side| Trans_2N2222
     Trans_2N2222 -->|Emitter| GND
 
-    T5 -->|USART3 TX/RX, future| Level_Shift
-    Level_Shift -->|3.3V<->5V| Arduino_Nano
-    Arduino_Nano -->|Drives| LED_Array
-    Arduino_Nano -->|Drives, boot mode sent over USART3| BootMode_LEDs
+    T5 -->|PA6 TIM16 PWM + DMA| Level_Shift
+    Level_Shift -->|5V DIN, 330 ohm| LED_Array
+    T5 -->|I2C2 PC4/PA8, future| Display
 
     Reset_Btn -->|NRST| STM32
-    BootSel_Btn -->|PB14, read once at boot| STM32
+    BootSel_Btn -->|PB2, read once at boot| STM32
 ```
 ### Planned Safety Latch State Machine
 
@@ -257,8 +255,8 @@ stateDiagram-v2
 
 ```
 ### Execution Strategy
-*   **Boot Mode Selection:** Before any sensor `configure()` call runs, `appStartDefaultTask` reads the `PB14` boot-select button once and then configures the RTC (`device/rtc`). It's a cold boot when the button is held, or when the RTC shows 1 hour or more offline (or cannot tell, see Real-Time Clock above); otherwise a warm boot. On a warm boot, MQ131 and MiCS-4514 run their normal (short) warm-up before publishing readings; on a cold boot, each runs its own extended warm-up/soak in parallel (see `device/o3sensor` and `device/co1no2`) — none of this is persisted across reboots. The selected mode is then sent to the Arduino Nano over the (future) `USART3` link, which lights one of two indicator LEDs to reflect the choice — the LEDs are driven by the Arduino, not directly by the STM32.
-*   **Aggregate Update Cadence:** Individual sensor tasks post to the queue at their own native rate (`SPS30` every 1.0s, `BME680` every 3.0s, `MQ131`/`MiCS-4514` every 20ms), but the system as a whole pushes an updated aggregate `CollectedAirData` snapshot roughly every ~5 seconds for downstream consumers (telemetry, and the future Arduino visualization stage).
+*   **Boot Mode Selection:** Before any sensor `configure()` call runs, `appStartDefaultTask` reads the `PB2` boot-select button once and then configures the RTC (`device/rtc`). It's a cold boot when the button is held, or when the RTC shows 1 hour or more offline (or cannot tell, see Real-Time Clock above); otherwise a warm boot. On a warm boot, MQ131 and MiCS-4514 run their normal (short) warm-up before publishing readings; on a cold boot, each runs its own extended warm-up/soak in parallel (see `device/o3sensor` and `device/co1no2`) — none of this is persisted across reboots.
+*   **Aggregate Update Cadence:** Individual sensor tasks post to the queue at their own native rate (`SPS30` every 1.0s, `BME680` every 3.0s, `MQ131`/`MiCS-4514` every 20ms), but the system as a whole pushes an updated aggregate `CollectedAirData` snapshot roughly every ~5 seconds for downstream consumers (telemetry, the status LEDs, and the future display).
 *   **Low-Overhead Data Capture:** `ADC1` runs continuously in multi-channel Scan Mode handled via DMA. It updates a local 3-element array in RAM with fresh voltages from the `MQ131` and `MiCS-4514` sensors without generating any CPU overhead.
 *   **AC Phase Control Loop:** (implemented in `device/fanmotor`, it bypasses the RTOS)
     1. The AC power wave crosses zero volts and the RobotDyn zero-cross output pulls the `ZC_INPUT` pin low.
@@ -291,7 +289,7 @@ graph TD
         T5[Task 5: Central Controller — evaluates each reading on arrival]
         FanSpeed[Global Fan Speed Variable 0-100%]
         BuzzerPin[GPIO Pin Latch to 2N2222A Base]
-        USART3_Out[USART3 TX to Arduino Nano, future]
+        LED_Out[WS2812B status LEDs via TIM16 + DMA]
     end
 
     %% Hardware Real-Time Layer
@@ -312,7 +310,7 @@ graph TD
     Queue -->|Receives Each Reading| T5
     T5 -->|Updates| FanSpeed
     T5 -->|Drives HIGH at Evacuate level| BuzzerPin
-    T5 -->|Sends status bytes, future| USART3_Out
+    T5 -->|Level color per metric| LED_Out
 
     %% Precise Timing Hardware Loop
     ZC_Pulse --> EXTI_ISR
@@ -435,7 +433,7 @@ stateDiagram-v2
 
 Pin map for the **STM32G474CEU6** (UFQFPN48) on the WeAct G4 Long board, debugged with an STLINK-V3MINIE. It is applied in `clear-air.ioc` except for the front and rear fan PWM and tach rows (`TIM1`, `TIM2`), which are still planned. Pin functions come from the CubeMX DB (`STM32G474C(B-C-E)Ux.xml`).
 
-**CubeMX labels used by `device/*`:** `MQ131_ADC`, `MICS_CO1`, `MICS_NO2`, `ZC_INPUT`, `TRIAC_DIMMER`, `BOOT_MODE`, `BUZZER_IN`, `LED_BOARD`, `I2C_SCL`, `I2C_SDA`, `RTC_SCL`, `RTC_SDA`. The sensor bus handle is `hi2c1` and the RTC bus handle is `hi2c2` (`Core/Src/cpp_main.cpp`).
+**CubeMX labels used by `device/*`:** `MQ131_ADC`, `MICS_CO1`, `MICS_NO2`, `ZC_INPUT`, `TRIAC_DIMMER`, `BOOT_MODE`, `BUZZER_IN`, `LED_DATA`, `LED_BOARD`, `I2C_SCL`, `I2C_SDA`, `RTC_SCL`, `RTC_SDA`. The sensor bus handle is `hi2c1` and the RTC bus handle is `hi2c2` (`Core/Src/cpp_main.cpp`).
 
 ### Service → Pin Assignments
 
@@ -446,17 +444,18 @@ Pin map for the **STM32G474CEU6** (UFQFPN48) on the WeAct G4 Long board, debugge
 | **MQ-131 Output** | ADC1_IN1 | PA0 (8) | Through the 1.8 kΩ / 3.3 kΩ divider. |
 | **MiCS-4514 (CO)** | ADC2_IN2 | PA1 (9) | `PA1` is shared by ADC1/ADC2 IN2. Select ADC2 in CubeMX. |
 | **MiCS-4514 ($NO_2$)** | ADC2_IN4 | PA7 (15) | Through the divider. |
-| **RobotDyn ZC Input** | GPIO EXTI0 | PB0 (17) | Falling edge, pull-up, through the divider. Uses the dedicated `EXTI0_IRQn` vector (priority 5). |
-| **RobotDyn Gate Out** | GPIO Output | PB1 (18) | Push-pull, high speed, driven from the `TIM3` ISR. |
-| **Cold/Warm Boot Select** | GPIO Input | PB14 (27) | Pull-up, read once at boot. |
-| **Safety Buzzer** | GPIO Output | PB15 (28) | Drives the 2N2222A base through R9 (1 kΩ); Q3 switches the 12V buzzer on its low side. HIGH = buzzer on. Initial state LOW. |
+| **RobotDyn ZC Input** | GPIO EXTI12 | PB12 (25) | Falling edge, pull-up, through the divider. Uses the shared `EXTI15_10_IRQn` vector (priority 5); no other EXTI line 10-15 is in use. |
+| **RobotDyn Gate Out** | GPIO Output | PB9 (47) | Push-pull, high speed, driven from the `TIM3` ISR. |
+| **Cold/Warm Boot Select** | GPIO Input | PB2 (19) | Pull-up, read once at boot. |
+| **Safety Buzzer** | GPIO Output | PB10 (22) | Drives the 2N2222A base through R9 (1 kΩ); Q3 switches the 12V buzzer on its low side. HIGH = buzzer on. Initial state LOW. |
 | **Front Fan PWM (80 mm)** | TIM1_CH3 | PA10 (32) | 25 kHz PWM to the fan's PWM wire. 1 kΩ in series. Prescaler `0`, period `6799` at 170 MHz. Fan 12V and GND come from the 12V rail, GND common with the STM32. |
 | **Rear Fan PWM (80 mm)** | TIM1_CH2 | PA9 (31) | Same timer as the front fan, so the same 25 kHz. 1 kΩ in series. |
 | **Front Fan Tach** | TIM2_CH1 | PA5 (13) | Input capture, 10 kΩ pull-up to 3.3V. The tach is an open-collector output; confirm on the bench that the fan does not pull it up to 12V. |
 | **Rear Fan Tach** | TIM2_CH2 | PB3 (41) | Input capture, 10 kΩ pull-up to 3.3V. `TIM2` is 32-bit, so a stalled fan does not overflow the period count. |
 | **Status Indicator** | GPIO Output | PC6 (29) | On-board WeAct user LED. |
 | **Debug & Telemetry** | USART2 | PA2 TX (10), PA3 RX (11) | The board has no on-board ST-LINK, and the 4-pin SWD header has no VCP lines. Wire `PA2`/`PA3` to the STLINK-V3MINIE 14-pin connector (`T_VCP_RX`/`T_VCP_TX`) or to a USB-serial adapter. |
-| **Arduino Visualization Controller (future)** | USART3 (via 2N7000 level shifter) | PB10 TX (22), PB11 RX (24) |  |
+| **Status LEDs (WS2812B chain)** | TIM16_CH1 + DMA | PA6 (14) | PWM at 800 kHz (prescaler `0`, period `211` at 170 MHz), one compare value per bit from DMA. Through `U6` (74AHCT125N at 5 V) and `R25` 330 Ω to `J9` DIN. |
+| **Display (future)** | I2C2 (shared with the RTC) | PC4 SCL (16), PA8 SDA (30) | Header `J10`. Not used by the firmware yet. |
 | **Phase-Delay Tracking** | TIM3 | Internal | At 170 MHz SYSCLK with APB1 = HCLK, set prescaler `169` for a 1 µs tick. |
 | **HAL Timebase** | TIM6 | Internal | `TIM6_DAC_IRQn`. |
 | **OS Kernel Clock** | SysTick | Internal | FreeRTOS only. |
@@ -479,10 +478,21 @@ Pin map for the **STM32G474CEU6** (UFQFPN48) on the WeAct G4 Long board, debugge
 ### Conflict Check
 
 *   Each pin above has one function.
-*   The only EXTI line in use is EXTI0 (`PB0`). `PA0` (also line 0) is analog, so it does not claim EXTI0.
-*   No alternate function overlaps another selected peripheral. The other I2C1 pin options are not used: `PA13`/`PA14` are SWD and `PB8` is BOOT0. `PB9` (I2C1_SDA alt) stays unused. The I2C1 SMBA pin (`PB5`) stays unused.
+*   The only EXTI line in use is EXTI12 (`PB12`).
+*   No alternate function overlaps another selected peripheral. The other I2C1 pin options are not used: `PA13`/`PA14` are SWD and `PB8` is BOOT0. The I2C1 SDA alternate `PB9` is the TRIAC gate GPIO. The I2C1 SMBA pin (`PB5`) stays unused.
 *   On the UFQFPN48, `I2C2` is the only second I2C bus that fits: its SDA is on `PA8` or `PF0` (HSE), `I2C3` SCL is only on `PA8`, and `I2C4` needs `PA13`/`PC6`/`PB7`, which are all taken. So the front fan PWM moved from `TIM1_CH1` (`PA8`) to `TIM1_CH3` (`PA10`), and `I2C2` uses `PC4`/`PA8`.
 *   `PA9`/`PA10` (`TIM1_CH2`/`TIM1_CH3`) and `PA5`/`PB3` (`TIM2_CH1`/`TIM2_CH2`) were spare. `TIM1` and `TIM2` are not used by anything else in this plan. The CubeMX DB lists these functions for the G474 UFQFPN48.
 *   `VREF+` (pin 20) must connect to `VDDA` on the board for the ADCs to read against 3.3V.
 
-**Spare pins after this plan:** PA4, PA6, PB2, PB5, PB9, PB13, PC10, PC11. PA4/PA6/PB2 also have ADC2 inputs, so they suit extra analog sensors.
+*   The ZC input, TRIAC gate, boot button, buzzer and LED data sit on `PB12`, `PB9`, `PB2`, `PB10` and `PA6` (`TIM16_CH1`, a timer nothing else uses) so that SPI2, SPI3 and COMP1/COMP2/COMP4 stay free for later use. SPI1, I2C3, I2C4, COMP3, USART1 and LPUART1 cannot be freed on this package without moving an ADC, fan or I2C pin; UART4 shares `PC10`/`PC11` with SPI3.
+
+**Spare pins after this plan:** PA4, PB0, PB1, PB5, PB11, PB13, PB14, PB15, PC10, PC11.
+
+| Free service | Pins |
+| :--- | :--- |
+| SPI2 | `PB13` SCK, `PB14` MISO, `PB15` MOSI (software NSS) |
+| SPI3 | `PC10` SCK, `PC11` MISO, `PB5` MOSI, `PA4` NSS (or software) |
+| COMP1 | INP `PB1` |
+| COMP2 | INP `PA7` (shared with `MICS_NO2`) |
+| COMP4 | INP `PB0` |
+| DAC1_OUT1 | `PA4` (when SPI3 uses software NSS) |
