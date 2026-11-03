@@ -75,6 +75,8 @@ void Error_Handler(void);
 #define BOOT_MODE_GPIO_Port GPIOB
 #define BUZZER_ON_Pin GPIO_PIN_10
 #define BUZZER_ON_GPIO_Port GPIOB
+#define BUTTONS_ADC_Pin GPIO_PIN_11
+#define BUTTONS_ADC_GPIO_Port GPIOB
 #define ZC_INPUT_Pin GPIO_PIN_12
 #define ZC_INPUT_GPIO_Port GPIOB
 #define ZC_INPUT_EXTI_IRQn EXTI15_10_IRQn
