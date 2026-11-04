@@ -26971,23 +26971,13 @@
 	)
 	(wire
 		(pts
-			(xy 472.44 281.94) (xy 472.44 292.1)
+			(xy 472.44 281.94) (xy 472.44 302.26)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
 		(uuid "9639b8b4-0ae5-5ac8-b825-24e3c36faac3")
-	)
-	(wire
-		(pts
-			(xy 472.44 317.5) (xy 472.44 327.66)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "df18b6f1-3808-5e9f-b121-4e3c4732327b")
 	)
 	(wire
 		(pts
@@ -27018,16 +27008,6 @@
 			(type default)
 		)
 		(uuid "9f2c9d15-d94e-5710-aaf1-c4daed700e5a")
-	)
-	(wire
-		(pts
-			(xy 452.12 304.8) (xy 452.12 327.66)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "a95fffbe-ac45-5630-b62c-98817f3ba312")
 	)
 	(wire
 		(pts
@@ -27400,28 +27380,10 @@
 		(uuid "0314bc5d-e518-5332-aa42-0aefe23e575f")
 	)
 	(junction
-		(at 452.12 297.18)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "d2bfee44-c24e-57bb-8b02-daac9f07cc64")
-	)
-	(junction
-		(at 452.12 327.66)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "0aba91de-63f9-5343-a5ba-5fed997016df")
-	)
-	(junction
 		(at 457.2 327.66)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "accbb55c-40a4-5c1c-9a24-bcbcf00db8ab")
-	)
-	(junction
-		(at 472.44 327.66)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "0fdd33ca-b564-5a14-ba91-5cfe0474ead4")
 	)
 	(junction
 		(at 495.3 281.94)
@@ -27537,7 +27499,75 @@
 		)
 		(uuid "d1a68e18-6d1f-551d-a854-d5c09da7fa68")
 	)
-	(text "Test buttons SW3-SW6 (on board): ladder on PA4 (FORCE_STATES_SW).\nTEST1 fan off, TEST2 fan lower, TEST3 fan higher,\nTEST4 100% fan + buzzer. 0.30 / 0.82 / 1.34 / 1.98 V.\nStandby: SW7 or J12 (external) pulls PB1 to GND.\nD1 green: on by default (Q4 PNP, R40 pulls base low).\nPB0 high: D2 red on, green off."
+	(wire
+		(pts
+			(xy 457.2 297.18) (xy 466.09 297.18)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "60684360-5280-4d9d-b050-37f04e99703a")
+	)
+	(wire
+		(pts
+			(xy 466.09 289.56) (xy 472.44 289.56)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "3727d005-5478-46ea-bb35-6f8072eae221")
+	)
+	(wire
+		(pts
+			(xy 466.09 297.18) (xy 466.09 320.04)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "97141695-b6df-4bbf-94ec-93c4c968f831")
+	)
+	(wire
+		(pts
+			(xy 466.09 320.04) (xy 472.44 320.04)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6e366b1c-c430-492c-b8ad-e8f13023d1df")
+	)
+	(wire
+		(pts
+			(xy 472.44 320.04) (xy 472.44 317.5)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2e2baad6-4d67-48a4-9ee2-43a6f688acb5")
+	)
+	(junction
+		(at 457.2 297.18)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "09f1da58-0214-466a-9e50-f38b5c2211e1")
+	)
+	(junction
+		(at 466.09 297.18)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "a2a2b32a-f7cc-4a24-b444-c5d9d765f98a")
+	)
+	(junction
+		(at 472.44 289.56)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "e5ae8f57-89e7-4538-96c4-d5a122b6fe94")
+	)
+	(text "Test buttons SW3-SW6 (on board): ladder on PA4 (FORCE_STATES_SW).\nTEST1 fan off, TEST2 fan lower, TEST3 fan higher,\nTEST4 100% fan + buzzer. 0.30 / 0.82 / 1.34 / 1.98 V.\nStandby: SW7 or J12 (external) pulls PB1 to GND.\nD2 red: on by default (R40 pulls PB0 node to 3V3).\nPB0 high: red on, green off. PB0 low: green on."
 		(exclude_from_sim no)
 		(at 500.38 236.22 0)
 		(effects
@@ -28502,172 +28532,8 @@
 		)
 	)
 	(symbol
-		(lib_id "Transistor_BJT:Q_PNP_EBC")
-		(at 469.9 297.18 0)
-		(mirror x)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "855da7bc-1721-5f91-94f0-5914a06f7a74")
-		(property "Reference" "Q4"
-			(at 472.44 295.91 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "2N3906"
-			(at 472.44 298.45 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Package_TO_SOT_THT:TO-92_Inline_Wide"
-			(at 469.9 297.18 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 469.9 297.18 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "-0.2A Ic, -40V Vce, Small Signal PNP Transistor, TO-92"
-			(at 469.9 297.18 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "3e0a1b26-6c25-547e-afbf-c9a97c8d4dd6")
-		)
-		(pin "2"
-			(uuid "7a8d5164-f1e0-5920-8868-17d5fe20f45e")
-		)
-		(pin "3"
-			(uuid "60992d14-e923-57e8-9e4f-406816ffbeb6")
-		)
-		(instances
-			(project "clearair"
-				(path "/953560a5-36cf-5251-8f8d-509802d70a69"
-					(reference "Q4")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Device:R")
-		(at 461.01 297.18 90)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "63f14de4-4d6d-5ab7-ac31-01ea7f943e27")
-		(property "Reference" "R39"
-			(at 461.01 294.64 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "4k7"
-			(at 461.01 299.72 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"
-			(at 461.01 297.18 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 461.01 297.18 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "Resistor"
-			(at 461.01 297.18 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "6f7f5cf6-867a-521f-a0ad-a1d092953f8e")
-		)
-		(pin "2"
-			(uuid "8a1af7b1-4df8-5bab-8e3c-c1699243c743")
-		)
-		(instances
-			(project "clearair"
-				(path "/953560a5-36cf-5251-8f8d-509802d70a69"
-					(reference "R39")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:R")
-		(at 452.12 300.99 0)
+		(at 466.09 293.37 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -28677,7 +28543,7 @@
 		(dnp no)
 		(uuid "a8fcede6-b08d-5c99-add7-bcc386aae45f")
 		(property "Reference" "R40"
-			(at 453.39 299.72 90)
+			(at 467.36 292.1 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -28687,7 +28553,7 @@
 			)
 		)
 		(property "Value" "2k2"
-			(at 450.85 300.99 90)
+			(at 464.82 293.37 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -28697,7 +28563,7 @@
 			)
 		)
 		(property "Footprint" "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"
-			(at 452.12 300.99 0)
+			(at 466.09 293.37 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -28708,7 +28574,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 452.12 300.99 0)
+			(at 466.09 293.37 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -28719,7 +28585,7 @@
 			)
 		)
 		(property "Description" "Resistor"
-			(at 452.12 300.99 0)
+			(at 466.09 293.37 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
