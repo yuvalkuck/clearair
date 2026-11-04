@@ -415,7 +415,7 @@ static void MX_ADC2_Init(void)
   hadc2.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
   hadc2.Init.LowPowerAutoWait = DISABLE;
   hadc2.Init.ContinuousConvMode = DISABLE;
-  hadc2.Init.NbrOfConversion = 3;
+  hadc2.Init.NbrOfConversion = 4;
   hadc2.Init.DiscontinuousConvMode = DISABLE;
   hadc2.Init.ExternalTrigConv = ADC_SOFTWARE_START;
   hadc2.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
@@ -453,6 +453,15 @@ static void MX_ADC2_Init(void)
   */
   sConfig.Channel = ADC_CHANNEL_14;
   sConfig.Rank = ADC_REGULAR_RANK_3;
+  if (HAL_ADC_ConfigChannel(&hadc2, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Configure Regular Channel
+  */
+  sConfig.Channel = ADC_CHANNEL_17;
+  sConfig.Rank = ADC_REGULAR_RANK_4;
   if (HAL_ADC_ConfigChannel(&hadc2, &sConfig) != HAL_OK)
   {
     Error_Handler();
@@ -902,23 +911,23 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, BUZZER_ON_Pin|TRIAC_DIMMER_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, STANDBY_LED_Pin|BUZZER_ON_Pin|FILTER_FAN_POWER_Pin|TRIAC_DIMMER_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(LED_BOARD_GPIO_Port, LED_BOARD_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin : BOOT_MODE_Pin */
-  GPIO_InitStruct.Pin = BOOT_MODE_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
-  HAL_GPIO_Init(BOOT_MODE_GPIO_Port, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : BUZZER_ON_Pin */
-  GPIO_InitStruct.Pin = BUZZER_ON_Pin;
+  /*Configure GPIO pins : STANDBY_LED_Pin BUZZER_ON_Pin FILTER_FAN_POWER_Pin */
+  GPIO_InitStruct.Pin = STANDBY_LED_Pin|BUZZER_ON_Pin|FILTER_FAN_POWER_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(BUZZER_ON_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : STANDBY_SW_Pin BOOT_MODE_Pin */
+  GPIO_InitStruct.Pin = STANDBY_SW_Pin|BOOT_MODE_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /*Configure GPIO pin : ZC_INPUT_Pin */
   GPIO_InitStruct.Pin = ZC_INPUT_Pin;

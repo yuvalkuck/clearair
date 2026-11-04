@@ -63,6 +63,8 @@ void Error_Handler(void);
 #define MQ131_ADC_GPIO_Port GPIOA
 #define MICS_CO1_Pin GPIO_PIN_1
 #define MICS_CO1_GPIO_Port GPIOA
+#define FORCE_STATES_SW_Pin GPIO_PIN_4
+#define FORCE_STATES_SW_GPIO_Port GPIOA
 #define FAN_FRONT_TACH_Pin GPIO_PIN_5
 #define FAN_FRONT_TACH_GPIO_Port GPIOA
 #define LED_DATA_Pin GPIO_PIN_6
@@ -71,6 +73,10 @@ void Error_Handler(void);
 #define MICS_NO2_GPIO_Port GPIOA
 #define RTC_SCL_Pin GPIO_PIN_4
 #define RTC_SCL_GPIO_Port GPIOC
+#define STANDBY_LED_Pin GPIO_PIN_0
+#define STANDBY_LED_GPIO_Port GPIOB
+#define STANDBY_SW_Pin GPIO_PIN_1
+#define STANDBY_SW_GPIO_Port GPIOB
 #define BOOT_MODE_Pin GPIO_PIN_2
 #define BOOT_MODE_GPIO_Port GPIOB
 #define BUZZER_ON_Pin GPIO_PIN_10
@@ -92,6 +98,8 @@ void Error_Handler(void);
 #define I2C_SCL_GPIO_Port GPIOA
 #define FAN_REAR_TACH_Pin GPIO_PIN_3
 #define FAN_REAR_TACH_GPIO_Port GPIOB
+#define FILTER_FAN_POWER_Pin GPIO_PIN_5
+#define FILTER_FAN_POWER_GPIO_Port GPIOB
 #define I2C_SDA_Pin GPIO_PIN_7
 #define I2C_SDA_GPIO_Port GPIOB
 #define TRIAC_DIMMER_Pin GPIO_PIN_9
