@@ -1,2 +1,8 @@
 ~*
 *.swp
+*.zip
+*.tgz
+*.tar.gz
+*.tar.bz2
+*.bak
+*/fab/**

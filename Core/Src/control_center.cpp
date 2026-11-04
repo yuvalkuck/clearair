@@ -185,7 +185,7 @@ TickType_t alarmRemainingTicks() {
 void enterAlarmStep(AlarmState state, bool buzzerOn) {
     alarmState = state;
     alarmStepStart = xTaskGetTickCount();
-    HAL_GPIO_WritePin(BUZZER_IN_GPIO_Port, BUZZER_IN_Pin, buzzerOn ? BUZZER_ON : BUZZER_OFF);
+    HAL_GPIO_WritePin(BUZZER_ON_GPIO_Port, BUZZER_ON_Pin, buzzerOn ? BUZZER_ON : BUZZER_OFF);
 }
 
 void updateAlarm(DangerLevel level) {

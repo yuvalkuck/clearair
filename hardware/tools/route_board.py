@@ -84,7 +84,7 @@ def board_stats(board):
 def clear_tracks(board):
     tracks = list(board.GetTracks())
     for t in tracks:
-        board.Remove(t)
+        board.Delete(t)
     print(f"cleared: {len(tracks)} existing track and via items")
 
 
