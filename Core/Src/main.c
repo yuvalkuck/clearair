@@ -911,7 +911,10 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, STANDBY_LED_Pin|BUZZER_ON_Pin|FILTER_FAN_POWER_Pin|TRIAC_DIMMER_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(STANDBY_LED_GPIO_Port, STANDBY_LED_Pin, GPIO_PIN_SET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOB, BUZZER_ON_Pin|FILTER_FAN_POWER_Pin|TRIAC_DIMMER_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(LED_BOARD_GPIO_Port, LED_BOARD_Pin, GPIO_PIN_RESET);
