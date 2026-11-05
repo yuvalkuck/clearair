@@ -17,9 +17,14 @@ An industrial-grade, real-time environmental control and safety monitoring syste
   - [Execution Strategy](#execution-strategy)
   - [Message-queue asynchronous flow](#message-queue-asynchronous-flow)
   - [Sensor-Level Fan Control](#sensor-level-fan-control)
+  - [Evacuate alarm](#evacuate-alarm)
 - [Compensation & Normalization Models](#-compensation--normalization-models)
 - [Safety Core & Fail-Safes](#-safety-core--fail-safes)
 - [Roadmap](#️-roadmap)
+- [STM32G474CEU6 Pin Plan (WeAct G4 Long)](#-stm32g474ceu6-pin-plan-weact-g4-long)
+  - [Service → Pin Assignments](#service--pin-assignments)
+  - [Reserved Pins (board / debugger — do not assign)](#reserved-pins-board--debugger--do-not-assign)
+  - [Conflict Check](#conflict-check)
 
 ---
 
