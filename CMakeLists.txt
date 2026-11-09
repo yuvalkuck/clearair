@@ -27,6 +27,14 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 # Core project settings
 project(${CMAKE_PROJECT_NAME})
 message("Build type: " ${CMAKE_BUILD_TYPE})
+#find_package(GTest REQUIRED)
+#target_include_directories(tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../third_party)
+#target_link_libraries(tests PRIVATE GTest::gtest_main)
+include(FetchContent)
+FetchContent_Declare(fff GIT_REPOSITORY https://github.com/meekrosoft/fff.git GIT_TAG v1.1)
+FetchContent_MakeAvailable(fff)
+target_include_directories(tests PRIVATE ${fff_SOURCE_DIR})
+
 
 # Enable CMake support for ASM and C languages
 enable_language(C CXX ASM)
